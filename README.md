@@ -12,7 +12,7 @@
 
 ## Dependencies Management
 
-The purpose of [requirements](requirements.txt) file is only to offer a quick way to install poetry.
+The purpose of [requirements](requirements.txt) file is just to offer a quick way to install poetry.
 Actual dependencies are managed by poetry itself.
 
 You can add new dependencies to the project by running `poetry add <package-name>`. This will add the
