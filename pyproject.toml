@@ -1,0 +1,20 @@
+[tool.poetry]
+name = "Reasoner Service"
+version = "0.1.0"
+description = "Reasoner servive of Aequitas"
+authors = ["aequitas-aod"]
+packages = [{include = "app"}]
+
+[tool.poetry.dependencies]
+python = "^3.10"
+flask = "^3.0.2"
+requests = "^2.31.0"
+waitress = "^3.0.0"
+python-dotenv = "^1.0.1"
+
+[tool.poetry.group.dev.dependencies]
+black = "^24.2.0"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
