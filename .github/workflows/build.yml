@@ -29,8 +29,8 @@ jobs:
           poetry install
       - name: Run build
         run: poetry build
-#      - name: Run tests
-#        run: poetry run unittest discover -s test
+      - name: Run tests
+        run: poetry run python -m unittest discover -s test
 
   style:
     runs-on: ubuntu-latest
