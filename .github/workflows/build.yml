@@ -1,0 +1,47 @@
+name: Revue Build
+
+on:
+  push:
+    branches: [ '**', '!main' ]
+
+  workflow_dispatch:
+
+jobs:
+
+  build:
+    strategy:
+      matrix:
+        os:
+          - ubuntu-latest
+          - windows-latest
+          - macos-latest
+    # run on ubuntu, windows and macOS
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.8'
+          cache: ['pip', 'poetry']
+      - name: Install dependencies
+        run: |
+          pip install -r requirements.txt
+          poetry install
+      - name: Run build
+        run: poetry build
+#      - name: Run tests
+#        run: poetry run unittest discover -s test
+
+  style:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.8'
+          cache: [ 'pip', 'poetry' ]
+      - name: Install dependencies
+        run: |
+          pip install -r requirements.txt
+          poetry install
+      - name: Check code style
+        run: poetry run black --check .

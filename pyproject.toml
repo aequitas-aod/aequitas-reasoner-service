@@ -6,7 +6,7 @@ authors = ["aequitas-aod"]
 packages = [{include = "app"}]
 
 [tool.poetry.dependencies]
-python = "^3.10"
+python = "^3.8"
 flask = "^3.0.2"
 requests = "^2.31.0"
 waitress = "^3.0.0"
