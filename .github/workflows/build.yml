@@ -1,4 +1,4 @@
-name: Aequitas Build
+name: Build
 
 on:
   push:
@@ -19,14 +19,14 @@ jobs:
     runs-on: ${{ matrix.os }}
     steps:
       - uses: actions/checkout@v4
+      - name: Install poetry
+        run: pip install -r requirements.txt
       - uses: actions/setup-python@v5
         with:
           python-version: '3.8'
           cache: 'poetry'
       - name: Install dependencies
-        run: |
-          pip install -r requirements.txt
-          poetry install
+        run: poetry install
       - name: Run build
         run: poetry build
       - name: Run tests
@@ -35,13 +35,14 @@ jobs:
   style:
     runs-on: ubuntu-latest
     steps:
+      - uses: actions/checkout@v4
+      - name: Install poetry
+        run: pip install -r requirements.txt
       - uses: actions/setup-python@v5
         with:
           python-version: '3.8'
           cache: 'poetry'
       - name: Install dependencies
-        run: |
-          pip install -r requirements.txt
-          poetry install
+        run: poetry install
       - name: Check code style
         run: poetry run black --check .

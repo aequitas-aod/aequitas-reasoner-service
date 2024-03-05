@@ -4,5 +4,11 @@
   },
   "engines": {
     "node": "20.11"
+  },
+  "private": true,
+  "release": {
+    "branches": [
+      "main"
+    ]
   }
 }
