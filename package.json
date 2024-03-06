@@ -1,4 +1,5 @@
 {
+  "name": "aequitas-reasoner-service",
   "devDependencies": {
     "semantic-release-preconfigured-conventional-commits": "latest"
   },
