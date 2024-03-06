@@ -1,0 +1,14 @@
+components:
+  responses:
+
+    Created:
+      description: The resource was created successfully
+
+    Deleted:
+      description: The resource was deleted successfully
+
+    NotFound:
+      description: The specified resource was not found
+
+    BadRequest:
+      description: The request was invalid
