@@ -37,9 +37,9 @@ paths:
               $ref: './schemas.yaml#/components/schemas/Project'
       responses:
         201:
-          $ref: './responses.yaml#/components/responses/Created'
+          description: The resource was created successfully
         400:
-          $ref: './responses.yaml#/components/responses/BadRequest'
+          description: The request was invalid
 
   /projects/{id}:
     get:
@@ -60,7 +60,7 @@ paths:
               schema:
                 $ref: './schemas.yaml#/components/schemas/Project'
         400:
-          $ref: './responses.yaml#/components/responses/BadRequest'
+          description: The request was invalid
 
     put:
       summary: Update a project
@@ -82,7 +82,7 @@ paths:
         200:
           description: The project was updated successfully
         400:
-          $ref: './responses.yaml#/components/responses/BadRequest'
+          description: The request was invalid
 
     delete:
       summary: Delete all projects
@@ -96,9 +96,9 @@ paths:
             description: ID of the project
       responses:
         204:
-          $ref: './responses.yaml#/components/responses/Deleted'
+          description: The resource was deleted successfully
         400:
-          $ref: './responses.yaml#/components/responses/BadRequest'
+          description: The request was invalid
 
   /questions:
     get:
@@ -164,7 +164,7 @@ paths:
         200:
           description: The question was updated successfully
         400:
-          $ref: './responses.yaml#/components/responses/BadRequest'
+          description: The request was invalid
 
     delete:
       summary: Delete a question
@@ -178,9 +178,9 @@ paths:
             description: ID of the question
       responses:
         204:
-          $ref: './responses.yaml#/components/responses/Deleted'
+          description: The resource was deleted successfully
         400:
-          $ref: './responses.yaml#/components/responses/BadRequest'
+          description: The request was invalid
 
 
   /answers:
@@ -208,9 +208,9 @@ paths:
               $ref: './schemas.yaml#/components/schemas/Answer'
       responses:
         201:
-          $ref: './responses.yaml#/components/responses/Created'
+          description: The resource was created successfully
         400:
-          $ref: './responses.yaml#/components/responses/BadRequest'
+          description: The request was invalid
 
   /answers/{id}:
     get:
@@ -263,33 +263,85 @@ paths:
             description: ID of the answer
       responses:
         204:
-          $ref: './responses.yaml#/components/responses/Deleted'
+          description: The resource was deleted successfully
 
-#  /projects/{id}/questionnaire:
-#    get:
-#      summary: Get all questions filled in by the user for a project
-#      tags: [ Questionnaires ]
-#      parameters:
-#        - in: path
-#          name: id
-#          required: true
-#          schema:
-#            type: integer
-#            description: ID of the project
-#      responses:
-#        200:
-#          description: The actual list of questions composing the questionnaire of the project
-#
-#    delete:
-#      summary: Delete all questions filled in by the user for a project
-#      tags: [ Questionnaires ]
-#      parameters:
-#        - in: path
-#          name: id
-#          required: true
-#          schema:
-#            type: integer
-#            description: ID of the project
-#      responses:
-#        204:
-#          description: Questions deleted successfully
+  /projects/{id}/questionnaire:
+    get:
+      summary: Get all questions filled in by the user for a project
+      tags: [ Questionnaires ]
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+            description: ID of the project
+      responses:
+        200:
+          description: The actual list of questions composing the questionnaire of the project
+
+    delete:
+      summary: Delete all questions filled in by the user for a project
+      tags: [ Questionnaires ]
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+            description: ID of the project
+      responses:
+        204:
+          description: Questions deleted successfully
+
+  /projects/{id}/questionnaire/{number}:
+    get:
+      summary: Get the n-th question of project questionnaire
+      tags: [ Questionnaires ]
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+            description: ID of the project
+        - in: path
+          name: number
+          required: true
+          schema:
+            type: integer
+            description: Number of the question
+      responses:
+        200:
+          description: The actual list of questions composing the questionnaire of the project
+        400:
+          description: The request was invalid
+
+    put:
+      summary: Update the n-th question of project questionnaire,
+        this operation implies the deletion of all successive questions
+      tags: [ Questionnaires ]
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+            description: ID of the project
+        - in: path
+          name: number
+          required: true
+          schema:
+            type: integer
+            description: Number of the question
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: './schemas.yaml#/components/schemas/Question'
+      responses:
+        200:
+          description: The question was updated successfully
+        400:
+          description: The request was invalid
