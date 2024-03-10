@@ -1,5 +1,6 @@
 components:
   schemas:
+
     Project:
       type: object
       properties:
@@ -9,22 +10,60 @@ components:
         name:
           type: string
           description: The name of the project
+
+    QuestionId:
+      type: object
+      properties:
+        code:
+          type: string
+          description: The unique identifier for the question
+
     Question:
       type: object
       properties:
         id:
-          type: integer
-          description: The unique identifier for the question
+          $ref: '#/components/schemas/QuestionId'
         text:
           type: string
           description: The text of the question
+        type:
+          type: string
+          description: The type of the question (e.g. multiple choice, boolean, ...)
+        availableAnswers:
+          type: array
+          items:
+            $ref: '#/components/schemas/Answer'
+          description: The list of available answers for the question
+        selectedAnswers:
+          type: array
+          items:
+            $ref: '#/components/schemas/Answer'
+          description: The list of selected answers
 
     Answer:
       type: object
       properties:
-        id:
-          type: integer
-          description: The unique identifier for the answer
+        value:
+          type: string
+          description: The value of the answer
         text:
           type: string
           description: The text of the answer
+
+    Questionnaire:
+      type: object
+      properties:
+        id:
+          type: integer
+          description: The unique identifier for the questionnaire
+        name:
+          type: string
+          description: The name of the questionnaire
+        questions:
+          type: array
+          items:
+            $ref: '#/components/schemas/Question'
+          description: The list of questions in the questionnaire
+        isCompleted:
+          type: boolean
+          description: Whether the questionnaire is completed or not
