@@ -43,6 +43,9 @@ components:
     Answer:
       type: object
       properties:
+        id:
+          type: integer
+          description: The unique identifier for the answer
         value:
           type: string
           description: The value of the answer
