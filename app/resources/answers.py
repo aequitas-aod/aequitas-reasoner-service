@@ -1,7 +1,7 @@
 from flask import Blueprint
 from flask_restful import Api, Resource
 
-answers_bp = Blueprint('answers', __name__)
+answers_bp = Blueprint("answers", __name__)
 api = Api(answers_bp)
 
 
@@ -18,4 +18,4 @@ class Answer(Resource):
         pass
 
 
-api.add_resource(Answer, '/answers', '/answers/<int:answer_id>')
+api.add_resource(Answer, "/answers", "/answers/<int:answer_id>")
