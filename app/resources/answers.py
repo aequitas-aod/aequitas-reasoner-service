@@ -5,7 +5,7 @@ answers_bp = Blueprint("answers", __name__)
 api = Api(answers_bp)
 
 
-class Answer(Resource):
+class AnswerResource(Resource):
 
     def get(self, answer_id=None):
         if answer_id:
@@ -18,4 +18,4 @@ class Answer(Resource):
         pass
 
 
-api.add_resource(Answer, "/answers", "/answers/<int:answer_id>")
+api.add_resource(AnswerResource, "/answers", "/answers/<int:answer_id>")
