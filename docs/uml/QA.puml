@@ -13,6 +13,7 @@ entity Question {
   +selectedAnswers: Answer[]
   +selectAnswers(answers: Answer[]): void
   +deselectAnswers(answers: Answer[]): void
+  +actionNeeded: Action
 }
 
 entity QuestionId {
@@ -31,6 +32,10 @@ entity QuestionIdFactory {
   +createQuestionId(code): QuestionId
 }
 
+enum Action {
+  METRICS_CHECK
+}
+
 enum QuestionType {
   BOOLEAN
   SINGLE_CHOICE
@@ -44,5 +49,10 @@ QuestionIdFactory --> QuestionId : creates
 Question o-right- Answer
 Question *-left- QuestionId
 Question *-- QuestionType
+Question *-- "0..1" Action
+
+note left of Question : entity
+note right of Answer : value object
+
 
 @enduml
