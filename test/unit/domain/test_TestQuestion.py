@@ -15,8 +15,8 @@ class TestQuestion(unittest.TestCase):
             QuestionType.SINGLE_CHOICE,
             frozenset(
                 {
-                    Answer("Always", "always"),
-                    Answer("Never", "never"),
+                    Answer(text="Always", value="always"),
+                    Answer(text="Never", value="never"),
                 }
             ),
         )
@@ -25,7 +25,7 @@ class TestQuestion(unittest.TestCase):
         self.assertEqual(
             self.question.id,
             QuestionId(
-                str(
+                code=str(
                     hash(
                         (
                             self.question.text,
@@ -53,7 +53,7 @@ class TestQuestion(unittest.TestCase):
         self.assertRaises(
             ValueError,
             lambda: self.question.select_answer(
-                Answer("this is not in the available answers", "whatever")
+                Answer(text="this is not in the available answers", value="whatever")
             ),
         )
 

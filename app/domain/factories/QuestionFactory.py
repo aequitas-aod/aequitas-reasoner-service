@@ -21,11 +21,11 @@ class QuestionFactory:
         action_needed: Action = None,
     ) -> Question:
         return Question(
-            text,
-            question_type,
-            available_answers,
-            selected_answers,
-            action_needed,
+            text=text,
+            type=question_type,
+            available_answers=available_answers,
+            selected_answers=selected_answers,
+            action_needed=action_needed,
         )
 
     def create_boolean_question(
@@ -38,8 +38,8 @@ class QuestionFactory:
             }
         )
         return Question(
-            text,
-            QuestionType.BOOLEAN,
-            frozenset(available_answers),
+            text=text,
+            type=QuestionType.BOOLEAN,
+            available_answers=available_answers,
             action_needed=action_needed,
         )

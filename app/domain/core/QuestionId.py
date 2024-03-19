@@ -1,14 +1,14 @@
-class QuestionId:
+from pydantic import BaseModel
 
-    def __init__(self, code: str):
-        self._code = code
 
-    @property
-    def code(self):
-        return self._code
+class QuestionId(BaseModel):
 
-    def __eq__(self, other):
-        return self.code == other.code
+    code: str
 
     def __str__(self):
         return f"QuestionId(code={self.code})"
+
+
+if __name__ == '__main__':
+    question_id = QuestionId(code="123")
+    print(question_id.model_dump_json())

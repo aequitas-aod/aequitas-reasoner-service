@@ -10,46 +10,12 @@ from app.domain.core.enum.QuestionType import QuestionType
 
 
 class Question(BaseModel):
-
-    def __init__(
-        self,
-        text: str,
-        question_type: QuestionType,
-        available_answers: FrozenSet[Answer],
-        selected_answers: FrozenSet[Answer] = frozenset(),
-        action_needed: Optional[Action] = None,
-    ):
-        super().__init__()
-        self._text: str = text
-        self._type: QuestionType = question_type
-        self._available_answers: FrozenSet[Answer] = available_answers
-        self._selected_answers: FrozenSet[Answer] = selected_answers
-        self._action_needed: Optional[Action] = action_needed
-        self._id = QuestionId(str(hash(self)))
-
-    @property
-    def id(self) -> QuestionId:
-        return self._id
-
-    @property
-    def text(self) -> str:
-        return self._text
-
-    @property
-    def type(self) -> QuestionType:
-        return self._type
-
-    @property
-    def available_answers(self) -> FrozenSet[Answer]:
-        return self._available_answers
-
-    @property
-    def selected_answers(self) -> FrozenSet[Answer]:
-        return self._selected_answers
-
-    @property
-    def action_needed(self) -> Optional[Action]:
-        return self._action_needed
+    text: str
+    type: QuestionType
+    available_answers: FrozenSet[Answer]
+    selected_answers: FrozenSet[Answer] = frozenset()
+    action_needed: Optional[Action] = None
+    id: QuestionId = QuestionId(code=str(hash("ss")))
 
     def select_answer(self, answer: Answer) -> Self:
         """Return a new question with the selected answer added to the selected answers set.
@@ -59,22 +25,21 @@ class Question(BaseModel):
         """
         if answer not in self.available_answers:
             raise ValueError(f"Answer {answer} is not available for this question")
-
         return Question(
-            self.text,
-            self.type,
-            self.available_answers,
-            self.selected_answers.union({answer}),
-            self.action_needed,
+            text=self.text,
+            type=self.type,
+            available_answers=self.available_answers,
+            selected_answers=self.selected_answers.union({answer}),
+            action_needed=self.action_needed
         )
 
     def deselect_answer(self, answer: Answer) -> Self:
         return Question(
-            self.text,
-            self.type,
-            self.available_answers,
-            self.selected_answers.difference({answer}),
-            self.action_needed,
+            text=self.text,
+            type=self.type,
+            available_answers=self.available_answers,
+            selected_answers=self.selected_answers.difference({answer}),
+            action_needed=self.action_needed
         )
 
     def __str__(self) -> str:
@@ -96,3 +61,13 @@ class Question(BaseModel):
                 self.action_needed,
             )
         )
+
+
+if __name__ == '__main__':
+    question = Question(
+        text="Do you practice TDD?",
+        type=QuestionType.BOOLEAN,
+        available_answers=frozenset([Answer(text="Yes", value="yes"), Answer(text="No", value="no")]),
+        action_needed=Action.METRICS_CHECK,
+    )
+    print(question.model_dump_json())
