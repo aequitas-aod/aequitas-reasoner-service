@@ -13,7 +13,7 @@ class TestQuestion(unittest.TestCase):
         self.question = QuestionFactory().create_question(
             "Do you practice TDD?",
             QuestionType.SINGLE_CHOICE,
-            {Answer("Always", "always"), Answer("Never", "never")},
+            {Answer(text="Always", value="always"), Answer(text="Never", value="never")},
         )
 
     def test_question_id(self):
@@ -48,7 +48,7 @@ class TestQuestion(unittest.TestCase):
         self.assertRaises(
             ValueError,
             lambda: self.question.select_answer(
-                Answer("this is not in the available answers", "whatever")
+                Answer(text="this is not in the available answers", value="whatever")
             ),
         )
 

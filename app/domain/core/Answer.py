@@ -1,9 +1,7 @@
-from dataclasses import dataclass
+from pydantic import BaseModel
 
 
-@dataclass
-class Answer:
-
+class Answer(BaseModel):
     text: str
     value: str
 
