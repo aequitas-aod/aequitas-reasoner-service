@@ -70,6 +70,15 @@ class Question:
             self.action_needed,
         )
 
+    def deselect_answer(self, answer: Answer) -> Self:
+        return Question(
+            self.text,
+            self.type,
+            self.available_answers,
+            self.selected_answers.difference({answer}),
+            self.action_needed,
+        )
+
     def __str__(self) -> str:
         return (
             f"Question(id={self.id}, text={self.text}, type={self.type}, available_answers={self.available_answers},"

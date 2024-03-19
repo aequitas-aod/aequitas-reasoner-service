@@ -9,10 +9,10 @@ entity Question {
   +id: QuestionId
   +text: string
   +type: QuestionType
-  +availableAnswers: Answer[]
-  +selectedAnswers: Answer[]
-  +selectAnswers(answers: Answer[]): void
-  +deselectAnswers(answers: Answer[]): void
+  +availableAnswers: Set<Answer>
+  +selectedAnswers: Set<Answer>
+  +selectAnswer(answers: Answer): Question
+  +deselectAnswer(answers: Answer): Question
   +actionNeeded: Action
 }
 

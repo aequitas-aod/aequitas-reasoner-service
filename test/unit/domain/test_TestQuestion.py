@@ -52,6 +52,16 @@ class TestQuestion(unittest.TestCase):
             ),
         )
 
+    def test_deselect_answer(self):
+        answer, _ = self.question.available_answers
+        question = self.question.select_answer(answer).deselect_answer(answer)
+        self.assertEqual(question.selected_answers, frozenset())
+
+    def test_deselect_not_selected_answer(self):
+        answer, _ = self.question.available_answers
+        question = self.question.deselect_answer(answer)
+        self.assertEqual(question.selected_answers, frozenset())
+
 
 class TestBooleanQuestion(unittest.TestCase):
     def setUp(self):
