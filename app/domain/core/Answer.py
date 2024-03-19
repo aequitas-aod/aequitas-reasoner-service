@@ -15,5 +15,8 @@ class Answer:
     def __str__(self):
         return f"Answer(text={self.text}, value={self.value})"
 
+    def __hash__(self):
+        return hash((self.text, self.value))
+
     def __eq__(self, other):
         return self.text == other.text and self.value == other.value
