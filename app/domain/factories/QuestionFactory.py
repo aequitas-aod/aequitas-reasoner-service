@@ -2,7 +2,6 @@ from typing import Set
 
 from app.domain.core.Answer import Answer
 from app.domain.core.Question import Question
-from app.domain.core.QuestionId import QuestionId
 from app.domain.core.enum.Action import Action
 from app.domain.core.enum.QuestionType import QuestionType
 from app.domain.factories.AnswerFactory import AnswerFactory

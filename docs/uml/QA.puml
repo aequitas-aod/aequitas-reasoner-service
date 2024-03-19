@@ -25,11 +25,8 @@ entity AnswerFactory {
 }
 
 entity QuestionFactory {
-  +createQuestion(id, text, type, availableAnswers): Question
-}
-
-entity QuestionIdFactory {
-  +createQuestionId(code): QuestionId
+  +createQuestion(text, questionType, availableAnswers, selectedAnswers, actionNeeded)
+  +createBooleanQuestion(id, text): Question
 }
 
 enum Action {
@@ -45,9 +42,8 @@ enum QuestionType {
 
 AnswerFactory --> Answer : creates
 QuestionFactory --> Question : creates
-QuestionIdFactory --> QuestionId : creates
 Question o-right- Answer
-Question *-left- QuestionId
+Question *-- QuestionId
 Question *-- QuestionType
 Question *-- "0..1" Action
 

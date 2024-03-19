@@ -3,6 +3,7 @@ import unittest
 from app.domain.core.Answer import Answer
 from app.domain.core.QuestionId import QuestionId
 from app.domain.core.enum.QuestionType import QuestionType
+from app.domain.factories.AnswerFactory import AnswerFactory
 from app.domain.factories.QuestionFactory import QuestionFactory
 
 
@@ -48,5 +49,24 @@ class TestQuestion(unittest.TestCase):
             ValueError,
             lambda: self.question.select_answer(
                 Answer("this is not in the available answers", "whatever")
+            ),
+        )
+
+
+class TestBooleanQuestion(unittest.TestCase):
+    def setUp(self):
+        self.answer_factory = AnswerFactory()
+        self.question = QuestionFactory().create_boolean_question(
+            "Do you practice TDD?"
+        )
+
+    def test_boolean_answers(self):
+        self.assertEqual(
+            self.question.available_answers,
+            frozenset(
+                {
+                    self.answer_factory.create_boolean_answer(True),
+                    self.answer_factory.create_boolean_answer(False),
+                }
             ),
         )
