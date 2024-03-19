@@ -1,5 +1,6 @@
 from typing import Optional, FrozenSet
 
+from pydantic import BaseModel
 from typing_extensions import Self
 
 from app.domain.core.Answer import Answer
@@ -8,24 +9,21 @@ from app.domain.core.enum.Action import Action
 from app.domain.core.enum.QuestionType import QuestionType
 
 
-class Question:
+class Question(BaseModel):
 
     def __init__(
         self,
         text: str,
         question_type: QuestionType,
         available_answers: FrozenSet[Answer],
-        selected_answers: FrozenSet[Answer] = None,
+        selected_answers: FrozenSet[Answer] = frozenset(),
         action_needed: Optional[Action] = None,
     ):
-        if selected_answers is None:
-            selected_answers = frozenset()
+        super().__init__()
         self._text: str = text
         self._type: QuestionType = question_type
         self._available_answers: FrozenSet[Answer] = available_answers
-        self._selected_answers: FrozenSet[Answer] = (
-            frozenset() if selected_answers is None else selected_answers
-        )
+        self._selected_answers: FrozenSet[Answer] = selected_answers
         self._action_needed: Optional[Action] = action_needed
         self._id = QuestionId(str(hash(self)))
 

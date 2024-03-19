@@ -1,4 +1,4 @@
-from typing import Set
+from typing import FrozenSet
 
 from app.domain.core.Answer import Answer
 from app.domain.core.Question import Question
@@ -16,14 +16,14 @@ class QuestionFactory:
         self,
         text: str,
         question_type: QuestionType,
-        available_answers: Set[Answer],
-        selected_answers: Set[Answer] = None,
+        available_answers: FrozenSet[Answer],
+        selected_answers: FrozenSet[Answer] = frozenset(),
         action_needed: Action = None,
     ) -> Question:
         return Question(
             text,
             question_type,
-            frozenset(available_answers),
+            available_answers,
             selected_answers,
             action_needed,
         )
@@ -31,10 +31,12 @@ class QuestionFactory:
     def create_boolean_question(
         self, text: str, action_needed: Action = None
     ) -> Question:
-        available_answers: Set[Answer] = {
-            self._answer_factory.create_boolean_answer(True),
-            self._answer_factory.create_boolean_answer(False),
-        }
+        available_answers: FrozenSet[Answer] = frozenset(
+            {
+                self._answer_factory.create_boolean_answer(True),
+                self._answer_factory.create_boolean_answer(False),
+            }
+        )
         return Question(
             text,
             QuestionType.BOOLEAN,

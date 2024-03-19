@@ -13,7 +13,12 @@ class TestQuestion(unittest.TestCase):
         self.question = QuestionFactory().create_question(
             "Do you practice TDD?",
             QuestionType.SINGLE_CHOICE,
-            {Answer(text="Always", value="always"), Answer(text="Never", value="never")},
+            frozenset(
+                {
+                    Answer(text="Always", value="always"),
+                    Answer(text="Never", value="never"),
+                }
+            ),
         )
 
     def test_question_id(self):
