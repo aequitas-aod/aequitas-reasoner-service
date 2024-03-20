@@ -55,9 +55,6 @@ class Question(BaseModel):
             f"selected_answer={self.selected_answers}, action_needed={self.action_needed})"
         )
 
-    def __eq__(self, other: Self) -> bool:
-        return self.id == other.id
-
     def __hash__(self):
         return hash(
             (

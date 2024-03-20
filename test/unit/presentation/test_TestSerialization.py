@@ -52,4 +52,3 @@ class TestSerialization(unittest.TestCase):
             expected,
             actual,
         )
-
