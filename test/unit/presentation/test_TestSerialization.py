@@ -8,7 +8,7 @@ from app.domain.factories.AnswerFactory import AnswerFactory
 from app.domain.factories.QuestionFactory import QuestionFactory
 
 
-class MyTestCase(unittest.TestCase):
+class TestSerialization(unittest.TestCase):
 
     def setUp(self):
         self.answer = AnswerFactory().create_answer("Always.", "always")
@@ -19,7 +19,7 @@ class MyTestCase(unittest.TestCase):
             Action.METRICS_CHECK,
         )
 
-    def test_answer_serialize(self):
+    def test_serialize_answer(self):
         expected: dict = {"text": "Always.", "value": "always"}
         actual: dict = json.loads(self.answer.model_dump_json())
         self.assertEqual(
@@ -27,7 +27,7 @@ class MyTestCase(unittest.TestCase):
             actual,
         )
 
-    def test_boolean_answer_serialize(self):
+    def test_serialize_boolean_answer(self):
         expected: dict = {"text": "No", "value": "False"}
         actual: dict = json.loads(self.boolean_answer.model_dump_json())
         self.assertEqual(
@@ -35,7 +35,7 @@ class MyTestCase(unittest.TestCase):
             actual,
         )
 
-    def test_question_serialize(self):
+    def test_serialize_question(self):
         expected: dict = {
             "id": {"code": "boolean_question_id"},
             "text": "Do you practice TDD?",
@@ -52,3 +52,4 @@ class MyTestCase(unittest.TestCase):
             expected,
             actual,
         )
+
