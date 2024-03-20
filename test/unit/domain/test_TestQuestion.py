@@ -11,6 +11,7 @@ class TestQuestion(unittest.TestCase):
 
     def setUp(self):
         self.question = QuestionFactory().create_question(
+            QuestionId(code="question_id"),
             "Do you practice TDD?",
             QuestionType.SINGLE_CHOICE,
             frozenset(
@@ -18,24 +19,6 @@ class TestQuestion(unittest.TestCase):
                     Answer(text="Always", value="always"),
                     Answer(text="Never", value="never"),
                 }
-            ),
-        )
-
-    def test_question_id(self):
-        self.assertEqual(
-            self.question.id,
-            QuestionId(
-                code=str(
-                    hash(
-                        (
-                            self.question.text,
-                            self.question.type,
-                            self.question.available_answers,
-                            self.question.selected_answers,
-                            self.question.action_needed,
-                        )
-                    )
-                )
             ),
         )
 
@@ -72,7 +55,7 @@ class TestBooleanQuestion(unittest.TestCase):
     def setUp(self):
         self.answer_factory = AnswerFactory()
         self.question = QuestionFactory().create_boolean_question(
-            "Do you practice TDD?"
+            QuestionId(code="boolean_question_id"), "Do you practice TDD?"
         )
 
     def test_boolean_answers(self):

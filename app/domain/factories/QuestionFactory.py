@@ -2,6 +2,7 @@ from typing import FrozenSet
 
 from app.domain.core.Answer import Answer
 from app.domain.core.Question import Question
+from app.domain.core.QuestionId import QuestionId
 from app.domain.core.enum.Action import Action
 from app.domain.core.enum.QuestionType import QuestionType
 from app.domain.factories.AnswerFactory import AnswerFactory
@@ -14,6 +15,7 @@ class QuestionFactory:
 
     def create_question(
         self,
+        question_id: QuestionId,
         text: str,
         question_type: QuestionType,
         available_answers: FrozenSet[Answer],
@@ -21,6 +23,7 @@ class QuestionFactory:
         action_needed: Action = None,
     ) -> Question:
         return Question(
+            id=question_id,
             text=text,
             type=question_type,
             available_answers=available_answers,
@@ -29,7 +32,7 @@ class QuestionFactory:
         )
 
     def create_boolean_question(
-        self, text: str, action_needed: Action = None
+        self, question_id: QuestionId, text: str, action_needed: Action = None
     ) -> Question:
         available_answers: FrozenSet[Answer] = frozenset(
             {
@@ -38,6 +41,7 @@ class QuestionFactory:
             }
         )
         return Question(
+            id=question_id,
             text=text,
             type=QuestionType.BOOLEAN,
             available_answers=available_answers,
