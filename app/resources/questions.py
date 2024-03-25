@@ -1,7 +1,7 @@
 import json
 
-from flask import Blueprint
-from flask_restful import Api, Resource
+from flask import Blueprint, request
+from flask_restful import Api, Resource, reqparse
 
 from app.domain.core.Question import Question
 from app.domain.core.QuestionId import QuestionId
@@ -43,8 +43,9 @@ class QuestionResource(Resource):
             return json.loads(json.dumps([q.model_dump_json() for q in questions])), 200
 
     def post(self):
-        # Implement POST method
-        pass
+        new_question: Question = Question(**request.get_json())
+        questions.add(new_question)
+        return json.loads(new_question.model_dump_json()), 201
 
 
 api.add_resource(QuestionResource, "/questions", "/questions/<string:question_id>")
