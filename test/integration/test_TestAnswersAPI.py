@@ -25,7 +25,7 @@ class TestAPI(unittest.TestCase):
                     AnswerFactory().create_answer("A little bit", "little-bit"),
                     AnswerFactory().create_answer("No", "no"),
                 }
-            )
+            ),
         )
         self.app.post("/questions", json=json.loads(self.question.model_dump_json()))
 

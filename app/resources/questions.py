@@ -37,7 +37,9 @@ class QuestionResource(Resource):
 
     def get(self, question_id=None):
         if question_id:
-            question: Question = list(filter(lambda q: q.id.code == question_id, questions)).pop()
+            question: Question = list(
+                filter(lambda q: q.id.code == question_id, questions)
+            ).pop()
             return json.loads(question.model_dump_json()), 200
         else:
             return json.loads(json.dumps([q.model_dump_json() for q in questions])), 200
