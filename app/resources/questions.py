@@ -9,6 +9,8 @@ from app.domain.core.enum.Action import Action
 from app.domain.core.enum.QuestionType import QuestionType
 from app.domain.factories.AnswerFactory import AnswerFactory
 from app.domain.factories.QuestionFactory import QuestionFactory
+from app.presentation.presentation import serialize_question
+from app.utils.logger import logger
 
 questions_bp = Blueprint("questions", __name__)
 api = Api(questions_bp)
@@ -40,14 +42,14 @@ class QuestionResource(Resource):
             question: Question = list(
                 filter(lambda q: q.id.code == question_id, questions)
             ).pop()
-            return json.loads(question.model_dump_json()), 200
+            return serialize_question(question), 200
         else:
             return json.loads(json.dumps([q.model_dump_json() for q in questions])), 200
 
     def post(self):
         new_question: Question = Question(**request.get_json())
         questions.add(new_question)
-        return json.loads(new_question.model_dump_json()), 201
+        return serialize_question(new_question), 201
 
 
 api.add_resource(QuestionResource, "/questions", "/questions/<string:question_id>")

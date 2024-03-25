@@ -9,6 +9,7 @@ from app.domain.core.enum.QuestionType import QuestionType
 from app.domain.factories.AnswerFactory import AnswerFactory
 from app.domain.factories.QuestionFactory import QuestionFactory
 from app.main import create_app
+from app.presentation.presentation import deserialize_question, serialize_question
 
 
 class TestAPI(unittest.TestCase):
@@ -27,17 +28,18 @@ class TestAPI(unittest.TestCase):
                 }
             ),
         )
-        self.app.post("/questions", json=json.loads(self.question.model_dump_json()))
 
-    def test_get_question_by_id(self):
-        pass
-        # response = self.app.get("/questions/test-question")
-        # self.assertEqual(response.status_code, 200)
-        # logging.Logger("test").info(response.data)
-        # self.assertEqual(self.question, response.data.__dict__)
+    def test_insert_question(self):
+        response = self.app.post("/questions", json=serialize_question(self.question))
+        self.assertEqual(response.status_code, 201)
+        self.assertEqual(self.question, deserialize_question(json.loads(response.data)))
 
-    def test_echo(self):
+    def test_get_question(self):
+        self.app.post("/questions", json=serialize_question(self.question))
+        response = self.app.get("/questions/test-question")
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(self.question, deserialize_question(json.loads(response.data)))
+
+    def test_delete_question(self):
         pass
-        # response = self.app.get("/echo/test")
-        # self.assertEqual(response.status_code, 200)
-        # self.assertIn(b"test", response.data)
+        # response = self.app.delete("/questions", json=serialize_question(self.question))
