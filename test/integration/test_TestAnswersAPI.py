@@ -9,7 +9,11 @@ from app.domain.core.enum.QuestionType import QuestionType
 from app.domain.factories.AnswerFactory import AnswerFactory
 from app.domain.factories.QuestionFactory import QuestionFactory
 from app.main import create_app
-from app.presentation.presentation import deserialize_question, serialize_question
+from app.presentation.presentation import (
+    deserialize_question,
+    serialize_question,
+    serialize_question_id,
+)
 
 
 class TestAPI(unittest.TestCase):
@@ -41,5 +45,8 @@ class TestAPI(unittest.TestCase):
         self.assertEqual(self.question, deserialize_question(json.loads(response.data)))
 
     def test_delete_question(self):
-        pass
-        # response = self.app.delete("/questions", json=serialize_question(self.question))
+        self.app.post("/questions", json=serialize_question(self.question))
+        response = self.app.delete(
+            "/questions", json=serialize_question_id(self.question.id)
+        )
+        self.assertEqual(response.status_code, 200)
