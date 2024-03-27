@@ -1,4 +1,5 @@
 import json
+from typing import List
 
 from flask import Blueprint, request
 from flask_restful import Api, Resource, reqparse
@@ -43,10 +44,13 @@ class QuestionResource(Resource):
 
     def get(self, question_id=None):
         if question_id:
-            question: Question = list(
+            filtered_questions: List[Question] = list(
                 filter(lambda q: q.id.code == question_id, questions)
-            ).pop()
-            return serialize_question(question), 200
+            )
+            if len(filtered_questions) == 0:
+                return "", 204
+            else:
+                return serialize_question(filtered_questions.pop()), 200
         else:
             return json.loads(json.dumps([q.model_dump_json() for q in questions])), 200
 
