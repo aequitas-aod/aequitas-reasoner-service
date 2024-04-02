@@ -40,7 +40,9 @@ class TestAPI(unittest.TestCase):
         response = self.app.get("/questions")
         self.assertEqual(response.status_code, 200)
         self.assertEqual(2, len(json.loads(response.data)))
-        all_questions: Set[Question] = set([deserialize_question(question) for question in json.loads(response.data)])
+        all_questions: Set[Question] = set(
+            [deserialize_question(question) for question in json.loads(response.data)]
+        )
         self.assertEqual({self.question, question2}, all_questions)
 
     def test_get_question(self):

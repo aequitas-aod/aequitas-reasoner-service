@@ -25,20 +25,22 @@ if os.environ.get("TEST") == "true":
 else:
     questions: set = {
         QuestionFactory().create_boolean_question(
-        QuestionId(code="tdd-question"), "Do you practice TDD?"
-    ), QuestionFactory().create_question(
-        QuestionId(code="ci-question"),
-        "Do you use CI?",
-        QuestionType.SINGLE_CHOICE,
-        frozenset(
-            {
-                AnswerFactory().create_answer("Yes", "yes"),
-                AnswerFactory().create_answer("A little bit", "little-bit"),
-                AnswerFactory().create_answer("No", "no"),
-            }
+            QuestionId(code="tdd-question"), "Do you practice TDD?"
         ),
-        action_needed=Action.METRICS_CHECK,
-    )}
+        QuestionFactory().create_question(
+            QuestionId(code="ci-question"),
+            "Do you use CI?",
+            QuestionType.SINGLE_CHOICE,
+            frozenset(
+                {
+                    AnswerFactory().create_answer("Yes", "yes"),
+                    AnswerFactory().create_answer("A little bit", "little-bit"),
+                    AnswerFactory().create_answer("No", "no"),
+                }
+            ),
+            action_needed=Action.METRICS_CHECK,
+        ),
+    }
 
 
 class QuestionResource(Resource):
@@ -53,7 +55,9 @@ class QuestionResource(Resource):
             else:
                 return serialize_question(filtered_questions.pop()), 200
         else:
-            all_questions: List[dict] = [json.loads(question.model_dump_json()) for question in questions]
+            all_questions: List[dict] = [
+                json.loads(question.model_dump_json()) for question in questions
+            ]
             return all_questions, 200
 
     def post(self):
