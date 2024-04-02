@@ -1,8 +1,9 @@
 import json
+import os
 from typing import List
 
 from flask import Blueprint, request
-from flask_restful import Api, Resource, reqparse
+from flask_restful import Api, Resource
 
 from app.domain.core.Question import Question
 from app.domain.core.QuestionId import QuestionId
@@ -15,16 +16,17 @@ from app.presentation.presentation import (
     deserialize_question,
     deserialize_question_id,
 )
-from app.utils.logger import logger
 
 questions_bp = Blueprint("questions", __name__)
 api = Api(questions_bp)
 
-questions = {
-    QuestionFactory().create_boolean_question(
+if os.environ.get("TEST") == "true":
+    questions: set = set()
+else:
+    questions: set = {
+        QuestionFactory().create_boolean_question(
         QuestionId(code="tdd-question"), "Do you practice TDD?"
-    ),
-    QuestionFactory().create_question(
+    ), QuestionFactory().create_question(
         QuestionId(code="ci-question"),
         "Do you use CI?",
         QuestionType.SINGLE_CHOICE,
@@ -36,8 +38,7 @@ questions = {
             }
         ),
         action_needed=Action.METRICS_CHECK,
-    ),
-}
+    )}
 
 
 class QuestionResource(Resource):
@@ -52,7 +53,8 @@ class QuestionResource(Resource):
             else:
                 return serialize_question(filtered_questions.pop()), 200
         else:
-            return json.loads(json.dumps([q.model_dump_json() for q in questions])), 200
+            all_questions: List[dict] = [json.loads(question.model_dump_json()) for question in questions]
+            return all_questions, 200
 
     def post(self):
         new_question: Question = deserialize_question(request.get_json())

@@ -1,10 +1,9 @@
 import json
-import logging
 import unittest
+from typing import Set
 
 from app.domain.core.Question import Question
 from app.domain.core.QuestionId import QuestionId
-from app.domain.core.enum.Action import Action
 from app.domain.core.enum.QuestionType import QuestionType
 from app.domain.factories.AnswerFactory import AnswerFactory
 from app.domain.factories.QuestionFactory import QuestionFactory
@@ -32,6 +31,17 @@ class TestAPI(unittest.TestCase):
                 }
             ),
         )
+
+    def test_get_all_questions(self):
+        question2: Question = self.question.copy()
+        question2.id = QuestionId(code="test-question-2")
+        self.app.post("/questions", json=serialize_question(self.question))
+        self.app.post("/questions", json=serialize_question(question2))
+        response = self.app.get("/questions")
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(2, len(json.loads(response.data)))
+        all_questions: Set[Question] = set([deserialize_question(question) for question in json.loads(response.data)])
+        self.assertEqual({self.question, question2}, all_questions)
 
     def test_get_question(self):
         self.app.post("/questions", json=serialize_question(self.question))
