@@ -5,17 +5,13 @@ from typing import List
 from flask import Blueprint, request
 from flask_restful import Api, Resource
 
-from app.domain.core.Question import Question
-from app.domain.core.QuestionId import QuestionId
-from app.domain.core.enum.Action import Action
-from app.domain.core.enum.QuestionType import QuestionType
-from app.domain.factories.AnswerFactory import AnswerFactory
-from app.domain.factories.QuestionFactory import QuestionFactory
-from app.presentation.presentation import (
-    serialize_question,
-    deserialize_question,
-    deserialize_question_id,
-)
+from app.domain.core import Question
+from app.domain.core import QuestionId
+from app.domain.core.enum import Action
+from app.domain.core.enum import QuestionType
+from app.domain.factories import AnswerFactory
+from app.domain.factories import QuestionFactory
+from app.presentation.presentation import serialize, deserialize
 
 questions_bp = Blueprint("questions", __name__)
 api = Api(questions_bp)
@@ -53,7 +49,7 @@ class QuestionResource(Resource):
             if len(filtered_questions) == 0:
                 return "", 204
             else:
-                return serialize_question(filtered_questions.pop()), 200
+                return serialize(filtered_questions.pop()), 200
         else:
             all_questions: List[dict] = [
                 json.loads(question.model_dump_json()) for question in questions
@@ -61,12 +57,12 @@ class QuestionResource(Resource):
             return all_questions, 200
 
     def post(self):
-        new_question: Question = deserialize_question(request.get_json())
+        new_question: Question = deserialize(request.get_json(), Question)
         questions.add(new_question)
-        return serialize_question(new_question), 201
+        return serialize(new_question), 201
 
     def delete(self):
-        question_id: QuestionId = deserialize_question_id(request.get_json())
+        question_id: QuestionId = deserialize(request.get_json(), QuestionId)
         questions.remove(list(filter(lambda q: q.id == question_id, questions)).pop())
         return "", 200
 

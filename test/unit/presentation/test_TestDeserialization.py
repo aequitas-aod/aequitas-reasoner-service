@@ -1,13 +1,13 @@
 import unittest
 
-from app.domain.core.Answer import Answer
-from app.domain.core.Question import Question
-from app.domain.core.QuestionId import QuestionId
-from app.domain.core.enum.Action import Action
-from app.domain.core.enum.QuestionType import QuestionType
-from app.domain.factories.AnswerFactory import AnswerFactory
-from app.domain.factories.QuestionFactory import QuestionFactory
-from app.presentation.presentation import deserialize_answer, deserialize_question
+from app.domain.core import Answer
+from app.domain.core import Question
+from app.domain.core import QuestionId
+from app.domain.core.enum import Action
+from app.domain.core.enum import QuestionType
+from app.domain.factories import AnswerFactory
+from app.domain.factories import QuestionFactory
+from app.presentation.presentation import deserialize
 
 
 class TestDeserialization(unittest.TestCase):
@@ -29,7 +29,7 @@ class TestDeserialization(unittest.TestCase):
 
     def test_deserialize_answer(self):
         expected: Answer = AnswerFactory().create_answer("Always.", "always")
-        actual: Answer = deserialize_answer(self.answer)
+        actual: Answer = deserialize(self.answer, Answer)
         self.assertEqual(
             expected,
             actual,
@@ -37,7 +37,7 @@ class TestDeserialization(unittest.TestCase):
 
     def test_deserialize_boolean_answer(self):
         expected: Answer = AnswerFactory().create_boolean_answer(False)
-        actual: Answer = deserialize_answer(self.boolean_answer)
+        actual: Answer = deserialize(self.boolean_answer, Answer)
         self.assertEqual(
             expected,
             actual,
@@ -49,7 +49,7 @@ class TestDeserialization(unittest.TestCase):
             "Do you practice TDD?",
             Action.METRICS_CHECK,
         )
-        actual: Question = deserialize_question(self.question)
+        actual: Question = deserialize(self.question, Question)
         self.assertEqual(
             expected,
             actual,

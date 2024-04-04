@@ -1,13 +1,13 @@
 import unittest
 
-from app.domain.core.Answer import Answer
-from app.domain.core.Question import Question
-from app.domain.core.QuestionId import QuestionId
-from app.domain.core.enum.Action import Action
-from app.domain.core.enum.QuestionType import QuestionType
-from app.domain.factories.AnswerFactory import AnswerFactory
-from app.domain.factories.QuestionFactory import QuestionFactory
-from app.presentation.presentation import serialize_answer, serialize_question
+from app.domain.core import Answer
+from app.domain.core import Question
+from app.domain.core import QuestionId
+from app.domain.core.enum import Action
+from app.domain.core.enum import QuestionType
+from app.domain.factories import AnswerFactory
+from app.domain.factories import QuestionFactory
+from app.presentation.presentation import serialize
 
 
 class TestSerialization(unittest.TestCase):
@@ -23,7 +23,7 @@ class TestSerialization(unittest.TestCase):
 
     def test_serialize_answer(self):
         expected: dict = {"text": "Always.", "value": "always"}
-        actual: dict = serialize_answer(self.answer)
+        actual: dict = serialize(self.answer)
         self.assertEqual(
             expected,
             actual,
@@ -31,7 +31,7 @@ class TestSerialization(unittest.TestCase):
 
     def test_serialize_boolean_answer(self):
         expected: dict = {"text": "No", "value": "False"}
-        actual: dict = serialize_answer(self.boolean_answer)
+        actual: dict = serialize(self.boolean_answer)
         self.assertEqual(
             expected,
             actual,
@@ -49,7 +49,7 @@ class TestSerialization(unittest.TestCase):
             "selected_answers": [],
             "action_needed": Action.METRICS_CHECK.value,
         }
-        actual: dict = serialize_question(self.question)
+        actual: dict = serialize(self.question)
         self.assertEqual(
             expected,
             actual,
