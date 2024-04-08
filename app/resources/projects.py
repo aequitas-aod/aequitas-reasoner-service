@@ -6,16 +6,12 @@ from flask_restful import Api, Resource
 
 from app.domain.core import Project
 from app.domain.core import ProjectId
-from app.domain.factories import ProjectFactory
 from app.presentation.presentation import serialize, deserialize
 
 projects_bp = Blueprint("projects", __name__)
 api = Api(projects_bp)
 
-projects: Set = {ProjectFactory().create_project(
-    ProjectId(code="project1"),
-    "project_name",
-)}
+projects: Set = set()
 
 
 class ProjectResource(Resource):
