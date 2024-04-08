@@ -8,8 +8,6 @@ tags:
     description: Operations related to projects
   - name: Questions
     description: Operations related to questions
-  - name: Answers
-    description: Operations related to answers
   - name: Questionnaires
     description: Operations related to projects questionnaires
 paths:
@@ -182,88 +180,6 @@ paths:
         400:
           description: The request was invalid
 
-
-  /answers:
-    get:
-      summary: Get all answers
-      tags: [ Answers ]
-      responses:
-        200:
-          description: The list of all answers
-          content:
-            application/json:
-              schema:
-                type: array
-                items:
-                  $ref: './schemas.yaml#/components/schemas/Answer'
-
-    post:
-      summary: Create a new answer
-      tags: [ Answers ]
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: './schemas.yaml#/components/schemas/Answer'
-      responses:
-        201:
-          description: The resource was created successfully
-        400:
-          description: The request was invalid
-
-  /answers/{id}:
-    get:
-      summary: Get an answer
-      tags: [ Answers ]
-      parameters:
-        - in: path
-          name: id
-          required: true
-          schema:
-            type: integer
-            description: ID of the answer
-      responses:
-        200:
-          description: The answer with the specified ID
-          content:
-            application/json:
-              schema:
-                $ref: './schemas.yaml#/components/schemas/Answer'
-
-    put:
-      summary: Update an answer
-      tags: [ Answers ]
-      parameters:
-        - in: path
-          name: id
-          required: true
-          schema:
-            type: integer
-            description: ID of the answer
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: './schemas.yaml#/components/schemas/Answer'
-      responses:
-        200:
-          description: The answer was updated successfully
-
-    delete:
-      summary: Delete an answer
-      tags: [ Answers ]
-      parameters:
-        - in: path
-          name: id
-          required: true
-          schema:
-            type: integer
-            description: ID of the answer
-      responses:
-        204:
-          description: The resource was deleted successfully
 
   /projects/{id}/questionnaire:
     get:
