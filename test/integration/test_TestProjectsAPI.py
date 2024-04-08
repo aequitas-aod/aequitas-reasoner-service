@@ -18,7 +18,6 @@ class TestProjectsAPI(unittest.TestCase):
             "Test project",
         )
 
-
     def test_get_all_projects(self):
         project2: Project = self.project.copy()
         project2.id = ProjectId(code="test-project-2")
@@ -36,9 +35,7 @@ class TestProjectsAPI(unittest.TestCase):
         self.app.post("/projects", json=serialize(self.project))
         response = self.app.get("/projects/test-project")
         self.assertEqual(response.status_code, 200)
-        self.assertEqual(
-            self.project, deserialize(json.loads(response.data), Project)
-        )
+        self.assertEqual(self.project, deserialize(json.loads(response.data), Project))
 
     def test_get_non_existent_project(self):
         response = self.app.get("/projects/does-not-exist")
@@ -47,9 +44,7 @@ class TestProjectsAPI(unittest.TestCase):
     def test_insert_project(self):
         response = self.app.post("/projects", json=serialize(self.project))
         self.assertEqual(response.status_code, 201)
-        self.assertEqual(
-            self.project, deserialize(json.loads(response.data), Project)
-        )
+        self.assertEqual(self.project, deserialize(json.loads(response.data), Project))
 
     def test_delete_project(self):
         self.app.post("/projects", json=serialize(self.project))
