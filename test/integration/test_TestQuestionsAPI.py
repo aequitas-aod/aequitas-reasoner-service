@@ -11,7 +11,7 @@ from app.main import create_app
 from app.presentation.presentation import serialize, deserialize
 
 
-class TestAPI(unittest.TestCase):
+class TestQuestionsAPI(unittest.TestCase):
 
     def setUp(self):
         self.app = create_app().test_client()
