@@ -23,4 +23,3 @@ class GraphQuestionRepository(QuestionRepository):
 
     def delete_question(self, id: str) -> bool:
         pass
-

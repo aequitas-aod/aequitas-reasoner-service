@@ -27,6 +27,7 @@ import app.domain.core as _core_domain
 # def deserialize_question_id(question_id: dict) -> QuestionId:
 #     return QuestionId(**question_id)
 
+
 def _is_admissible_type(obj: type) -> bool:
     for name in dir(_core_domain):
         symbol = getattr(_core_domain, name)

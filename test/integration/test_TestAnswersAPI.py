@@ -45,7 +45,9 @@ class TestAPI(unittest.TestCase):
         self.app.post("/questions", json=serialize(self.question))
         response = self.app.get("/questions/test-question")
         self.assertEqual(response.status_code, 200)
-        self.assertEqual(self.question, deserialize(json.loads(response.data), Question))
+        self.assertEqual(
+            self.question, deserialize(json.loads(response.data), Question)
+        )
 
     def test_get_non_existent_question(self):
         response = self.app.get("/questions/does-not-exist")
@@ -54,13 +56,13 @@ class TestAPI(unittest.TestCase):
     def test_insert_question(self):
         response = self.app.post("/questions", json=serialize(self.question))
         self.assertEqual(response.status_code, 201)
-        self.assertEqual(self.question, deserialize(json.loads(response.data), Question))
+        self.assertEqual(
+            self.question, deserialize(json.loads(response.data), Question)
+        )
 
     def test_delete_question(self):
         self.app.post("/questions", json=serialize(self.question))
-        response = self.app.delete(
-            "/questions", json=serialize(self.question.id)
-        )
+        response = self.app.delete("/questions", json=serialize(self.question.id))
         self.assertEqual(response.status_code, 200)
         response = self.app.get("/questions/test-question")
         self.assertEqual(response.status_code, 204)
