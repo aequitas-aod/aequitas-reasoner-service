@@ -10,7 +10,7 @@ from app.domain.factories import QuestionFactory
 from app.presentation.presentation import serialize
 
 
-class TestSerialization(unittest.TestCase):
+class TestQuestionSerialization(unittest.TestCase):
 
     def setUp(self):
         self.answer: Answer = AnswerFactory().create_answer("Always.", "always")

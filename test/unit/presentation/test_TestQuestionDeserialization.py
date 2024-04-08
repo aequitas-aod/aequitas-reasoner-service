@@ -10,7 +10,7 @@ from app.domain.factories import QuestionFactory
 from app.presentation.presentation import deserialize
 
 
-class TestDeserialization(unittest.TestCase):
+class TestQuestionDeserialization(unittest.TestCase):
 
     def setUp(self):
         self.answer = {"text": "Always.", "value": "always"}

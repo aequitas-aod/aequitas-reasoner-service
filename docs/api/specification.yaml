@@ -11,6 +11,89 @@ tags:
   - name: Questionnaires
     description: Operations related to projects questionnaires
 paths:
+
+  /questions:
+    get:
+      summary: Get all questions
+      tags: [ Questions ]
+      responses:
+        200:
+          description: The list of all questions
+
+    post:
+      summary: Create a new question
+      tags: [ Questions ]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: './schemas.yaml#/components/schemas/Question'
+      responses:
+        201:
+          description: The question was created successfully
+        400:
+          description: Invalid input
+
+  /questions/{id}:
+    get:
+      summary: Get a question
+      tags: [ Questions ]
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+            description: ID of the question
+      responses:
+        200:
+          description: The question with the specified ID
+          content:
+            application/json:
+              schema:
+                $ref: './schemas.yaml#/components/schemas/Question'
+        400:
+          description: Invalid input
+
+    put:
+      summary: Update a question
+      tags: [ Questions ]
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+            description: ID of the question
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: './schemas.yaml#/components/schemas/Question'
+      responses:
+        200:
+          description: The question was updated successfully
+        400:
+          description: The request was invalid
+
+    delete:
+      summary: Delete a question
+      tags: [ Questions ]
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+            description: ID of the question
+      responses:
+        204:
+          description: The resource was deleted successfully
+        400:
+          description: The request was invalid
+
   /projects:
     get:
       summary: Get all projects
@@ -97,89 +180,6 @@ paths:
           description: The resource was deleted successfully
         400:
           description: The request was invalid
-
-  /questions:
-    get:
-      summary: Get all questions
-      tags: [ Questions ]
-      responses:
-        200:
-          description: The list of all questions
-
-    post:
-      summary: Create a new question
-      tags: [ Questions ]
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: './schemas.yaml#/components/schemas/Question'
-      responses:
-        201:
-          description: The question was created successfully
-        400:
-          description: Invalid input
-
-  /questions/{id}:
-    get:
-      summary: Get a question
-      tags: [ Questions ]
-      parameters:
-        - in: path
-          name: id
-          required: true
-          schema:
-            type: integer
-            description: ID of the question
-      responses:
-        200:
-          description: The question with the specified ID
-          content:
-            application/json:
-              schema:
-                $ref: './schemas.yaml#/components/schemas/Question'
-        400:
-          description: Invalid input
-
-    put:
-      summary: Update a question
-      tags: [ Questions ]
-      parameters:
-        - in: path
-          name: id
-          required: true
-          schema:
-            type: integer
-            description: ID of the question
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: './schemas.yaml#/components/schemas/Question'
-      responses:
-        200:
-          description: The question was updated successfully
-        400:
-          description: The request was invalid
-
-    delete:
-      summary: Delete a question
-      tags: [ Questions ]
-      parameters:
-        - in: path
-          name: id
-          required: true
-          schema:
-            type: integer
-            description: ID of the question
-      responses:
-        204:
-          description: The resource was deleted successfully
-        400:
-          description: The request was invalid
-
 
   /projects/{id}/questionnaire:
     get:
