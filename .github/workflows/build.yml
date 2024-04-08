@@ -56,6 +56,6 @@ jobs:
   release:
     needs:
       - test
-    if: github.ref_name != 'main'
+    if: github.ref_name == 'main'
     uses: ./.github/workflows/release.yml
 #    secrets: inherit
