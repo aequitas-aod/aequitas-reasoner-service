@@ -1,5 +1,14 @@
 @startuml
 
+entity Project {
+  +id: ProjectId
+  +name: string
+}
+
+entity ProjectId {
+  +code: string
+}
+
 entity Answer {
   +value: string
   +text: string
@@ -20,6 +29,10 @@ entity QuestionId {
   +code: string
 }
 
+entity ProjectFactory {
+  +createProject(id: ProjectId, name: string): Project
+}
+
 entity AnswerFactory {
   +createAnswer(value, text): Answer
 }
@@ -27,6 +40,20 @@ entity AnswerFactory {
 entity QuestionFactory {
   +createQuestion(text, questionType, availableAnswers, selectedAnswers, actionNeeded)
   +createBooleanQuestion(id, text): Question
+}
+
+entity QuestionRepository {
+  +getQuestions(): Set<Question>
+  +getQuestionById(id: QuestionId): Question
+  +insertQuestion(question: Question): void
+  +updateQuestion(id: QuestionId, question: Question): void
+  +deleteQuestion(id: QuestionId): void
+}
+
+entity QuestionnaireService {
+  +getNextQuestion(projectId: Project, previousQuestion: Question): Question
+  +goBackToQuestion(projectId: Project, question: Question): Question
+  +resetQuestionnaire(): void
 }
 
 enum Action {
@@ -40,15 +67,21 @@ enum QuestionType {
   RATING
 }
 
+Project -* ProjectId
+ProjectFactory --> Project : creates
 AnswerFactory --> Answer : creates
 QuestionFactory --> Question : creates
+QuestionRepository -up-> Question : uses
+QuestionnaireService -up-> QuestionRepository : uses
+QuestionnaireService --> Project : uses
 Question o-right- Answer
 Question *-- QuestionId
 Question *-- QuestionType
 Question *-- "0..1" Action
 
-note left of Question : entity
+note right of Question : entity
 note right of Answer : value object
+note left of QuestionnaireService : service
 
 
 @enduml
