@@ -1,7 +1,10 @@
 import json
+from typing import Type, TypeVar
 
 from pydantic import BaseModel
 import app.domain.core as _core_domain
+
+T = TypeVar('T', bound=BaseModel)
 
 
 def _is_admissible_type(obj: type) -> bool:
@@ -18,7 +21,7 @@ def serialize(obj: BaseModel) -> dict:
     return json.loads(obj.model_dump_json())
 
 
-def deserialize(obj: dict, type: type) -> BaseModel:
-    if not _is_admissible_type(type):
-        raise ValueError(f"Type {type} is not admissible")
-    return type(**obj)
+def deserialize(obj: dict, klass: Type[T]) -> T:
+    if not _is_admissible_type(klass):
+        raise ValueError(f"Type {klass} is not admissible")
+    return klass(**obj)
