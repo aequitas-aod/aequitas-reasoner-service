@@ -55,7 +55,7 @@ entity QuestionRepository {
 entity QuestionnaireService {
   +getNextQuestion(projectId, previousQuestion): Question
   +goBackToQuestion(projectId, question): Question
-  +resetQuestionnaire(): void
+  +resetQuestionnaire(projectId): void
 }
 
 enum Action {
