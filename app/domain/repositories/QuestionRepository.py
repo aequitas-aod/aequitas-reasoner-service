@@ -11,7 +11,7 @@ class QuestionRepository(ABC):
         pass
 
     @abstractmethod
-    def get_question_by_id(self, id: str) -> Question:
+    def get_question_by_id(self, question_id: str) -> Question:
         pass
 
     @abstractmethod
@@ -19,9 +19,9 @@ class QuestionRepository(ABC):
         pass
 
     @abstractmethod
-    def update_question(self, id: str, question) -> bool:
+    def update_question(self, question_id: str, question) -> bool:
         pass
 
     @abstractmethod
-    def delete_question(self, id: str) -> bool:
+    def delete_question(self, question_id: str) -> bool:
         pass

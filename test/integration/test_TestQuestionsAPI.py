@@ -29,7 +29,7 @@ class TestQuestionsAPI(unittest.TestCase):
         )
 
     def test_get_all_questions(self):
-        question2: Question = self.question.copy()
+        question2: Question = self.question.model_copy()
         question2.id = QuestionId(code="test-question-2")
         self.app.post("/questions", json=serialize(self.question))
         self.app.post("/questions", json=serialize(question2))

@@ -20,8 +20,8 @@ entity Question {
   +type: QuestionType
   +availableAnswers: Set<Answer>
   +selectedAnswers: Set<Answer>
-  +selectAnswer(answers: Answer): Question
-  +deselectAnswer(answers: Answer): Question
+  +selectAnswer(answer): Question
+  +deselectAnswer(answer): Question
   +actionNeeded: Action
 }
 
@@ -30,29 +30,31 @@ entity QuestionId {
 }
 
 entity ProjectFactory {
-  +createProject(id: ProjectId, name: string): Project
+  +createProject(projectId, name): Project
 }
 
 entity AnswerFactory {
-  +createAnswer(value, text): Answer
+  +createAnswer(text, value): Answer
+  +createBooleanAnswer(value): Answer
 }
 
 entity QuestionFactory {
-  +createQuestion(text, questionType, availableAnswers, selectedAnswers, actionNeeded)
-  +createBooleanQuestion(id, text): Question
+  +createQuestion(questionId, text, questionType,
+  availableAnswers, selectedAnswers, actionNeeded)
+  +createBooleanQuestion(id, text, actionNeeded): Question
 }
 
 entity QuestionRepository {
-  +getQuestions(): Set<Question>
-  +getQuestionById(id: QuestionId): Question
-  +insertQuestion(question: Question): void
-  +updateQuestion(id: QuestionId, question: Question): void
-  +deleteQuestion(id: QuestionId): void
+  +getAllQuestions(): Set<Question>
+  +getQuestionById(questionId): Question
+  +insertQuestion(question): void
+  +updateQuestion(questionId, question): void
+  +deleteQuestion(questionId): void
 }
 
 entity QuestionnaireService {
-  +getNextQuestion(projectId: Project, previousQuestion: Question): Question
-  +goBackToQuestion(projectId: Project, question: Question): Question
+  +getNextQuestion(projectId, previousQuestion): Question
+  +goBackToQuestion(projectId, question): Question
   +resetQuestionnaire(): void
 }
 

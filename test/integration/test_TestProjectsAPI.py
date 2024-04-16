@@ -19,7 +19,7 @@ class TestProjectsAPI(unittest.TestCase):
         )
 
     def test_get_all_projects(self):
-        project2: Project = self.project.copy()
+        project2: Project = self.project.model_copy()
         project2.id = ProjectId(code="test-project-2")
         self.app.post("/projects", json=serialize(self.project))
         self.app.post("/projects", json=serialize(project2))
