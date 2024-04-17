@@ -25,6 +25,8 @@ entity Question {
   +actionNeeded: Action
 }
 
+entity SelectionStrategy(?)
+
 entity QuestionId {
   +code: string
 }
@@ -52,10 +54,10 @@ entity QuestionRepository {
   +deleteQuestion(questionId): void
 }
 
-entity QuestionnaireService {
+entity QuestionService {
   +getNextQuestion(projectId, previousQuestion): Question
   +goBackToQuestion(projectId, question): Question
-  +resetQuestionnaire(): void
+  +resetQuestionnaire(projectId): void
 }
 
 enum Action {
@@ -73,9 +75,9 @@ Project -* ProjectId
 ProjectFactory --> Project : creates
 AnswerFactory --> Answer : creates
 QuestionFactory --> Question : creates
-QuestionRepository -up-> Question : uses
-QuestionnaireService -up-> QuestionRepository : uses
-QuestionnaireService --> Project : uses
+QuestionRepository -right-> Question : uses
+QuestionService -up-> QuestionRepository : uses
+QuestionService --> Project : uses
 Question o-right- Answer
 Question *-- QuestionId
 Question *-- QuestionType
@@ -83,7 +85,7 @@ Question *-- "0..1" Action
 
 note right of Question : entity
 note right of Answer : value object
-note left of QuestionnaireService : service
+note left of QuestionService : service
 
 
 @enduml
