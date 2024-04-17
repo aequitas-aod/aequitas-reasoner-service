@@ -24,10 +24,18 @@ class GraphQuestionRepository(QuestionRepository):
         )
         self._driver.verify_connectivity()
 
-    def get_all_questions(self, project_id: ProjectId):
-        query: LiteralString = "MATCH (question:Question) RETURN question"
+    def get_all_questions(self, project_id: ProjectId) -> List[Question]:
+        query: LiteralString = "MATCH (q:Question)-[:HAS_ANSWER]->(a:Answer) RETURN q, COLLECT(a) AS answers"
         with self._driver.session() as session:
-            return session.run(query).data()
+            res: list[dict] = session.run(query).data()
+            questions: List[Question] = []
+            for question in res:
+                q: dict = question["q"]
+                q["id"] = {"code": q["id"]}
+                q["available_answers"] = [a for a in question["answers"]]
+                q["selected_answers"] = []
+                questions.append(deserialize(q, Question))
+            return questions
 
     def get_question_by_id(
         self, project_id: ProjectId, question_id: QuestionId
@@ -35,12 +43,11 @@ class GraphQuestionRepository(QuestionRepository):
         query: LiteralString = "MATCH (q:Question {id: $question_id})-[:HAS_ANSWER]->(a:Answer) RETURN q, COLLECT(a) AS answers"
         with self._driver.session() as session:
             res: list[dict] = session.run(query, question_id=question_id.code).data()
-            for question in res:
-                q: dict = question["q"]
-                q["id"] = {"code": q["id"]}
-                q["available_answers"] = [a for a in question["answers"]]
-                q["selected_answers"] = []
-                return deserialize(q, Question)
+            question: dict = res[0]["q"]
+            question["id"] = {"code": question["id"]}
+            question["available_answers"] = [a for a in res[0]["answers"]]
+            question["selected_answers"] = []
+            return deserialize(question, Question)
 
     def insert_question(self, project_id: ProjectId, question: Question) -> None:
         with self._driver.session() as session:
