@@ -25,7 +25,9 @@ class GraphQuestionRepository(QuestionRepository):
         self._driver.verify_connectivity()
 
     def get_all_questions(self, project_id: ProjectId) -> List[Question]:
-        query: LiteralString = "MATCH (q:Question)-[:HAS_ANSWER]->(a:Answer) RETURN q, COLLECT(a) AS answers"
+        query: LiteralString = (
+            "MATCH (q:Question)-[:HAS_ANSWER]->(a:Answer) RETURN q, COLLECT(a) AS answers"
+        )
         with self._driver.session() as session:
             res: list[dict] = session.run(query).data()
             questions: List[Question] = []
@@ -40,7 +42,9 @@ class GraphQuestionRepository(QuestionRepository):
     def get_question_by_id(
         self, project_id: ProjectId, question_id: QuestionId
     ) -> Question:
-        query: LiteralString = "MATCH (q:Question {id: $question_id})-[:HAS_ANSWER]->(a:Answer) RETURN q, COLLECT(a) AS answers"
+        query: LiteralString = (
+            "MATCH (q:Question {id: $question_id})-[:HAS_ANSWER]->(a:Answer) RETURN q, COLLECT(a) AS answers"
+        )
         with self._driver.session() as session:
             res: list[dict] = session.run(query, question_id=question_id.code).data()
             question: dict = res[0]["q"]
@@ -83,7 +87,11 @@ class GraphQuestionRepository(QuestionRepository):
 
 
 if __name__ == "__main__":
-    print(GraphQuestionRepository().get_question_by_id(ProjectId(code="project1"), QuestionId(code="ci-question")))
+    print(
+        GraphQuestionRepository().get_question_by_id(
+            ProjectId(code="project1"), QuestionId(code="ci-question")
+        )
+    )
     # GraphQuestionRepository().insert_question(
     #     ProjectId(code="project1"),
     #     QuestionFactory().create_question(
