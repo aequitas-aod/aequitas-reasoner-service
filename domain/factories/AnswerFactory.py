@@ -1,4 +1,4 @@
-from app.domain.core.Answer import Answer
+from domain.core import Answer
 
 
 class AnswerFactory:

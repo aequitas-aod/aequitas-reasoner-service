@@ -1,8 +1,8 @@
 from abc import ABC, abstractmethod
 from typing import List
 
-from app.domain.core import ProjectId, QuestionId
-from app.domain.core.Question import Question
+from domain.core import ProjectId, QuestionId
+from domain.core import Question
 
 
 class QuestionRepository(ABC):

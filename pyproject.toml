@@ -3,16 +3,16 @@ name = "Reasoner Service"
 version = "0.1.0"
 description = "Reasoner servive of Aequitas"
 authors = ["aequitas-aod"]
-packages = [{include = "app"}]
+packages = [{include = "ws"}]
 
 [tool.poetry.dependencies]
 python = ">= 3.8.0, < 4.0.0"
-flask = "^3.0.2"
+flask = "^3.0.3"
 flask-restful = "^0.3.10"
 requests = "^2.31.0"
 waitress = "^3.0.0"
 python-dotenv = "^1.0.1"
-pydantic = "^2.6.4"
+pydantic = "^2.7.0"
 neo4j = "^5.19.0"
 
 [tool.poetry.group.dev.dependencies]

@@ -2,11 +2,11 @@ import json
 import unittest
 from typing import Set
 
-from app.domain.core import Project
-from app.domain.core import ProjectId
-from app.domain.factories import ProjectFactory
-from app.main import create_app
-from app.presentation.presentation import serialize, deserialize
+from domain.core import Project
+from domain.core import ProjectId
+from domain.factories import ProjectFactory
+from ws.main import create_app
+from presentation.presentation import serialize, deserialize
 
 
 class TestProjectsAPI(unittest.TestCase):

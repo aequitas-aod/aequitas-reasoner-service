@@ -1,10 +1,10 @@
 import unittest
 
-from app.domain.core.Answer import Answer
-from app.domain.core.QuestionId import QuestionId
-from app.domain.core.enum.QuestionType import QuestionType
-from app.domain.factories.AnswerFactory import AnswerFactory
-from app.domain.factories.QuestionFactory import QuestionFactory
+from domain.core import Answer
+from domain.core import QuestionId
+from domain.core.enum import QuestionType
+from domain.factories.AnswerFactory import AnswerFactory
+from domain.factories.QuestionFactory import QuestionFactory
 
 
 class TestQuestion(unittest.TestCase):

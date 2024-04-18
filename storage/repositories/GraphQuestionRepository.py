@@ -5,12 +5,10 @@ from typing_extensions import LiteralString
 from dotenv import load_dotenv
 from neo4j import GraphDatabase
 
-from app.domain.core import ProjectId, QuestionId
-from app.domain.core.Question import Question
-from app.domain.core.enum import QuestionType, Action
-from app.domain.factories import QuestionFactory, AnswerFactory
-from app.domain.repositories.QuestionRepository import QuestionRepository
-from app.presentation.presentation import serialize, deserialize
+from domain.core import ProjectId, QuestionId
+from domain.core import Question
+from domain.repositories.QuestionRepository import QuestionRepository
+from presentation.presentation import serialize, deserialize
 
 load_dotenv()
 

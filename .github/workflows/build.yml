@@ -45,7 +45,7 @@ jobs:
         run: poetry install
 
       - name: Check syntax of Python sources
-        run: python -m compileall app test run_tests.py 
+        run: python -m compileall ws test run_tests.py
 
       - name: Check code style
         run: poetry run black --check .

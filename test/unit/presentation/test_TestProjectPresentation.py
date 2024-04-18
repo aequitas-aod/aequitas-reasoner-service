@@ -1,8 +1,8 @@
 import unittest
 
-from app.domain.core import Project, ProjectId
-from app.domain.factories import ProjectFactory
-from app.presentation.presentation import serialize, deserialize
+from domain.core import Project, ProjectId
+from domain.factories import ProjectFactory
+from presentation.presentation import serialize, deserialize
 
 
 class TestProjectSerialization(unittest.TestCase):

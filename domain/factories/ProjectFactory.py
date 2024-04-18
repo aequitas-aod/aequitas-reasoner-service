@@ -1,5 +1,5 @@
-from app.domain.core.Project import Project
-from app.domain.core.ProjectId import ProjectId
+from domain.core import Project
+from domain.core import ProjectId
 
 
 class ProjectFactory:

@@ -2,13 +2,13 @@ import json
 import unittest
 from typing import Set
 
-from app.domain.core import Question
-from app.domain.core import QuestionId
-from app.domain.core.enum import QuestionType
-from app.domain.factories import AnswerFactory
-from app.domain.factories import QuestionFactory
-from app.main import create_app
-from app.presentation.presentation import serialize, deserialize
+from domain.core import Question
+from domain.core import QuestionId
+from domain.core.enum import QuestionType
+from domain.factories import AnswerFactory
+from domain.factories import QuestionFactory
+from ws.main import create_app
+from presentation.presentation import serialize, deserialize
 
 
 class TestQuestionsAPI(unittest.TestCase):

@@ -3,10 +3,10 @@ from typing import Optional, FrozenSet
 from pydantic import BaseModel, field_serializer
 from typing_extensions import Self
 
-from app.domain.core.Answer import Answer
-from app.domain.core.QuestionId import QuestionId
-from app.domain.core.enum.Action import Action
-from app.domain.core.enum.QuestionType import QuestionType
+from domain.core import Answer
+from domain.core.QuestionId import QuestionId
+from domain.core.enum import Action
+from domain.core.enum import QuestionType
 
 
 class Question(BaseModel):

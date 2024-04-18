@@ -1,5 +1,5 @@
-from app.domain.core import ProjectId, Question
-from app.domain.repositories import QuestionRepository
+from domain.core import ProjectId, Question
+from domain.repositories import QuestionRepository
 
 
 class QuestionService:

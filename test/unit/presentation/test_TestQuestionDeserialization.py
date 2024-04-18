@@ -1,13 +1,13 @@
 import unittest
 
-from app.domain.core import Answer
-from app.domain.core import Question
-from app.domain.core import QuestionId
-from app.domain.core.enum import Action
-from app.domain.core.enum import QuestionType
-from app.domain.factories import AnswerFactory
-from app.domain.factories import QuestionFactory
-from app.presentation.presentation import deserialize
+from domain.core import Answer
+from domain.core import Question
+from domain.core import QuestionId
+from domain.core.enum import Action
+from domain.core.enum import QuestionType
+from domain.factories import AnswerFactory
+from domain.factories import QuestionFactory
+from presentation.presentation import deserialize
 
 
 class TestQuestionDeserialization(unittest.TestCase):

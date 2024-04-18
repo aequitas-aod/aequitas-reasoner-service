@@ -1,8 +1,8 @@
 from flask import Flask
 
-from app.resources.projects import projects_bp
-from app.resources.questionnaires import questionnaires_bp
-from app.resources.questions import questions_bp
+from ws.resources.projects import projects_bp
+from ws.resources.questionnaires import questionnaires_bp
+from ws.resources.questions import questions_bp
 
 
 def create_app():
