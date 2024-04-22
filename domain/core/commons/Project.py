@@ -1,6 +1,6 @@
 from pydantic import BaseModel
 
-from domain.core import ProjectId
+from domain.core.commons import ProjectId
 
 
 class Project(BaseModel):

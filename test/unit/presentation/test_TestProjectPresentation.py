@@ -1,6 +1,6 @@
 import unittest
 
-from domain.core import Project, ProjectId
+from domain.core.commons import Project, ProjectId
 from domain.factories import ProjectFactory
 from presentation.presentation import serialize, deserialize
 

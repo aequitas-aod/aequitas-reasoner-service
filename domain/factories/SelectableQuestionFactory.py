@@ -5,10 +5,12 @@ from domain.core.commons import Answer
 from domain.core.commons import Question
 from domain.core.commons import QuestionId
 from domain.core.commons import QuestionType
+from domain.core.project import SelectableQuestion
+from domain.core.project.selection import SingleSelectionStrategy, MultipleSelectionStrategy
 from domain.factories.AnswerFactory import AnswerFactory
 
 
-class QuestionFactory:
+class SelectableQuestionFactory:
 
     def __init__(self):
         self._answer_factory = AnswerFactory()
@@ -20,18 +22,36 @@ class QuestionFactory:
             question_type: QuestionType,
             available_answers: FrozenSet[Answer],
             action_needed: Action = None,
-    ) -> Question:
-        return Question(
+            selected_answers: FrozenSet[Answer] = frozenset(),
+    ) -> SelectableQuestion:
+        match question_type:
+            case QuestionType.BOOLEAN:
+                selection_strategy = SingleSelectionStrategy()
+            case QuestionType.SINGLE_CHOICE:
+                selection_strategy = SingleSelectionStrategy()
+            case QuestionType.MULTIPLE_CHOICE:
+                selection_strategy = MultipleSelectionStrategy()
+            case QuestionType.RATING:
+                selection_strategy = SingleSelectionStrategy()
+            case _:
+                raise ValueError(f"Unsupported question type {question_type}")
+
+        return SelectableQuestion(
             id=question_id,
             text=text,
             type=question_type,
             available_answers=available_answers,
             action_needed=action_needed,
+            selection_strategy=selection_strategy,
+            selected_answers=selected_answers,
         )
 
     def create_boolean_question(
-            self, question_id: QuestionId, text: str, action_needed: Action = None
-    ) -> Question:
+            self,
+            question_id: QuestionId,
+            text: str,
+            action_needed: Action = None,
+    ) -> SelectableQuestion:
         available_answers: FrozenSet[Answer] = frozenset(
             {
                 self._answer_factory.create_boolean_answer(True),
@@ -43,5 +63,5 @@ class QuestionFactory:
             text,
             QuestionType.BOOLEAN,
             available_answers,
-            action_needed,
+            action_needed
         )

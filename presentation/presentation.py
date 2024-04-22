@@ -2,7 +2,7 @@ import json
 from typing import Type, TypeVar
 
 from pydantic import BaseModel
-import domain.core as _core_domain
+import domain.core.commons as _core_domain
 
 T = TypeVar("T", bound=BaseModel)
 

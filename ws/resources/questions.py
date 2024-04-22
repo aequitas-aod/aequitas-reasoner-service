@@ -7,8 +7,8 @@ from flask_restful import Api, Resource
 
 from domain.core import Question
 from domain.core import QuestionId
-from domain.core.enum import Action
-from domain.core.enum import QuestionType
+from domain.core import Action
+from domain.core import QuestionType
 from domain.factories import AnswerFactory
 from domain.factories import QuestionFactory
 from presentation.presentation import serialize, deserialize

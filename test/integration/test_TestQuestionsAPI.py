@@ -2,9 +2,9 @@ import json
 import unittest
 from typing import Set
 
-from domain.core import Question
-from domain.core import QuestionId
-from domain.core.enum import QuestionType
+from domain.core.commons import Question
+from domain.core.commons import QuestionId
+from domain.core.commons import QuestionType
 from domain.factories import AnswerFactory
 from domain.factories import QuestionFactory
 from ws.main import create_app

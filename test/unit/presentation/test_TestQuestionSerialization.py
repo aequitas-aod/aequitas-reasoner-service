@@ -1,10 +1,10 @@
 import unittest
 
-from domain.core import Answer
-from domain.core import Question
-from domain.core import QuestionId
-from domain.core.enum import Action
-from domain.core.enum import QuestionType
+from domain.core.commons import Answer
+from domain.core.commons import Question
+from domain.core.commons import QuestionId
+from domain.core.commons import Action
+from domain.core.commons import QuestionType
 from domain.factories import AnswerFactory
 from domain.factories import QuestionFactory
 from presentation.presentation import serialize
@@ -46,7 +46,6 @@ class TestQuestionSerialization(unittest.TestCase):
                 {"text": "No", "value": "False"},
                 {"text": "Yes", "value": "True"},
             ],
-            "selected_answers": [],
             "action_needed": Action.METRICS_CHECK.value,
         }
         actual: dict = serialize(self.question)

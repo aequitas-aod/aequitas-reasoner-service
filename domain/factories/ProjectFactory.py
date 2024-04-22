@@ -1,5 +1,5 @@
-from domain.core import Project
-from domain.core import ProjectId
+from domain.core.commons import Project
+from domain.core.commons import ProjectId
 
 
 class ProjectFactory:

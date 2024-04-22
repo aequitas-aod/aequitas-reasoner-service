@@ -1,3 +1,4 @@
 from .AnswerFactory import AnswerFactory
-from .QuestionFactory import QuestionFactory
 from .ProjectFactory import ProjectFactory
+from .QuestionFactory import QuestionFactory
+from .SelectableQuestionFactory import SelectableQuestionFactory
