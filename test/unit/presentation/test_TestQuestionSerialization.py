@@ -1,12 +1,9 @@
 import unittest
 
-from domain.core.commons import Answer
-from domain.core.commons import Question
-from domain.core.commons import QuestionId
-from domain.core.commons import Action
-from domain.core.commons import QuestionType
-from domain.factories import AnswerFactory
-from domain.factories import QuestionFactory
+from domain.graph.core import Answer, QuestionId, Question
+from domain.graph.core.enum import Action, QuestionType
+from domain.graph.factories import AnswerFactory
+from domain.graph.factories import QuestionFactory
 from presentation.presentation import serialize
 
 

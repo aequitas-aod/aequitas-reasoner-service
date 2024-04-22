@@ -4,8 +4,7 @@ from typing import List, Set
 from flask import Blueprint, request
 from flask_restful import Api, Resource
 
-from domain.core import Project
-from domain.core import ProjectId
+from domain.graph.core import Project, ProjectId
 from presentation.presentation import serialize, deserialize
 
 projects_bp = Blueprint("projects", __name__)

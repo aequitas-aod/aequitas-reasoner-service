@@ -1,11 +1,11 @@
 import unittest
 
-from domain.core.commons import Answer
-from domain.core.commons import QuestionId
-from domain.core.commons import QuestionType
-from domain.core.project import SelectableQuestion
-from domain.factories.AnswerFactory import AnswerFactory
-from domain.factories import SelectableQuestionFactory
+from domain.graph.core import Answer
+from domain.graph.core import QuestionId
+from domain.graph.core.enum import QuestionType
+from domain.graph.factories.AnswerFactory import AnswerFactory
+from domain.project.core import SelectableQuestion
+from domain.project.factories import SelectableQuestionFactory
 
 
 class TestSelectableQuestion(unittest.TestCase):

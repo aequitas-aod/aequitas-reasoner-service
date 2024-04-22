@@ -1,7 +1,7 @@
 from typing_extensions import FrozenSet
 
-from domain.core.commons import Answer
-from domain.core.project.selection import SelectionStrategy
+from domain.graph.core import Answer
+from domain.project.core.selection import SelectionStrategy
 
 
 class SingleSelectionStrategy(SelectionStrategy):

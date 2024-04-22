@@ -1,11 +1,8 @@
 from typing import FrozenSet
 
-from domain.core.commons import Action
-from domain.core.commons import Answer
-from domain.core.commons import Question
-from domain.core.commons import QuestionId
-from domain.core.commons import QuestionType
-from domain.factories.AnswerFactory import AnswerFactory
+from domain.graph.core import Answer, Question, QuestionId
+from domain.graph.core.enum import Action, QuestionType
+from domain.graph.factories.AnswerFactory import AnswerFactory
 
 
 class QuestionFactory:

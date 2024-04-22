@@ -2,9 +2,8 @@ import json
 import unittest
 from typing import Set
 
-from domain.core.commons import Project
-from domain.core.commons import ProjectId
-from domain.factories import ProjectFactory
+from domain.graph.core import Project, ProjectId
+from domain.graph.factories import ProjectFactory
 from ws.main import create_app
 from presentation.presentation import serialize, deserialize
 
@@ -14,13 +13,13 @@ class TestProjectsAPI(unittest.TestCase):
     def setUp(self):
         self.app = create_app().test_client()
         self.project: Project = ProjectFactory().create_project(
-            ProjectId(code="test-project"),
-            "Test project",
+            ProjectId(code="test-core"),
+            "Test core",
         )
 
     def test_get_all_projects(self):
         project2: Project = self.project.model_copy()
-        project2.id = ProjectId(code="test-project-2")
+        project2.id = ProjectId(code="test-core-2")
         self.app.post("/projects", json=serialize(self.project))
         self.app.post("/projects", json=serialize(project2))
         response = self.app.get("/projects")
@@ -33,7 +32,7 @@ class TestProjectsAPI(unittest.TestCase):
 
     def test_get_project(self):
         self.app.post("/projects", json=serialize(self.project))
-        response = self.app.get("/projects/test-project")
+        response = self.app.get("/projects/test-core")
         self.assertEqual(response.status_code, 200)
         self.assertEqual(self.project, deserialize(json.loads(response.data), Project))
 
@@ -50,5 +49,5 @@ class TestProjectsAPI(unittest.TestCase):
         self.app.post("/projects", json=serialize(self.project))
         response = self.app.delete("/projects", json=serialize(self.project.id))
         self.assertEqual(response.status_code, 200)
-        response = self.app.get("/projects/test-project")
+        response = self.app.get("/projects/test-core")
         self.assertEqual(response.status_code, 204)

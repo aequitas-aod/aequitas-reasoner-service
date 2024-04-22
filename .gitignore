@@ -84,7 +84,7 @@ ipython_config.py
 
 .pdm.toml
 
-# PEP 582; used by e.g. github.com/David-OConnor/pyflow and github.com/pdm-project/pdm
+# PEP 582; used by e.g. github.com/David-OConnor/pyflow and github.com/pdm-core/pdm
 __pypackages__/
 
 # Celery stuff
@@ -103,11 +103,11 @@ ENV/
 env.bak/
 venv.bak/
 
-# Spyder project settings
+# Spyder core settings
 .spyderproject
 .spyproject
 
-# Rope project settings
+# Rope core settings
 .ropeproject
 
 # mkdocs documentation

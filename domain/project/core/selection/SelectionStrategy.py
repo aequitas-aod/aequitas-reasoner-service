@@ -3,7 +3,7 @@ from abc import ABC, abstractmethod
 from pydantic import BaseModel
 from typing_extensions import FrozenSet
 
-from domain.core.commons import Answer
+from domain.graph.core import Answer
 
 
 class SelectionStrategy(ABC, BaseModel):

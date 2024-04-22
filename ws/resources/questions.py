@@ -5,12 +5,9 @@ from typing import List
 from flask import Blueprint, request
 from flask_restful import Api, Resource
 
-from domain.core import Question
-from domain.core import QuestionId
-from domain.core import Action
-from domain.core import QuestionType
-from domain.factories import AnswerFactory
-from domain.factories import QuestionFactory
+from domain.graph.core import Question, QuestionId
+from domain.graph.core.enum import Action, QuestionType
+from domain.graph.factories import AnswerFactory, QuestionFactory
 from presentation.presentation import serialize, deserialize
 
 questions_bp = Blueprint("questions", __name__)

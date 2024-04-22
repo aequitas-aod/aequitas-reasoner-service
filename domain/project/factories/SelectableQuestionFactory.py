@@ -1,13 +1,10 @@
 from typing import FrozenSet
 
-from domain.core.commons import Action
-from domain.core.commons import Answer
-from domain.core.commons import Question
-from domain.core.commons import QuestionId
-from domain.core.commons import QuestionType
-from domain.core.project import SelectableQuestion
-from domain.core.project.selection import SingleSelectionStrategy, MultipleSelectionStrategy
-from domain.factories.AnswerFactory import AnswerFactory
+from domain.graph.core import Answer, QuestionId
+from domain.graph.core.enum import Action, QuestionType
+from domain.graph.factories.AnswerFactory import AnswerFactory
+from domain.project.core import SelectableQuestion
+from domain.project.core.selection import SingleSelectionStrategy, MultipleSelectionStrategy
 
 
 class SelectableQuestionFactory:

@@ -1,8 +1,7 @@
 from abc import ABC, abstractmethod
 from typing import List
 
-from domain.core import ProjectId, QuestionId
-from domain.core import Question
+from domain.graph.core import ProjectId, QuestionId, Question
 
 
 class QuestionRepository(ABC):
@@ -13,7 +12,7 @@ class QuestionRepository(ABC):
 
     @abstractmethod
     def get_question_by_id(
-        self, project_id: ProjectId, question_id: QuestionId
+            self, project_id: ProjectId, question_id: QuestionId
     ) -> Question:
         pass
 
@@ -23,7 +22,7 @@ class QuestionRepository(ABC):
 
     @abstractmethod
     def update_question(
-        self, project_id: ProjectId, question_id: QuestionId, question
+            self, project_id: ProjectId, question_id: QuestionId, question
     ) -> None:
         pass
 

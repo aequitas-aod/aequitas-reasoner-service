@@ -2,9 +2,8 @@ from typing import Optional, FrozenSet
 
 from pydantic import BaseModel, field_serializer
 
-from domain.core.commons import Answer, QuestionId
-from domain.core.commons.enum import Action
-from domain.core.commons.enum import QuestionType
+from domain.graph.core import Answer, QuestionId
+from domain.graph.core.enum import Action, QuestionType
 
 
 class Question(BaseModel):

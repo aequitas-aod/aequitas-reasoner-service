@@ -3,9 +3,8 @@ from typing import FrozenSet
 from pydantic import field_serializer
 from typing_extensions import Self
 
-from domain.core import Answer
-from domain.core.commons import Question, QuestionId, QuestionType
-from domain.core.project.selection import SelectionStrategy, SingleSelectionStrategy
+from domain.graph.core import Answer, Question, QuestionId
+from domain.project.core.selection import SelectionStrategy, SingleSelectionStrategy
 
 
 class SelectableQuestion(Question):

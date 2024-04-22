@@ -7,7 +7,7 @@ from neo4j import GraphDatabase
 
 from domain.core import ProjectId, QuestionId
 from domain.core import Question
-from domain.repositories.QuestionRepository import QuestionRepository
+from domain.graph.repositories import QuestionRepository
 from presentation.presentation import serialize, deserialize
 
 load_dotenv()

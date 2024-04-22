@@ -1,4 +1,4 @@
-from domain.core import Answer
+from domain.graph.core import Answer
 
 
 class AnswerFactory:

@@ -1,7 +1,7 @@
 import unittest
 
-from domain.core.commons import Project, ProjectId
-from domain.factories import ProjectFactory
+from domain.graph.core import Project, ProjectId
+from domain.graph.factories import ProjectFactory
 from presentation.presentation import serialize, deserialize
 
 

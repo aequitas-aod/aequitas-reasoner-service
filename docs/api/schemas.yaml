@@ -6,10 +6,10 @@ components:
       properties:
         id:
           type: integer
-          description: The unique identifier for the project
+          description: The unique identifier for the core
         name:
           type: string
-          description: The name of the project
+          description: The name of the core
 
     QuestionId:
       type: object

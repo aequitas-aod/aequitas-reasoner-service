@@ -108,7 +108,7 @@ paths:
                 items:
                   $ref: "./schemas.yaml#/components/schemas/Project"
     post:
-      summary: Create a new project
+      summary: Create a new core
       tags: [ Projects ]
       requestBody:
         required: true
@@ -124,7 +124,7 @@ paths:
 
   /projects/{id}:
     get:
-      summary: Get a project
+      summary: Get a core
       tags: [ Projects ]
       parameters:
         - in: path
@@ -132,10 +132,10 @@ paths:
           required: true
           schema:
             type: integer
-            description: ID of the project
+            description: ID of the core
       responses:
         200:
-          description: The project with the specified ID
+          description: The core with the specified ID
           content:
             application/json:
               schema:
@@ -144,7 +144,7 @@ paths:
           description: The request was invalid
 
     put:
-      summary: Update a project
+      summary: Update a core
       tags: [ Projects ]
       parameters:
         - in: path
@@ -152,7 +152,7 @@ paths:
           required: true
           schema:
             type: integer
-            description: ID of the project
+            description: ID of the core
       requestBody:
         required: true
         content:
@@ -161,7 +161,7 @@ paths:
               $ref: './schemas.yaml#/components/schemas/Project'
       responses:
         200:
-          description: The project was updated successfully
+          description: The core was updated successfully
         400:
           description: The request was invalid
 
@@ -174,7 +174,7 @@ paths:
           required: true
           schema:
             type: integer
-            description: ID of the project
+            description: ID of the core
       responses:
         204:
           description: The resource was deleted successfully
@@ -183,7 +183,7 @@ paths:
 
   /projects/{id}/questionnaire:
     get:
-      summary: Get all questions filled in by the user for a project
+      summary: Get all questions filled in by the user for a core
       tags: [ Questionnaires ]
       parameters:
         - in: path
@@ -191,13 +191,13 @@ paths:
           required: true
           schema:
             type: integer
-            description: ID of the project
+            description: ID of the core
       responses:
         200:
-          description: The actual list of questions composing the questionnaire of the project
+          description: The actual list of questions composing the questionnaire of the core
 
     delete:
-      summary: Delete all questions filled in by the user for a project
+      summary: Delete all questions filled in by the user for a core
       tags: [ Questionnaires ]
       parameters:
         - in: path
@@ -205,14 +205,14 @@ paths:
           required: true
           schema:
             type: integer
-            description: ID of the project
+            description: ID of the core
       responses:
         204:
           description: Questions deleted successfully
 
   /projects/{id}/questionnaire/{number}:
     get:
-      summary: Get the n-th question of project questionnaire
+      summary: Get the n-th question of core questionnaire
       tags: [ Questionnaires ]
       parameters:
         - in: path
@@ -220,7 +220,7 @@ paths:
           required: true
           schema:
             type: integer
-            description: ID of the project
+            description: ID of the core
         - in: path
           name: number
           required: true
@@ -229,12 +229,12 @@ paths:
             description: Number of the question
       responses:
         200:
-          description: The actual list of questions composing the questionnaire of the project
+          description: The actual list of questions composing the questionnaire of the core
         400:
           description: The request was invalid
 
     put:
-      summary: Update the n-th question of project questionnaire,
+      summary: Update the n-th question of core questionnaire,
         this operation implies the deletion of all successive questions
       tags: [ Questionnaires ]
       parameters:
@@ -243,7 +243,7 @@ paths:
           required: true
           schema:
             type: integer
-            description: ID of the project
+            description: ID of the core
         - in: path
           name: number
           required: true

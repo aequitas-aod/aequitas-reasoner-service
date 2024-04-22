@@ -1,5 +1,5 @@
 from domain.core import ProjectId, Question
-from domain.repositories import QuestionRepository
+from domain.graph.repositories import QuestionRepository
 
 
 class QuestionService:
