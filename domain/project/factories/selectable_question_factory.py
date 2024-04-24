@@ -1,14 +1,13 @@
 from typing import FrozenSet, Optional
 
-from domain.graph.core.answer import Answer
-from domain.graph.core.answer_id import AnswerId
-from domain.graph.core.enum.action import Action
-from domain.graph.core.enum.question_type import QuestionType
-from domain.graph.core.question_id import QuestionId
-from domain.graph.factories.answer_factory import AnswerFactory
-from domain.project.core.selectable_question import SelectableQuestion
-from domain.project.core.selection.multiple_selection_strategy import MultipleSelectionStrategy
-from domain.project.core.selection.single_selection_strategy import SingleSelectionStrategy
+from domain.graph.core import Answer, AnswerId, QuestionId
+from domain.graph.core.enum import Action, QuestionType
+from domain.graph.factories import AnswerFactory
+from domain.project.core import SelectableQuestion
+from domain.project.core.selection import (
+    MultipleSelectionStrategy,
+    SingleSelectionStrategy,
+)
 
 
 class SelectableQuestionFactory:
@@ -17,14 +16,14 @@ class SelectableQuestionFactory:
         self._answer_factory = AnswerFactory()
 
     def create_question(
-            self,
-            question_id: QuestionId,
-            text: str,
-            question_type: QuestionType,
-            available_answers: FrozenSet[Answer],
-            previous_question_id: Optional[QuestionId] = None,
-            action_needed: Optional[Action] = None,
-            selected_answers: FrozenSet[Answer] = frozenset(),
+        self,
+        question_id: QuestionId,
+        text: str,
+        question_type: QuestionType,
+        available_answers: FrozenSet[Answer],
+        previous_question_id: Optional[QuestionId] = None,
+        action_needed: Optional[Action] = None,
+        selected_answers: FrozenSet[Answer] = frozenset(),
     ) -> SelectableQuestion:
         match question_type:
             case QuestionType.BOOLEAN:
@@ -50,11 +49,11 @@ class SelectableQuestionFactory:
         )
 
     def create_boolean_question(
-            self,
-            question_id: QuestionId,
-            text: str,
-            previous_question_id: Optional[QuestionId] = None,
-            action_needed: Optional[Action] = None,
+        self,
+        question_id: QuestionId,
+        text: str,
+        previous_question_id: Optional[QuestionId] = None,
+        action_needed: Optional[Action] = None,
     ) -> SelectableQuestion:
         available_answers: FrozenSet[Answer] = frozenset(
             {

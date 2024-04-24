@@ -1,9 +1,7 @@
 from abc import ABC, abstractmethod
 from typing import List
 
-from domain.graph.core.project_id import ProjectId
-from domain.graph.core.question import Question
-from domain.graph.core.question_id import QuestionId
+from domain.graph.core import ProjectId, QuestionId, Question
 
 
 class QuestionRepository(ABC):
