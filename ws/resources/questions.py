@@ -5,7 +5,7 @@ from typing import List
 from flask import Blueprint, request
 from flask_restful import Api, Resource
 
-from domain.graph.core import Question, QuestionId
+from domain.graph.core import Question, QuestionId, AnswerId
 from domain.graph.core.enum import Action, QuestionType
 from domain.graph.factories import AnswerFactory, QuestionFactory
 from presentation.presentation import serialize, deserialize
@@ -26,9 +26,9 @@ else:
             QuestionType.SINGLE_CHOICE,
             frozenset(
                 {
-                    AnswerFactory().create_answer("Yes", "yes"),
-                    AnswerFactory().create_answer("A little bit", "little-bit"),
-                    AnswerFactory().create_answer("No", "no"),
+                    AnswerFactory().create_answer(AnswerId(code="answer-yes"), "Yes", "yes"),
+                    AnswerFactory().create_answer(AnswerId(code="answer-little-bit"), "A little bit", "little-bit"),
+                    AnswerFactory().create_answer(AnswerId(code="answer-no"), "No", "no"),
                 }
             ),
             action_needed=Action.METRICS_CHECK,

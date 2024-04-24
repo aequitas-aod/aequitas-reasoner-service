@@ -1,6 +1,6 @@
 from typing import FrozenSet
 
-from domain.graph.core import Answer, QuestionId
+from domain.graph.core import Answer, QuestionId, AnswerId
 from domain.graph.core.enum import Action, QuestionType
 from domain.graph.factories.AnswerFactory import AnswerFactory
 from domain.project.core import SelectableQuestion
@@ -51,8 +51,8 @@ class SelectableQuestionFactory:
     ) -> SelectableQuestion:
         available_answers: FrozenSet[Answer] = frozenset(
             {
-                self._answer_factory.create_boolean_answer(True),
-                self._answer_factory.create_boolean_answer(False),
+                self._answer_factory.create_boolean_answer(AnswerId(code=f"{question_id.code}-true"), True),
+                self._answer_factory.create_boolean_answer(AnswerId(code=f"{question_id.code}-false"), False),
             }
         )
         return self.create_question(

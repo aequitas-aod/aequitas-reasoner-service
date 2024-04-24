@@ -5,8 +5,8 @@ from typing_extensions import LiteralString
 from dotenv import load_dotenv
 from neo4j import GraphDatabase
 
-from domain.core import ProjectId, QuestionId
-from domain.core import Question
+from domain.graph.core import ProjectId, QuestionId
+from domain.graph.core import Question
 from domain.graph.repositories import QuestionRepository
 from presentation.presentation import serialize, deserialize
 

@@ -1,7 +1,6 @@
 import unittest
 
-from domain.graph.core import Answer
-from domain.graph.core import QuestionId
+from domain.graph.core import Answer, AnswerId, QuestionId
 from domain.graph.core.enum import QuestionType
 from domain.graph.factories.AnswerFactory import AnswerFactory
 from domain.project.core import SelectableQuestion
@@ -17,8 +16,8 @@ class TestSelectableQuestion(unittest.TestCase):
             QuestionType.SINGLE_CHOICE,
             frozenset(
                 {
-                    Answer(text="Always", value="always"),
-                    Answer(text="Never", value="never"),
+                    Answer(id=AnswerId(code="answer-always"), text="Always", value="always"),
+                    Answer(id=AnswerId(code="answer-never"), text="Never", value="never"),
                 }
             ),
         )
@@ -64,8 +63,8 @@ class TestBooleanQuestion(unittest.TestCase):
             self.question.available_answers,
             frozenset(
                 {
-                    self.answer_factory.create_boolean_answer(True),
-                    self.answer_factory.create_boolean_answer(False),
+                    self.answer_factory.create_boolean_answer(AnswerId(code="boolean_question_id-true"), True),
+                    self.answer_factory.create_boolean_answer(AnswerId(code="boolean_question_id-false"), False),
                 }
             ),
         )

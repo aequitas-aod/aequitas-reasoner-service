@@ -1,6 +1,6 @@
 import unittest
 
-from domain.graph.core import Answer, QuestionId, Question
+from domain.graph.core import AnswerId, Answer, QuestionId, Question
 from domain.graph.core.enum import Action, QuestionType
 from domain.graph.factories import AnswerFactory
 from domain.graph.factories import QuestionFactory
@@ -10,8 +10,8 @@ from presentation.presentation import serialize
 class TestQuestionSerialization(unittest.TestCase):
 
     def setUp(self):
-        self.answer: Answer = AnswerFactory().create_answer("Always.", "always")
-        self.boolean_answer: Answer = AnswerFactory().create_boolean_answer(False)
+        self.answer: Answer = AnswerFactory().create_answer(AnswerId(code="answer"), "Always.", "always")
+        self.boolean_answer: Answer = AnswerFactory().create_boolean_answer(AnswerId(code="boolean-answer"), False)
         self.question: Question = QuestionFactory().create_boolean_question(
             QuestionId(code="boolean_question_id"),
             "Do you practice TDD?",
@@ -19,7 +19,7 @@ class TestQuestionSerialization(unittest.TestCase):
         )
 
     def test_serialize_answer(self):
-        expected: dict = {"text": "Always.", "value": "always"}
+        expected: dict = {"id": {"code": "answer"}, "text": "Always.", "value": "always"}
         actual: dict = serialize(self.answer)
         self.assertEqual(
             expected,
@@ -27,7 +27,7 @@ class TestQuestionSerialization(unittest.TestCase):
         )
 
     def test_serialize_boolean_answer(self):
-        expected: dict = {"text": "No", "value": "False"}
+        expected: dict = {"id": {"code": "boolean-answer"}, "text": "No", "value": "False"}
         actual: dict = serialize(self.boolean_answer)
         self.assertEqual(
             expected,
@@ -40,8 +40,8 @@ class TestQuestionSerialization(unittest.TestCase):
             "text": "Do you practice TDD?",
             "type": QuestionType.BOOLEAN.value,
             "available_answers": [
-                {"text": "No", "value": "False"},
-                {"text": "Yes", "value": "True"},
+                {"id": {"code": "boolean_question_id-false"}, "text": "No", "value": "False"},
+                {"id": {"code": "boolean_question_id-true"}, "text": "Yes", "value": "True"},
             ],
             "action_needed": Action.METRICS_CHECK.value,
         }

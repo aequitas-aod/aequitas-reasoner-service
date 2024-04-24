@@ -2,7 +2,7 @@ import json
 import unittest
 from typing import Set
 
-from domain.graph.core import Question, QuestionId
+from domain.graph.core import Question, QuestionId, AnswerId
 from domain.graph.core.enum import QuestionType
 from domain.graph.factories import AnswerFactory, QuestionFactory
 from presentation.presentation import serialize, deserialize
@@ -19,9 +19,9 @@ class TestQuestionsAPI(unittest.TestCase):
             QuestionType.SINGLE_CHOICE,
             frozenset(
                 {
-                    AnswerFactory().create_answer("Yes", "yes"),
-                    AnswerFactory().create_answer("A little bit", "little-bit"),
-                    AnswerFactory().create_answer("No", "no"),
+                    AnswerFactory().create_answer(AnswerId(code="answer-yes"), "Yes", "yes"),
+                    AnswerFactory().create_answer(AnswerId(code="answer-little-bit"), "A little bit", "little-bit"),
+                    AnswerFactory().create_answer(AnswerId(code="answer-no"), "No", "no"),
                 }
             ),
         )

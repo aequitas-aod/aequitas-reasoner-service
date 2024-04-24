@@ -1,4 +1,4 @@
-from domain.core import ProjectId, Question
+from domain.graph.core import ProjectId, Question
 from domain.graph.repositories import QuestionRepository
 
 
