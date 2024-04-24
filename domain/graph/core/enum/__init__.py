@@ -1,2 +1,2 @@
-from .Action import Action
-from .QuestionType import QuestionType
+from domain.graph.core.enum.Action import Action
+from domain.graph.core.enum.QuestionType import QuestionType

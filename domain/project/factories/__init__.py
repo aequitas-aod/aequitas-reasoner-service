@@ -1,1 +1,1 @@
-from .SelectableQuestionFactory import SelectableQuestionFactory
+from domain.project.factories.SelectableQuestionFactory import SelectableQuestionFactory

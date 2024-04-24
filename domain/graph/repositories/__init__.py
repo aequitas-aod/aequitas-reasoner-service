@@ -1,1 +1,1 @@
-from .QuestionRepository import QuestionRepository
+from domain.graph.repositories.QuestionRepository import (QuestionRepository)
