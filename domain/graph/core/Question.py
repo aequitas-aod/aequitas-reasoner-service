@@ -11,6 +11,7 @@ class Question(BaseModel):
     text: str
     type: QuestionType
     available_answers: FrozenSet[Answer]
+    previous_question_id: Optional[QuestionId]
     action_needed: Optional[Action] = None
 
     @field_serializer("available_answers", when_used="json")
@@ -19,8 +20,8 @@ class Question(BaseModel):
 
     def __str__(self) -> str:
         return (
-            f"Question(id={self.id}, text={self.text}, type={self.type}, available_answers={self.available_answers},"
-            f"action_needed={self.action_needed})"
+            f"Question(id={self.id}, text={self.text}, type={self.type}, previous_question_id={self.previous_question_id},"
+            f"available_answers={self.available_answers}, action_needed={self.action_needed})"
         )
 
     def __hash__(self):

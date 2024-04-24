@@ -12,7 +12,7 @@ class QuestionRepository(ABC):
 
     @abstractmethod
     def get_question_by_id(
-            self, project_id: ProjectId, question_id: QuestionId
+        self, project_id: ProjectId, question_id: QuestionId
     ) -> Question:
         pass
 
@@ -22,7 +22,7 @@ class QuestionRepository(ABC):
 
     @abstractmethod
     def update_question(
-            self, project_id: ProjectId, question_id: QuestionId, question
+        self, project_id: ProjectId, question_id: QuestionId, question
     ) -> None:
         pass
 

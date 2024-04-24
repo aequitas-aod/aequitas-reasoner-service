@@ -1,10 +1,13 @@
-from typing import FrozenSet
+from typing import FrozenSet, Optional
 
 from domain.graph.core import Answer, QuestionId, AnswerId
 from domain.graph.core.enum import Action, QuestionType
-from domain.graph.factories.AnswerFactory import AnswerFactory
+from domain.graph.factories import AnswerFactory
 from domain.project.core import SelectableQuestion
-from domain.project.core.selection import SingleSelectionStrategy, MultipleSelectionStrategy
+from domain.project.core.selection import (
+    SingleSelectionStrategy,
+    MultipleSelectionStrategy,
+)
 
 
 class SelectableQuestionFactory:
@@ -18,7 +21,8 @@ class SelectableQuestionFactory:
             text: str,
             question_type: QuestionType,
             available_answers: FrozenSet[Answer],
-            action_needed: Action = None,
+            previous_question_id: Optional[QuestionId] = None,
+            action_needed: Optional[Action] = None,
             selected_answers: FrozenSet[Answer] = frozenset(),
     ) -> SelectableQuestion:
         match question_type:
@@ -38,6 +42,7 @@ class SelectableQuestionFactory:
             text=text,
             type=question_type,
             available_answers=available_answers,
+            previous_question_id=previous_question_id,
             action_needed=action_needed,
             selection_strategy=selection_strategy,
             selected_answers=selected_answers,
@@ -47,12 +52,17 @@ class SelectableQuestionFactory:
             self,
             question_id: QuestionId,
             text: str,
-            action_needed: Action = None,
+            previous_question_id: Optional[QuestionId] = None,
+            action_needed: Optional[Action] = None,
     ) -> SelectableQuestion:
         available_answers: FrozenSet[Answer] = frozenset(
             {
-                self._answer_factory.create_boolean_answer(AnswerId(code=f"{question_id.code}-true"), True),
-                self._answer_factory.create_boolean_answer(AnswerId(code=f"{question_id.code}-false"), False),
+                self._answer_factory.create_boolean_answer(
+                    AnswerId(code=f"{question_id.code}-true"), True
+                ),
+                self._answer_factory.create_boolean_answer(
+                    AnswerId(code=f"{question_id.code}-false"), False
+                ),
             }
         )
         return self.create_question(
@@ -60,5 +70,6 @@ class SelectableQuestionFactory:
             text,
             QuestionType.BOOLEAN,
             available_answers,
-            action_needed
+            previous_question_id,
+            action_needed,
         )

@@ -19,9 +19,15 @@ class TestQuestionsAPI(unittest.TestCase):
             QuestionType.SINGLE_CHOICE,
             frozenset(
                 {
-                    AnswerFactory().create_answer(AnswerId(code="answer-yes"), "Yes", "yes"),
-                    AnswerFactory().create_answer(AnswerId(code="answer-little-bit"), "A little bit", "little-bit"),
-                    AnswerFactory().create_answer(AnswerId(code="answer-no"), "No", "no"),
+                    AnswerFactory().create_answer(
+                        AnswerId(code="answer-yes"), "Yes", "yes"
+                    ),
+                    AnswerFactory().create_answer(
+                        AnswerId(code="answer-little-bit"), "A little bit", "little-bit"
+                    ),
+                    AnswerFactory().create_answer(
+                        AnswerId(code="answer-no"), "No", "no"
+                    ),
                 }
             ),
         )

@@ -2,14 +2,16 @@ import json
 from typing import Type, TypeVar
 
 from pydantic import BaseModel
-import domain.graph.core as _core_domain
+
+import domain.graph.core as _graph_core_domain
+import domain.project.core as _project_core_domain
 
 T = TypeVar("T", bound=BaseModel)
 
 
 def _is_admissible_type(obj: type) -> bool:
-    for name in dir(_core_domain):
-        symbol = getattr(_core_domain, name)
+    for name in dir(_graph_core_domain) + dir(_project_core_domain):
+        symbol = getattr(_graph_core_domain, name)
         if isinstance(symbol, type) and issubclass(obj, symbol):
             return True
     return False

@@ -9,9 +9,13 @@ from domain.graph.core import Answer
 class SelectionStrategy(ABC, BaseModel):
 
     @abstractmethod
-    def select_answer(self, answer: Answer, selected_answers: FrozenSet[Answer]) -> FrozenSet[Answer]:
+    def select_answer(
+        self, answer: Answer, selected_answers: FrozenSet[Answer]
+    ) -> FrozenSet[Answer]:
         pass
 
     @abstractmethod
-    def deselect_answer(self, answer: Answer, selected_answers: FrozenSet[Answer]) -> FrozenSet[Answer]:
+    def deselect_answer(
+        self, answer: Answer, selected_answers: FrozenSet[Answer]
+    ) -> FrozenSet[Answer]:
         pass

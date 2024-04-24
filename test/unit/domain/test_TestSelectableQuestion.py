@@ -16,8 +16,12 @@ class TestSelectableQuestion(unittest.TestCase):
             QuestionType.SINGLE_CHOICE,
             frozenset(
                 {
-                    Answer(id=AnswerId(code="answer-always"), text="Always", value="always"),
-                    Answer(id=AnswerId(code="answer-never"), text="Never", value="never"),
+                    Answer(
+                        id=AnswerId(code="answer-always"), text="Always", value="always"
+                    ),
+                    Answer(
+                        id=AnswerId(code="answer-never"), text="Never", value="never"
+                    ),
                 }
             ),
         )
@@ -29,7 +33,9 @@ class TestSelectableQuestion(unittest.TestCase):
 
     def test_select_answer_twice(self):
         answer, _ = self.question.available_answers
-        question: SelectableQuestion = self.question.select_answer(answer).select_answer(answer)
+        question: SelectableQuestion = self.question.select_answer(
+            answer
+        ).select_answer(answer)
         self.assertEqual(question.selected_answers, {answer})
 
     def test_select_wrong_answer(self):
@@ -42,7 +48,9 @@ class TestSelectableQuestion(unittest.TestCase):
 
     def test_deselect_answer(self):
         answer, _ = self.question.available_answers
-        question: SelectableQuestion = self.question.select_answer(answer).deselect_answer(answer)
+        question: SelectableQuestion = self.question.select_answer(
+            answer
+        ).deselect_answer(answer)
         self.assertEqual(question.selected_answers, frozenset())
 
     def test_deselect_not_selected_answer(self):
@@ -54,7 +62,9 @@ class TestSelectableQuestion(unittest.TestCase):
 class TestBooleanQuestion(unittest.TestCase):
     def setUp(self):
         self.answer_factory = AnswerFactory()
-        self.question: SelectableQuestion = SelectableQuestionFactory().create_boolean_question(
+        self.question: (
+            SelectableQuestion
+        ) = SelectableQuestionFactory().create_boolean_question(
             QuestionId(code="boolean_question_id"), "Do you practice TDD?"
         )
 
@@ -63,8 +73,12 @@ class TestBooleanQuestion(unittest.TestCase):
             self.question.available_answers,
             frozenset(
                 {
-                    self.answer_factory.create_boolean_answer(AnswerId(code="boolean_question_id-true"), True),
-                    self.answer_factory.create_boolean_answer(AnswerId(code="boolean_question_id-false"), False),
+                    self.answer_factory.create_boolean_answer(
+                        AnswerId(code="boolean_question_id-true"), True
+                    ),
+                    self.answer_factory.create_boolean_answer(
+                        AnswerId(code="boolean_question_id-false"), False
+                    ),
                 }
             ),
         )
