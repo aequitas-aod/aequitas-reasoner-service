@@ -3,9 +3,9 @@ from typing import FrozenSet
 from pydantic import field_serializer
 from typing_extensions import Self
 
-from domain.graph.core import Answer, Question, QuestionId
-from domain.project.core.selection import SelectionStrategy, SingleSelectionStrategy
-from domain.project.factories import SelectableQuestionFactory
+from domain.graph.core.answer import Answer
+from domain.graph.core.question import Question
+from domain.project.core.selection.selection_strategy import SelectionStrategy
 
 
 class SelectableQuestion(Question):
@@ -21,28 +21,30 @@ class SelectableQuestion(Question):
         selected_answers = self.selection_strategy.select_answer(
             answer, self.selected_answers
         )
-        return SelectableQuestionFactory().create_question(
-            self.id,
-            self.text,
-            self.type,
-            self.available_answers,
-            self.previous_question_id,
-            self.action_needed,
-            selected_answers,
+        return SelectableQuestion(
+            id=self.id,
+            text=self.text,
+            type=self.type,
+            available_answers=self.available_answers,
+            previous_question_id=self.previous_question_id,
+            action_needed=self.action_needed,
+            selection_strategy=self.selection_strategy,
+            selected_answers=selected_answers,
         )
 
     def deselect_answer(self, answer: Answer) -> Self:
         selected_answers = self.selection_strategy.deselect_answer(
             answer, self.selected_answers
         )
-        return SelectableQuestionFactory().create_question(
-            self.id,
-            self.text,
-            self.type,
-            self.available_answers,
-            self.previous_question_id,
-            self.action_needed,
-            selected_answers,
+        return SelectableQuestion(
+            id=self.id,
+            text=self.text,
+            type=self.type,
+            available_answers=self.available_answers,
+            previous_question_id=self.previous_question_id,
+            action_needed=self.action_needed,
+            selection_strategy=self.selection_strategy,
+            selected_answers=selected_answers,
         )
 
     @field_serializer("selected_answers", when_used="json")
@@ -65,21 +67,3 @@ class SelectableQuestion(Question):
                 self.action_needed,
             )
         )
-
-
-if __name__ == "__main__":
-    print(
-        SelectableQuestion(
-            id=QuestionId(code="question_id"),
-            text="Do you practice TDD?",
-            type=QuestionType.SINGLE_CHOICE,
-            available_answers=frozenset(
-                {
-                    Answer(text="Always", value="always"),
-                    Answer(text="Never", value="never"),
-                }
-            ),
-            action_needed=None,
-            selection_strategy=SingleSelectionStrategy(),
-        )
-    )

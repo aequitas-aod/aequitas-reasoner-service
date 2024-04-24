@@ -1,4 +1,5 @@
-from domain.graph.core import Answer, AnswerId
+from domain.graph.core.answer import Answer
+from domain.graph.core.answer_id import AnswerId
 
 
 class AnswerFactory:

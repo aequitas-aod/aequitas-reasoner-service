@@ -1,8 +1,12 @@
 from typing import FrozenSet, Optional
 
-from domain.graph.core import Answer, Question, QuestionId, AnswerId
-from domain.graph.core.enum import Action, QuestionType
-from domain.graph.factories.AnswerFactory import AnswerFactory
+from domain.graph.core.answer import Answer
+from domain.graph.core.answer_id import AnswerId
+from domain.graph.core.enum.action import Action
+from domain.graph.core.enum.question_type import QuestionType
+from domain.graph.core.question import Question
+from domain.graph.core.question_id import QuestionId
+from domain.graph.factories.answer_factory import AnswerFactory
 
 
 class QuestionFactory:
@@ -11,13 +15,13 @@ class QuestionFactory:
         self._answer_factory = AnswerFactory()
 
     def create_question(
-        self,
-        question_id: QuestionId,
-        text: str,
-        question_type: QuestionType,
-        available_answers: FrozenSet[Answer],
-        previous_question_id: Optional[QuestionId] = None,
-        action_needed: Optional[Action] = None,
+            self,
+            question_id: QuestionId,
+            text: str,
+            question_type: QuestionType,
+            available_answers: FrozenSet[Answer],
+            previous_question_id: Optional[QuestionId] = None,
+            action_needed: Optional[Action] = None,
     ) -> Question:
         return Question(
             id=question_id,
@@ -29,11 +33,11 @@ class QuestionFactory:
         )
 
     def create_boolean_question(
-        self,
-        question_id: QuestionId,
-        text: str,
-        previous_question_id: Optional[QuestionId] = None,
-        action_needed: Optional[Action] = None,
+            self,
+            question_id: QuestionId,
+            text: str,
+            previous_question_id: Optional[QuestionId] = None,
+            action_needed: Optional[Action] = None,
     ) -> Question:
         available_answers: FrozenSet[Answer] = frozenset(
             {

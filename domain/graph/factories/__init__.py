@@ -1,3 +1,3 @@
-from domain.graph.factories.AnswerFactory import AnswerFactory
-from domain.graph.factories.ProjectFactory import ProjectFactory
-from domain.graph.factories.QuestionFactory import QuestionFactory
+from domain.graph.factories.answer_factory import AnswerFactory
+from domain.graph.factories.project_factory import ProjectFactory
+from domain.graph.factories.question_factory import QuestionFactory

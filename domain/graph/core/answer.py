@@ -1,6 +1,6 @@
 from pydantic import BaseModel
 
-from domain.graph.core import AnswerId
+from domain.graph.core.answer_id import AnswerId
 
 
 class Answer(BaseModel):

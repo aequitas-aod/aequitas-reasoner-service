@@ -2,7 +2,7 @@ import unittest
 
 from domain.graph.core import Answer, AnswerId, QuestionId
 from domain.graph.core.enum import QuestionType
-from domain.graph.factories.AnswerFactory import AnswerFactory
+from domain.graph.factories.answer_factory import AnswerFactory
 from domain.project.core import SelectableQuestion
 from domain.project.factories import SelectableQuestionFactory
 

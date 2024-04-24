@@ -1,13 +1,14 @@
 from typing import FrozenSet, Optional
 
-from domain.graph.core import Answer, QuestionId, AnswerId
-from domain.graph.core.enum import Action, QuestionType
-from domain.graph.factories import AnswerFactory
-from domain.project.core import SelectableQuestion
-from domain.project.core.selection import (
-    SingleSelectionStrategy,
-    MultipleSelectionStrategy,
-)
+from domain.graph.core.answer import Answer
+from domain.graph.core.answer_id import AnswerId
+from domain.graph.core.enum.action import Action
+from domain.graph.core.enum.question_type import QuestionType
+from domain.graph.core.question_id import QuestionId
+from domain.graph.factories.answer_factory import AnswerFactory
+from domain.project.core.selectable_question import SelectableQuestion
+from domain.project.core.selection.multiple_selection_strategy import MultipleSelectionStrategy
+from domain.project.core.selection.single_selection_strategy import SingleSelectionStrategy
 
 
 class SelectableQuestionFactory:

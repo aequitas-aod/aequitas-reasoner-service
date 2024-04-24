@@ -1,1 +1,1 @@
-from domain.project.core.SelectableQuestion import SelectableQuestion
+from domain.project.core.selectable_question import SelectableQuestion

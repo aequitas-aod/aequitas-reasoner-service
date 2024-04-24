@@ -1,7 +1,7 @@
 from typing_extensions import FrozenSet
 
-from domain.graph.core import Answer
-from domain.project.core.selection import SelectionStrategy
+from domain.graph.core.answer import Answer
+from domain.project.core.selection.selection_strategy import SelectionStrategy
 
 
 class MultipleSelectionStrategy(SelectionStrategy):
