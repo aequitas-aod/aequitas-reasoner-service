@@ -50,7 +50,9 @@ class GraphQuestionRepository(QuestionRepository):
                     "OPTIONAL MATCH (q)-[:ENABLED_BY]->(a:Answer)"
                     "RETURN COLLECT(a.id) AS enabled_by"
                 )
-                res: list[dict] = session.run(query, question_id=question["id"]["code"]).data()
+                res: list[dict] = session.run(
+                    query, question_id=question["id"]["code"]
+                ).data()
                 question["enabled_by"] = [{"code": a} for a in res[0]["enabled_by"]]
                 questions.append(deserialize(question, Question))
             return questions
@@ -130,7 +132,12 @@ class GraphQuestionRepository(QuestionRepository):
         pass
 
     def delete_question(self, question_id: str) -> None:
-        pass
+        query = (
+            "MATCH (q:Question {id: $question_id})-[:HAS_ANSWER]->(a:Answer)"
+            "DETACH DELETE q, a"
+        )
+        with self._driver.session() as session:
+            session.run(query, question_id=question_id).data()
 
     def __convert_question_in_node(self, question: Question) -> dict:
         q: dict = serialize(question)
@@ -164,9 +171,7 @@ if __name__ == "__main__":
                 AnswerFactory().create_answer(
                     AnswerId(code="answer-little-bit"), "A little bit", "little-bit"
                 ),
-                AnswerFactory().create_answer(
-                    AnswerId(code="answer-no"), "No", "no"
-                ),
+                AnswerFactory().create_answer(AnswerId(code="answer-no"), "No", "no"),
             }
         ),
         None,
@@ -194,5 +199,6 @@ if __name__ == "__main__":
         action_needed=Action.METRICS_CHECK,
     )
     GraphQuestionRepository().insert_question(q2)
-    print(GraphQuestionRepository().get_question_by_id(QuestionId(code="ci-question")))
+    GraphQuestionRepository().delete_question("ci-question")
+    print(GraphQuestionRepository().get_question_by_id(QuestionId(code="cd-question")))
     # print(GraphQuestionRepository().get_all_questions())
