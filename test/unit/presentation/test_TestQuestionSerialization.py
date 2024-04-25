@@ -26,7 +26,7 @@ class TestQuestionSerialization(unittest.TestCase):
         self.question: Question = QuestionFactory().create_boolean_question(
             QuestionId(code="boolean_question_id"),
             "Do you practice TDD?",
-            None,
+            QuestionId(code="previous_question_id"),
             self.enabled_by,
             Action.METRICS_CHECK,
         )
@@ -72,7 +72,7 @@ class TestQuestionSerialization(unittest.TestCase):
                     "value": "True",
                 },
             ],
-            "previous_question_id": None,
+            "previous_question_id": {"code": "previous_question_id"},
             "enabled_by": [
                 {"code": "enabling-answer-1"},
                 {"code": "enabling-answer-2"},

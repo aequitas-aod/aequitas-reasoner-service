@@ -78,6 +78,13 @@ class GraphQuestionRepository(QuestionRepository):
                     prev_question_id=prev_question_id,
                 ).data()
 
+            for answer_id in question.enabled_by:
+                session.run(
+                    "MATCH (q1:Question {id: $question_id}) MATCH (a:Answer {id: $answer_id}) CREATE (q1)-[:ENABLED_BY]->(a)",
+                    question_id=question.id.code,
+                    answer_id=answer_id.code,
+                ).data()
+
     def update_question(self, question_id: str, question) -> None:
         pass
 
@@ -87,8 +94,9 @@ class GraphQuestionRepository(QuestionRepository):
     def __convert_question_in_node(self, question: Question) -> dict:
         q: dict = serialize(question)
         q["id"] = question.id.code
-        del q["previous_question_id"]
         del q["available_answers"]
+        del q["previous_question_id"]
+        del q["enabled_by"]
         return q
 
     def __convert_answer_in_node(self, answer: Answer) -> dict:
@@ -145,7 +153,8 @@ if __name__ == "__main__":
                     AnswerFactory().create_answer(AnswerId(code="no"), "No", "no"),
                 }
             ),
-            QuestionId(code="ci-question"),
+            previous_question_id=QuestionId(code="ci-question"),
+            enabled_by=frozenset({AnswerId(code="answer-yes"), AnswerId(code="answer-little-bit")}),
             action_needed=Action.METRICS_CHECK,
         ),
     )
