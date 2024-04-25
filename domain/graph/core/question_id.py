@@ -7,3 +7,6 @@ class QuestionId(BaseModel):
 
     def __str__(self):
         return f"QuestionId(code={self.code})"
+
+    def __hash__(self):
+        hash(self.code)

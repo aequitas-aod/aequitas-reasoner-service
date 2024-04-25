@@ -47,8 +47,8 @@ class SelectableQuestion(Question):
         )
 
     @field_serializer("selected_answers", when_used="json")
-    def serialize_courses_in_order(self, answers: FrozenSet[Answer]):
-        return sorted(answers, key=lambda answer: answer.text)
+    def serialize_available_answers_in_order(self, answer_ids: FrozenSet[Answer]):
+        return sorted(answer_ids, key=lambda answer: answer.text)
 
     def __str__(self) -> str:
         return (

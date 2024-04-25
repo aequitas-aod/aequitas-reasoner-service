@@ -1,4 +1,5 @@
 import unittest
+from typing import FrozenSet
 
 from domain.graph.core import AnswerId, Answer, QuestionId, Question
 from domain.graph.core.enum import Action, QuestionType
@@ -16,10 +17,17 @@ class TestQuestionSerialization(unittest.TestCase):
         self.boolean_answer: Answer = AnswerFactory().create_boolean_answer(
             AnswerId(code="boolean-answer"), False
         )
+        self.enabled_by: FrozenSet[AnswerId] = frozenset(
+            {
+                AnswerId(code="enabling-answer-1"),
+                AnswerId(code="enabling-answer-2"),
+            }
+        )
         self.question: Question = QuestionFactory().create_boolean_question(
             QuestionId(code="boolean_question_id"),
             "Do you practice TDD?",
             None,
+            self.enabled_by,
             Action.METRICS_CHECK,
         )
 
@@ -65,6 +73,10 @@ class TestQuestionSerialization(unittest.TestCase):
                 },
             ],
             "previous_question_id": None,
+            "enabled_by": [
+                {"code": "enabling-answer-1"},
+                {"code": "enabling-answer-2"},
+            ],
             "action_needed": Action.METRICS_CHECK.value,
         }
         actual: dict = serialize(self.question)
