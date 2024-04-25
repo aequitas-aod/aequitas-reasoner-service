@@ -1,11 +1,11 @@
 import os
 from typing import List
-from typing_extensions import LiteralString
 
 from dotenv import load_dotenv
 from neo4j import GraphDatabase
+from typing_extensions import LiteralString
 
-from domain.graph.core import ProjectId, QuestionId, Question, AnswerId, Answer
+from domain.graph.core import QuestionId, Question, AnswerId, Answer
 from domain.graph.core.enum import QuestionType, Action
 from domain.graph.factories import AnswerFactory, QuestionFactory
 from domain.graph.repositories import QuestionRepository

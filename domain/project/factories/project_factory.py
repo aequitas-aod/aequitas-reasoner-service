@@ -1,4 +1,4 @@
-from domain.graph.core import Project, ProjectId
+from domain.project.core import Project, ProjectId
 
 
 class ProjectFactory:

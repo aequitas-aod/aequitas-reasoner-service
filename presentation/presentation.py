@@ -7,13 +7,15 @@ import domain.graph.core as _graph_core_domain
 import domain.project.core as _project_core_domain
 
 T = TypeVar("T", bound=BaseModel)
+core_modules = [_graph_core_domain, _project_core_domain]
 
 
 def _is_admissible_type(obj: type) -> bool:
-    for name in dir(_graph_core_domain) + dir(_project_core_domain):
-        symbol = getattr(_graph_core_domain, name)
-        if isinstance(symbol, type) and issubclass(obj, symbol):
-            return True
+    for core_module in core_modules:
+        for name in dir(core_module):
+            symbol = getattr(core_module, name)
+            if isinstance(symbol, type) and issubclass(obj, symbol):
+                return True
     return False
 
 

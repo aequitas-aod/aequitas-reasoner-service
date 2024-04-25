@@ -2,8 +2,8 @@ import json
 import unittest
 from typing import Set
 
-from domain.graph.core import Project, ProjectId
-from domain.graph.factories import ProjectFactory
+from domain.project.core import Project, ProjectId
+from domain.project.factories import ProjectFactory
 from ws.main import create_app
 from presentation.presentation import serialize, deserialize
 
