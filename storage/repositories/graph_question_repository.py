@@ -88,6 +88,9 @@ class GraphQuestionRepository(QuestionRepository):
             return deserialize(question, Question)
 
     def insert_question(self, question: Question) -> None:
+        res: Optional[Question] = self.get_question_by_id(question.id)
+        if res:
+            raise ValueError(f"Question with id {question.id} already exists")
         with self._driver.session() as session:
             q: dict = self.__convert_question_in_node(question)
             prev_question_id: str = (
@@ -149,50 +152,47 @@ class GraphQuestionRepository(QuestionRepository):
 
 
 if __name__ == "__main__":
+    q1: Question = QuestionFactory().create_question(
+        QuestionId(code="ci-question"),
+        "Do you use CI?",
+        QuestionType.SINGLE_CHOICE,
+        frozenset(
+            {
+                AnswerFactory().create_answer(
+                    AnswerId(code="answer-yes"), "Yes", "yes"
+                ),
+                AnswerFactory().create_answer(
+                    AnswerId(code="answer-little-bit"), "A little bit", "little-bit"
+                ),
+                AnswerFactory().create_answer(
+                    AnswerId(code="answer-no"), "No", "no"
+                ),
+            }
+        ),
+        None,
+        action_needed=Action.METRICS_CHECK,
+    )
     GraphQuestionRepository().delete_all_questions()
-    GraphQuestionRepository().insert_question(
-        QuestionFactory().create_question(
-            QuestionId(code="ci-question"),
-            "Do you use CI?",
-            QuestionType.SINGLE_CHOICE,
-            frozenset(
-                {
-                    AnswerFactory().create_answer(
-                        AnswerId(code="answer-yes"), "Yes", "yes"
-                    ),
-                    AnswerFactory().create_answer(
-                        AnswerId(code="answer-little-bit"), "A little bit", "little-bit"
-                    ),
-                    AnswerFactory().create_answer(
-                        AnswerId(code="answer-no"), "No", "no"
-                    ),
-                }
-            ),
-            None,
-            action_needed=Action.METRICS_CHECK,
+    GraphQuestionRepository().insert_question(q1)
+    q2: Question = QuestionFactory().create_question(
+        QuestionId(code="cd-question"),
+        "Do you use CD?",
+        QuestionType.SINGLE_CHOICE,
+        frozenset(
+            {
+                AnswerFactory().create_answer(AnswerId(code="yes"), "Yes", "yes"),
+                AnswerFactory().create_answer(
+                    AnswerId(code="little-bit"), "A little bit", "little-bit"
+                ),
+                AnswerFactory().create_answer(AnswerId(code="no"), "No", "no"),
+            }
         ),
-    )
-
-    GraphQuestionRepository().insert_question(
-        QuestionFactory().create_question(
-            QuestionId(code="cd-question"),
-            "Do you use CD?",
-            QuestionType.SINGLE_CHOICE,
-            frozenset(
-                {
-                    AnswerFactory().create_answer(AnswerId(code="yes"), "Yes", "yes"),
-                    AnswerFactory().create_answer(
-                        AnswerId(code="little-bit"), "A little bit", "little-bit"
-                    ),
-                    AnswerFactory().create_answer(AnswerId(code="no"), "No", "no"),
-                }
-            ),
-            previous_question_id=QuestionId(code="ci-question"),
-            enabled_by=frozenset(
-                {AnswerId(code="answer-yes"), AnswerId(code="answer-little-bit")}
-            ),
-            action_needed=Action.METRICS_CHECK,
+        previous_question_id=QuestionId(code="ci-question"),
+        enabled_by=frozenset(
+            {AnswerId(code="answer-yes"), AnswerId(code="answer-little-bit")}
         ),
+        action_needed=Action.METRICS_CHECK,
     )
-    print(GraphQuestionRepository().get_question_by_id(QuestionId(code="ci-dddd")))
+    GraphQuestionRepository().insert_question(q2)
+    print(GraphQuestionRepository().get_question_by_id(QuestionId(code="ci-question")))
     # print(GraphQuestionRepository().get_all_questions())
