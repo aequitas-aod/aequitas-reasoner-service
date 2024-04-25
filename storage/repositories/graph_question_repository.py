@@ -1,5 +1,5 @@
 import os
-from typing import List
+from typing import List, Optional
 
 from dotenv import load_dotenv
 from neo4j import GraphDatabase
@@ -55,7 +55,7 @@ class GraphQuestionRepository(QuestionRepository):
                 questions.append(deserialize(question, Question))
             return questions
 
-    def get_question_by_id(self, question_id: QuestionId) -> Question:
+    def get_question_by_id(self, question_id: QuestionId) -> Optional[Question]:
         query = (
             "MATCH (q:Question {id: $question_id})-[:HAS_ANSWER]->(a:Answer)"
             "OPTIONAL MATCH (q)-[:PREVIOUS]->(prev:Question)"
@@ -63,6 +63,8 @@ class GraphQuestionRepository(QuestionRepository):
         )
         with self._driver.session() as session:
             res: list[dict] = session.run(query, question_id=question_id.code).data()
+            if len(res) == 0:
+                return None
             question: dict = res[0]["q"]
             question["id"] = {"code": question["id"]}
             question["available_answers"] = [
@@ -192,5 +194,5 @@ if __name__ == "__main__":
             action_needed=Action.METRICS_CHECK,
         ),
     )
-    print(GraphQuestionRepository().get_question_by_id(QuestionId(code="ci-question")))
-    print(GraphQuestionRepository().get_all_questions())
+    print(GraphQuestionRepository().get_question_by_id(QuestionId(code="ci-dddd")))
+    # print(GraphQuestionRepository().get_all_questions())
