@@ -12,6 +12,7 @@ on:
       - 'renovate.json'
   pull_request:
   workflow_dispatch:
+
 jobs:
   test:
     strategy:
@@ -45,9 +46,6 @@ jobs:
       - name: Check syntax of Python sources
         run: python -m compileall ws test run_tests.py
 
-      - name: Check code style
-        run: poetry run black --check .
-
       - name: Run tests
         run: poetry run python run_tests.py
 
@@ -57,3 +55,24 @@ jobs:
     if: github.ref_name == 'main'
     uses: ./.github/workflows/release.yml
 #    secrets: inherit
+
+  style:
+    runs-on: ubuntu-latest
+    name: Check code style
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install poetry
+        run: pip install -r requirements.txt
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+          cache: 'poetry'
+
+      - name: Install dependencies
+        run: poetry install
+
+      - name: Check code style
+        run: poetry run black --check .
