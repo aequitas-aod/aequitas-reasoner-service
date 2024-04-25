@@ -25,8 +25,8 @@ class Question(BaseModel):
 
     def __str__(self) -> str:
         return (
-            f"Question(id={self.id}, text={self.text}, type={self.type}, previous_question_id={self.previous_question_id},"
-            f"available_answers={self.available_answers}, enabled_by={self.enabled_by}, action_needed={self.action_needed})"
+            f"Question(\n id={self.id},\n text='{self.text}',\n type={self.type},\n previous_question_id={self.previous_question_id},\n"
+            f" available_answers={self.available_answers},\n enabled_by={self.enabled_by},\n action_needed={self.action_needed}\n)"
         )
 
     def __hash__(self):

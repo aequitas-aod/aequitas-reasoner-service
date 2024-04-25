@@ -38,14 +38,30 @@ class GraphQuestionRepository(QuestionRepository):
             return questions
 
     def get_question_by_id(self, question_id: QuestionId) -> Question:
-        query: LiteralString = (
-            "MATCH (q:Question {id: $question_id})-[:HAS_ANSWER]->(a:Answer) RETURN q, COLLECT(a) AS answers"
+        query = (
+            "MATCH (q:Question {id: $question_id})-[:HAS_ANSWER]->(a:Answer)"
+            "OPTIONAL MATCH (q)-[:PREVIOUS]->(prev:Question)"
+            "RETURN q, COLLECT(a) AS answers, prev.id AS previous_question_id"
         )
         with self._driver.session() as session:
             res: list[dict] = session.run(query, question_id=question_id.code).data()
             question: dict = res[0]["q"]
             question["id"] = {"code": question["id"]}
-            question["available_answers"] = [a for a in res[0]["answers"]]
+            question["available_answers"] = [{'id': {'code': a['id']}, 'text': a['text'], 'value': a['value']} for a in res[0]["answers"]]
+            question["previous_question_id"] = (
+                {"code": res[0]["previous_question_id"]}
+                if res[0]["previous_question_id"]
+                else None
+            )
+            query = (
+                "MATCH (q:Question {id: $question_id}) "
+                "OPTIONAL MATCH (q)-[:ENABLED_BY]->(a:Answer) "
+                "RETURN COLLECT(a.id) AS enabled_by"
+            )
+            res: list[dict] = session.run(query, question_id=question_id.code).data()
+            print(res)
+            question["enabled_by"] = [{"code": a} for a in res[0]["enabled_by"]]
+            print(question)
             return deserialize(question, Question)
 
     def insert_question(self, question: Question) -> None:
@@ -56,7 +72,6 @@ class GraphQuestionRepository(QuestionRepository):
                 if question.previous_question_id
                 else None
             )
-            print(q)
             session.run("CREATE (:Question $question)", question=q).data()
 
             for answer in question.available_answers:
@@ -112,10 +127,6 @@ class GraphQuestionRepository(QuestionRepository):
 
 if __name__ == "__main__":
     GraphQuestionRepository().delete_all_questions()
-
-    # print(
-    #     GraphQuestionRepository().get_question_by_id(QuestionId(code="ci-question"))
-    # )
     GraphQuestionRepository().insert_question(
         QuestionFactory().create_question(
             QuestionId(code="ci-question"),
@@ -154,7 +165,11 @@ if __name__ == "__main__":
                 }
             ),
             previous_question_id=QuestionId(code="ci-question"),
-            enabled_by=frozenset({AnswerId(code="answer-yes"), AnswerId(code="answer-little-bit")}),
+            enabled_by=frozenset(
+                {AnswerId(code="answer-yes"), AnswerId(code="answer-little-bit")}
+            ),
             action_needed=Action.METRICS_CHECK,
         ),
     )
+    print(GraphQuestionRepository().get_question_by_id(QuestionId(code="ci-question")))
+    print(Answer(id=AnswerId(code="answer-yes"), text="Yes", value="yes"))
