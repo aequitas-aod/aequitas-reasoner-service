@@ -23,7 +23,7 @@ class GraphQuestionRepository(QuestionRepository):
         )
         self._driver.verify_connectivity()
 
-    def get_all_questions(self, project_id: ProjectId) -> List[Question]:
+    def get_all_questions(self) -> List[Question]:
         query: LiteralString = (
             "MATCH (q:Question)-[:HAS_ANSWER]->(a:Answer) RETURN q, COLLECT(a) AS answers"
         )
@@ -37,9 +37,7 @@ class GraphQuestionRepository(QuestionRepository):
                 questions.append(deserialize(q, Question))
             return questions
 
-    def get_question_by_id(
-            self, project_id: ProjectId, question_id: QuestionId
-    ) -> Question:
+    def get_question_by_id(self, question_id: QuestionId) -> Question:
         query: LiteralString = (
             "MATCH (q:Question {id: $question_id})-[:HAS_ANSWER]->(a:Answer) RETURN q, COLLECT(a) AS answers"
         )
@@ -50,10 +48,14 @@ class GraphQuestionRepository(QuestionRepository):
             question["available_answers"] = [a for a in res[0]["answers"]]
             return deserialize(question, Question)
 
-    def insert_question(self, project_id: ProjectId, question: Question) -> None:
+    def insert_question(self, question: Question) -> None:
         with self._driver.session() as session:
             q: dict = self.__convert_question_in_node(question)
-            prev_question_id: str = question.previous_question_id.code if question.previous_question_id else None
+            prev_question_id: str = (
+                question.previous_question_id.code
+                if question.previous_question_id
+                else None
+            )
             print(q)
             session.run("CREATE (:Question $question)", question=q).data()
 
@@ -76,12 +78,10 @@ class GraphQuestionRepository(QuestionRepository):
                     prev_question_id=prev_question_id,
                 ).data()
 
-    def update_question(
-            self, project_id: ProjectId, question_id: str, question
-    ) -> None:
+    def update_question(self, question_id: str, question) -> None:
         pass
 
-    def delete_question(self, project_id: ProjectId, question_id: str) -> None:
+    def delete_question(self, question_id: str) -> None:
         pass
 
     def __convert_question_in_node(self, question: Question) -> dict:
@@ -94,7 +94,6 @@ class GraphQuestionRepository(QuestionRepository):
     def __convert_answer_in_node(self, answer: Answer) -> dict:
         a: dict = serialize(answer)
         a["id"] = answer.id.code
-        print(a)
         return a
 
     def delete_all_questions(self) -> None:
@@ -107,21 +106,24 @@ if __name__ == "__main__":
     GraphQuestionRepository().delete_all_questions()
 
     # print(
-    #     GraphQuestionRepository().get_question_by_id(
-    #         ProjectId(code="project1"), QuestionId(code="ci-question")
-    #     )
+    #     GraphQuestionRepository().get_question_by_id(QuestionId(code="ci-question"))
     # )
     GraphQuestionRepository().insert_question(
-        ProjectId(code="project1"),
         QuestionFactory().create_question(
             QuestionId(code="ci-question"),
             "Do you use CI?",
             QuestionType.SINGLE_CHOICE,
             frozenset(
                 {
-                    AnswerFactory().create_answer(AnswerId(code="answer-yes"), "Yes", "yes"),
-                    AnswerFactory().create_answer(AnswerId(code="answer-little-bit"), "A little bit", "little-bit"),
-                    AnswerFactory().create_answer(AnswerId(code="answer-no"), "No", "no"),
+                    AnswerFactory().create_answer(
+                        AnswerId(code="answer-yes"), "Yes", "yes"
+                    ),
+                    AnswerFactory().create_answer(
+                        AnswerId(code="answer-little-bit"), "A little bit", "little-bit"
+                    ),
+                    AnswerFactory().create_answer(
+                        AnswerId(code="answer-no"), "No", "no"
+                    ),
                 }
             ),
             None,
@@ -130,7 +132,6 @@ if __name__ == "__main__":
     )
 
     GraphQuestionRepository().insert_question(
-        ProjectId(code="project2"),
         QuestionFactory().create_question(
             QuestionId(code="cd-question"),
             "Do you use CD?",
@@ -138,7 +139,9 @@ if __name__ == "__main__":
             frozenset(
                 {
                     AnswerFactory().create_answer(AnswerId(code="yes"), "Yes", "yes"),
-                    AnswerFactory().create_answer(AnswerId(code="little-bit"), "A little bit", "little-bit"),
+                    AnswerFactory().create_answer(
+                        AnswerId(code="little-bit"), "A little bit", "little-bit"
+                    ),
                     AnswerFactory().create_answer(AnswerId(code="no"), "No", "no"),
                 }
             ),
