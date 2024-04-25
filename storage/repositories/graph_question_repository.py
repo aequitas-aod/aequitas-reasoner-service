@@ -25,16 +25,34 @@ class GraphQuestionRepository(QuestionRepository):
 
     def get_all_questions(self) -> List[Question]:
         query: LiteralString = (
-            "MATCH (q:Question)-[:HAS_ANSWER]->(a:Answer) RETURN q, COLLECT(a) AS answers"
+            "MATCH (q:Question)-[:HAS_ANSWER]->(a:Answer)"
+            "OPTIONAL MATCH (q)-[:PREVIOUS]->(prev:Question)"
+            "RETURN q, COLLECT(a) AS answers, prev.id AS previous_question_id"
         )
         with self._driver.session() as session:
             res: list[dict] = session.run(query).data()
-            questions: List[Question] = []
-            for question in res:
-                q: dict = question["q"]
-                q["id"] = {"code": q["id"]}
-                q["available_answers"] = [a for a in question["answers"]]
-                questions.append(deserialize(q, Question))
+            print("RES", res)
+            questions: list[Question] = []
+            for r in res:
+                question: dict = r["q"]
+                question["id"] = {"code": question["id"]}
+                question["available_answers"] = [
+                    {"id": {"code": a["id"]}, "text": a["text"], "value": a["value"]}
+                    for a in r["answers"]
+                ]
+                question["previous_question_id"] = (
+                    {"code": r["previous_question_id"]}
+                    if r["previous_question_id"]
+                    else None
+                )
+                query: LiteralString = (
+                    "MATCH (q:Question {id: $question_id})"
+                    "OPTIONAL MATCH (q)-[:ENABLED_BY]->(a:Answer)"
+                    "RETURN COLLECT(a.id) AS enabled_by"
+                )
+                res: list[dict] = session.run(query, question_id=question["id"]["code"]).data()
+                question["enabled_by"] = [{"code": a} for a in res[0]["enabled_by"]]
+                questions.append(deserialize(question, Question))
             return questions
 
     def get_question_by_id(self, question_id: QuestionId) -> Question:
@@ -47,7 +65,10 @@ class GraphQuestionRepository(QuestionRepository):
             res: list[dict] = session.run(query, question_id=question_id.code).data()
             question: dict = res[0]["q"]
             question["id"] = {"code": question["id"]}
-            question["available_answers"] = [{'id': {'code': a['id']}, 'text': a['text'], 'value': a['value']} for a in res[0]["answers"]]
+            question["available_answers"] = [
+                {"id": {"code": a["id"]}, "text": a["text"], "value": a["value"]}
+                for a in res[0]["answers"]
+            ]
             question["previous_question_id"] = (
                 {"code": res[0]["previous_question_id"]}
                 if res[0]["previous_question_id"]
@@ -172,4 +193,4 @@ if __name__ == "__main__":
         ),
     )
     print(GraphQuestionRepository().get_question_by_id(QuestionId(code="ci-question")))
-    print(Answer(id=AnswerId(code="answer-yes"), text="Yes", value="yes"))
+    print(GraphQuestionRepository().get_all_questions())
