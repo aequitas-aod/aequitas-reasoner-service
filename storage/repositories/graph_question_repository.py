@@ -24,7 +24,7 @@ class GraphQuestionRepository(QuestionRepository):
         self._driver.verify_connectivity()
 
     def get_all_questions(self) -> List[Question]:
-        query: LiteralString = (
+        query = (
             "MATCH (q:Question)-[:HAS_ANSWER]->(a:Answer)"
             "OPTIONAL MATCH (q)-[:PREVIOUS]->(prev:Question)"
             "RETURN q, COLLECT(a) AS answers, prev.id AS previous_question_id"
@@ -45,7 +45,7 @@ class GraphQuestionRepository(QuestionRepository):
                     if r["previous_question_id"]
                     else None
                 )
-                query: LiteralString = (
+                query = (
                     "MATCH (q:Question {id: $question_id})"
                     "OPTIONAL MATCH (q)-[:ENABLED_BY]->(a:Answer)"
                     "RETURN COLLECT(a.id) AS enabled_by"
@@ -128,8 +128,12 @@ class GraphQuestionRepository(QuestionRepository):
                     answer_id=answer_id.code,
                 ).data()
 
-    def update_question(self, question_id: str, question) -> None:
-        pass
+    def update_question(self, question_id: str, question: Question) -> None:
+        q: Question = self.get_question_by_id(QuestionId(code=question_id))
+        if not q:
+            raise ValueError(f"Question with id {question_id} does not exist")
+        self.delete_question(question_id)
+        self.insert_question(question)
 
     def delete_question(self, question_id: str) -> None:
         query = (
