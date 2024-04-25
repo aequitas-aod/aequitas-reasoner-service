@@ -3,7 +3,6 @@ from typing import List, Optional
 
 from dotenv import load_dotenv
 from neo4j import GraphDatabase
-from typing_extensions import LiteralString
 
 from domain.graph.core import QuestionId, Question, AnswerId, Answer
 from domain.graph.core.enum import QuestionType, Action
