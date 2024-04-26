@@ -1,8 +1,10 @@
 import os
+import time
 from typing import List, Optional
 
 from dotenv import load_dotenv
 from neo4j import GraphDatabase
+from neo4j.exceptions import ServiceUnavailable
 
 from domain.graph.core import QuestionId, Question, AnswerId, Answer
 from domain.graph.core.enum import QuestionType, Action
@@ -20,7 +22,24 @@ class GraphQuestionRepository(QuestionRepository):
             f"neo4j://{os.environ.get('DB_HOST')}",
             auth=(os.environ.get("DB_USER"), os.environ.get("DB_PASSWORD")),
         )
+        self.__wait_for_neo4j()
         self._driver.verify_connectivity()
+
+    def __wait_for_neo4j(self, max_retries=20, retry_interval=0.5):
+        retries = 0
+        while retries < max_retries:
+            try:
+                # Try to execute a simple query to ensure the server is ready
+                with self._driver.session() as session:
+                    session.run("RETURN 1")
+                break
+            except ServiceUnavailable as e:
+                retries += 1
+                time.sleep(retry_interval)
+        if self._driver:
+            self._driver.close()
+        else:
+            raise TimeoutError("Neo4j server did not become available within the specified time.")
 
     def get_all_questions(self) -> List[Question]:
         query = (
@@ -30,7 +49,6 @@ class GraphQuestionRepository(QuestionRepository):
         )
         with self._driver.session() as session:
             res: list[dict] = session.run(query).data()
-            print("RES", res)
             questions: list[Question] = []
             for r in res:
                 question: dict = r["q"]
@@ -83,9 +101,7 @@ class GraphQuestionRepository(QuestionRepository):
                 "RETURN COLLECT(a.id) AS enabled_by"
             )
             res: list[dict] = session.run(query, question_id=question_id.code).data()
-            print(res)
             question["enabled_by"] = [{"code": a} for a in res[0]["enabled_by"]]
-            print(question)
             return deserialize(question, Question)
 
     def insert_question(self, question: Question) -> None:
@@ -204,4 +220,4 @@ if __name__ == "__main__":
     GraphQuestionRepository().insert_question(q2)
     # GraphQuestionRepository().delete_question("ci-question")
     print(GraphQuestionRepository().get_question_by_id(QuestionId(code="cd-question")))
-    # print(GraphQuestionRepository().get_all_questions())
+    print(GraphQuestionRepository().delete_all_questions())
