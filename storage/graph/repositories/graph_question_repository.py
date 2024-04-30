@@ -39,7 +39,9 @@ class GraphQuestionRepository(QuestionRepository):
         if self._driver:
             self._driver.close()
         else:
-            raise TimeoutError("Neo4j server did not become available within the specified time.")
+            raise TimeoutError(
+                "Neo4j server did not become available within the specified time."
+            )
 
     def get_all_questions(self) -> List[Question]:
         query = (
@@ -143,20 +145,20 @@ class GraphQuestionRepository(QuestionRepository):
                     answer_id=answer_id.code,
                 ).data()
 
-    def update_question(self, question_id: str, question: Question) -> None:
-        q: Question = self.get_question_by_id(QuestionId(code=question_id))
+    def update_question(self, question_id: QuestionId, question: Question) -> None:
+        q: Question = self.get_question_by_id(question_id)
         if not q:
             raise ValueError(f"Question with id {question_id} does not exist")
         self.delete_question(question_id)
         self.insert_question(question)
 
-    def delete_question(self, question_id: str) -> None:
+    def delete_question(self, question_id: QuestionId) -> None:
         query = (
             "MATCH (q:Question {id: $question_id})-[:HAS_ANSWER]->(a:Answer)"
             "DETACH DELETE q, a"
         )
         with self._driver.session() as session:
-            session.run(query, question_id=question_id).data()
+            session.run(query, question_id=question_id.code).data()
 
     def __convert_question_in_node(self, question: Question) -> dict:
         q: dict = serialize(question)
@@ -220,4 +222,4 @@ if __name__ == "__main__":
     GraphQuestionRepository().insert_question(q2)
     # GraphQuestionRepository().delete_question("ci-question")
     print(GraphQuestionRepository().get_question_by_id(QuestionId(code="cd-question")))
-    print(GraphQuestionRepository().delete_all_questions())
+    # print(GraphQuestionRepository().delete_all_questions())
