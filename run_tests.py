@@ -4,6 +4,8 @@ import subprocess
 
 
 if __name__ == "__main__":
+    subprocess.run("docker compose up -d", shell=True, check=True)
+
     os.environ["TEST"] = "true"
     process = subprocess.run(
         args=[
@@ -19,4 +21,7 @@ if __name__ == "__main__":
         ],
         env=os.environ,
     )
+
+    subprocess.run("docker compose down -v", shell=True, check=True)
+
     exit(process.returncode)

@@ -1,12 +1,17 @@
 import json
+import subprocess
 import unittest
 from typing import Set
+
+from dotenv import load_dotenv
 
 from domain.graph.core import Question, QuestionId, AnswerId
 from domain.graph.core.enum import QuestionType
 from domain.graph.factories import AnswerFactory, QuestionFactory
 from presentation.presentation import serialize, deserialize
 from ws.main import create_app
+
+load_dotenv()
 
 
 class TestQuestionsAPI(unittest.TestCase):
@@ -31,27 +36,32 @@ class TestQuestionsAPI(unittest.TestCase):
                 }
             ),
         )
+        self.question2: Question = QuestionFactory().create_boolean_question(
+            QuestionId(code="test-question-2"), "Test question 2"
+        )
 
     def test_get_all_questions(self):
-        question2: Question = self.question.model_copy()
-        question2.id = QuestionId(code="test-question-2")
         self.app.post("/questions", json=serialize(self.question))
-        self.app.post("/questions", json=serialize(question2))
+        self.app.post("/questions", json=serialize(self.question2))
         response = self.app.get("/questions")
+        questions_dict = json.loads(response.data)
         self.assertEqual(response.status_code, 200)
-        self.assertEqual(2, len(json.loads(response.data)))
+        self.assertEqual(2, len(questions_dict))
         all_questions: Set[Question] = set(
-            [deserialize(question, Question) for question in json.loads(response.data)]
+            [deserialize(question, Question) for question in questions_dict]
         )
-        self.assertEqual({self.question, question2}, all_questions)
+        self.assertEqual({self.question, self.question2}, all_questions)
+        self.app.delete(f"/questions/{self.question.id.code}")
+        self.app.delete(f"/questions/{self.question2.id}")
 
     def test_get_question(self):
         self.app.post("/questions", json=serialize(self.question))
-        response = self.app.get("/questions/test-question")
+        response = self.app.get(f"/questions/{self.question.id.code}")
         self.assertEqual(response.status_code, 200)
         self.assertEqual(
             self.question, deserialize(json.loads(response.data), Question)
         )
+        self.app.delete(f"/questions/{self.question.id.code}")
 
     def test_get_non_existent_question(self):
         response = self.app.get("/questions/does-not-exist")
@@ -63,10 +73,12 @@ class TestQuestionsAPI(unittest.TestCase):
         self.assertEqual(
             self.question, deserialize(json.loads(response.data), Question)
         )
+        self.app.delete(f"/questions/{self.question.id.code}")
 
     def test_delete_question(self):
         self.app.post("/questions", json=serialize(self.question))
-        response = self.app.delete("/questions", json=serialize(self.question.id))
+        response = self.app.delete(f"/questions/{self.question.id.code}")
         self.assertEqual(response.status_code, 200)
-        response = self.app.get("/questions/test-question")
+        response = self.app.get(f"/questions/{self.question.id.code}")
         self.assertEqual(response.status_code, 204)
+        self.app.delete(f"/questions/{self.question.id.code}")
