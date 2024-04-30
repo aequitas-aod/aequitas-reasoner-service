@@ -10,8 +10,8 @@ services:
       - '7474:7474'
       - '7687:7687'
     volumes:
-      - reasoner_data:/data
+      - data:/data
 
 volumes:
-  reasoner_data:
+  data:
     driver: local
