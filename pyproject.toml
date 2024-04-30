@@ -17,6 +17,7 @@ neo4j = "^5.19.0"
 
 [tool.poetry.group.dev.dependencies]
 black = "^24.2.0"
+python-on-whales = "^0.71.0"
 
 [build-system]
 requires = ["poetry-core"]
