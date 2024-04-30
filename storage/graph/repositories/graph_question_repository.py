@@ -1,26 +1,22 @@
-import os
 import time
 from typing import List, Optional
-
-from dotenv import load_dotenv
-from neo4j import GraphDatabase
-from neo4j.exceptions import ServiceUnavailable
 
 from domain.graph.core import QuestionId, Question, AnswerId, Answer
 from domain.graph.core.enum import QuestionType, Action
 from domain.graph.factories import AnswerFactory, QuestionFactory
 from domain.graph.repositories import QuestionRepository
+from neo4j import GraphDatabase
+from neo4j.exceptions import ServiceUnavailable
 from presentation.presentation import serialize, deserialize
-
-load_dotenv()
+from utils.env import DB_HOST, DB_USER, DB_PASSWORD
 
 
 class GraphQuestionRepository(QuestionRepository):
 
     def __init__(self):
         self._driver = GraphDatabase.driver(
-            f"neo4j://{os.environ.get('DB_HOST')}",
-            auth=(os.environ.get("DB_USER"), os.environ.get("DB_PASSWORD")),
+            f"neo4j://{DB_HOST}",
+            auth=(DB_USER, DB_PASSWORD),
         )
         self.__wait_for_neo4j()
         self._driver.verify_connectivity()

@@ -5,11 +5,8 @@ from typing import Set
 from domain.graph.core import Question, QuestionId, AnswerId
 from domain.graph.core.enum import QuestionType
 from domain.graph.factories import AnswerFactory, QuestionFactory
-from dotenv import load_dotenv
 from presentation.presentation import serialize, deserialize
 from ws.main import create_app
-
-load_dotenv()
 
 
 class TestQuestionsAPI(unittest.TestCase):
