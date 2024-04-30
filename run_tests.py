@@ -1,11 +1,11 @@
 import os
-import sys
 import subprocess
+import sys
 
+from python_on_whales import docker
 
 if __name__ == "__main__":
-    subprocess.run("docker compose up -d", shell=True, check=True)
-
+    docker.compose.up(detach=True)
     os.environ["TEST"] = "true"
     process = subprocess.run(
         args=[
@@ -21,7 +21,5 @@ if __name__ == "__main__":
         ],
         env=os.environ,
     )
-
-    subprocess.run("docker compose down -v", shell=True, check=True)
-
+    docker.compose.down(volumes=True)
     exit(process.returncode)
