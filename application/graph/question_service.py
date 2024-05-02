@@ -1,4 +1,4 @@
-from typing import Optional
+from typing import Optional, List
 
 from domain.graph.core import Question, QuestionId
 from domain.graph.repositories import QuestionRepository
@@ -9,7 +9,7 @@ class QuestionService:
     def __init__(self, question_repository: QuestionRepository):
         self.question_repository = question_repository
 
-    def get_all_questions(self) -> list[Question]:
+    def get_all_questions(self) -> List[Question]:
         return self.question_repository.get_all_questions()
 
     def get_question_by_id(self, question_id: QuestionId) -> Optional[Question]:

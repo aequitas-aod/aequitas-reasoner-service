@@ -1,0 +1,67 @@
+@startuml
+
+entity Project {
+  +id: ProjectId
+  +name: string
+}
+
+entity ProjectId {
+  +code: string
+}
+
+entity Answer {
+  +id: AnswerId
+  +value: string
+  +text: string
+}
+
+entity AnswerId {
+  +code: string
+}
+
+entity Question {
+}
+
+entity SelectableQuestion {
+  +selectionStrategy: SelectionStrategy
+  +selectedAnswers: Set<Answer>
+  +selectAnswer(answer): Question
+  +deselectAnswer(answer): Question
+}
+
+entity SelectionStrategy {
+  +selectAnswer(question, answer): Question
+  +deselectAnswer(question, answer): Question
+}
+
+entity SelectionStrategyImpl {
+  +selectAnswer(question, answer): Question
+  +deselectAnswer(question, answer): Question
+}
+
+entity ProjectFactory {
+  +createProject(projectId, name): Project
+}
+
+entity AnswerFactory {
+  +createAnswer(text, value): Answer
+  +createBooleanAnswer(value): Answer
+}
+
+entity QuestionFactory {
+  +createQuestion(questionId, text, questionType,
+  availableAnswers, selectedAnswers, actionNeeded)
+  +createBooleanQuestion(id, text, actionNeeded): Question
+}
+
+Project *- ProjectId
+Answer *- AnswerId
+ProjectFactory --> Project : creates
+AnswerFactory --> Answer : creates
+QuestionFactory --> Question : creates
+SelectableQuestion -up-|> Question
+
+
+
+
+@enduml
