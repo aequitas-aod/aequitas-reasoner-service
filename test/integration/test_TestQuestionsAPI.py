@@ -16,8 +16,7 @@ class TestQuestionsAPI(unittest.TestCase):
 
     @classmethod
     def setUpClass(cls):
-        raise NotImplementedError(f"ENV FILE {find_dotenv('.env')}")
-        cls.docker = DockerClient(compose_env_file=find_dotenv(".env"))
+        cls.docker = DockerClient(compose_env_file=".env.test")
         cls.docker.compose.up(detach=True)
         cls.app = create_app().test_client()
         cls.question: Question = QuestionFactory().create_question(
