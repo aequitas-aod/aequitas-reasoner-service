@@ -14,7 +14,7 @@ on:
   workflow_dispatch:
 
 jobs:
-  test:
+  unit-test:
     strategy:
       fail-fast: false
       matrix:
@@ -27,7 +27,7 @@ jobs:
           - '3.11'
           - '3.12'
     runs-on: ${{ matrix.os }}
-    name: Run tests on Python ${{ matrix.python-version }}, on ${{ matrix.os }}
+    name: Run unit tests on Python ${{ matrix.python-version }}, on ${{ matrix.os }}
     steps:
       - uses: actions/checkout@v4
 
@@ -52,11 +52,47 @@ jobs:
         run: python -m compileall ws test run_tests.py
 
       - name: Run tests
-        run: TEST=true poetry run python run_tests.py
+        run: ENV=test poe unit-test
+
+  integration-test:
+    strategy:
+      fail-fast: false
+      matrix:
+        os:
+          - ubuntu-latest
+        python-version:
+          - '3.10'
+          - '3.11'
+          - '3.12'
+    runs-on: ${{ matrix.os }}
+    name: Run integration tests on Python ${{ matrix.python-version }}, on ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install poetry and poethepoet
+        run: |
+          pipx install poetry
+          pipx install poethepoet
+
+      - name: Check poetry
+        run: poetry check
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+          cache: 'poetry'
+
+      - name: Install dependencies
+        run: poetry install
+
+      - name: Run tests
+        run: ENV=test poe integration-test
 
   release:
     needs:
-      - test
+      - unit-test
+      - integration-test
     if: github.ref_name == 'main'
     uses: ./.github/workflows/release.yml
 #    secrets: inherit
@@ -82,4 +118,4 @@ jobs:
         run: poetry install
 
       - name: Check code style
-        run: poetry run black --check .
+        run: poe format-check

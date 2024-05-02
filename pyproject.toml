@@ -22,3 +22,18 @@ python-on-whales = "^0.71.0"
 [build-system]
 requires = ["poetry-core"]
 build-backend = "poetry.core.masonry.api"
+
+[tool.poe.tasks]
+test = "python -m unittest discover -v -t . -s test -p 'test_*.py'"
+unit-test = "python -m unittest discover -v -t . -s test/unit -p 'test_*.py'"
+integration-test = "python -m unittest discover -v -t . -s test/integration -p 'test_*.py'"
+format-check = "black --check ."
+format = "black ."
+
+[tool.poe.tasks.dev]
+shell = "FLASK_ENV=develop flask --app ws/main.py run -h localhost -p $port"
+args = ["port"]
+
+[tool.poe.tasks.serve]
+shell = "waitress-serve --port $port --call ws.main:create_app"
+args = ["port"]
