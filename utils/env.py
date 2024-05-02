@@ -1,9 +1,8 @@
 import os
-import sys
 
-from dotenv import load_dotenv
+from dotenv import load_dotenv, find_dotenv
 
-load_dotenv(sys.path[1] + '/.env')
+load_dotenv(find_dotenv(".env"))
 
 DB_HOST = os.environ.get("DB_HOST")
 DB_USER = os.environ.get("DB_USER")
