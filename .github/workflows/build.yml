@@ -49,7 +49,7 @@ jobs:
         run: poetry install
 
       - name: Check syntax of Python sources
-        run: python -m compileall ws test run_tests.py
+        run: python -m compileall ws test
 
       - name: Run tests
         run: ENV=test poe unit-test
