@@ -2,9 +2,10 @@ import os
 import subprocess
 import sys
 
-from python_on_whales import docker
+from python_on_whales import DockerClient
 
 if __name__ == "__main__":
+    docker = DockerClient(compose_env_file=".")
     docker.compose.up(detach=True)
     os.environ["TEST"] = "true"
     process = subprocess.run(
