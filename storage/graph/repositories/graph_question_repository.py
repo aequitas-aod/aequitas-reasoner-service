@@ -5,7 +5,7 @@ from domain.graph.core import QuestionId, Question, AnswerId, Answer
 from domain.graph.core.enum import QuestionType, Action
 from domain.graph.factories import AnswerFactory, QuestionFactory
 from domain.graph.repositories import QuestionRepository
-from neo4j import GraphDatabase
+from neo4j import GraphDatabase, Driver
 from neo4j.exceptions import ServiceUnavailable
 from presentation.presentation import serialize, deserialize
 from utils.env import DB_HOST, DB_USER, DB_PASSWORD
@@ -13,27 +13,25 @@ from utils.env import DB_HOST, DB_USER, DB_PASSWORD
 
 class GraphQuestionRepository(QuestionRepository):
 
-    def __init__(self):
-        self._driver = GraphDatabase.driver(
+    def __open_connection(self, max_retries=20, retry_interval=0.5) -> Driver:
+        print(f"Connecting to Neo4j at {DB_HOST}")
+        driver = GraphDatabase.driver(
             f"neo4j://{DB_HOST}",
             auth=(DB_USER, DB_PASSWORD),
         )
-        self.__wait_for_neo4j()
-        self._driver.verify_connectivity()
-
-    def __wait_for_neo4j(self, max_retries=20, retry_interval=0.5):
+        driver.verify_connectivity()
         retries = 0
         while retries < max_retries:
             try:
                 # Try to execute a simple query to ensure the server is ready
-                with self._driver.session() as session:
+                with driver.session() as session:
                     session.run("RETURN 1")
                 break
             except ServiceUnavailable as e:
                 retries += 1
                 time.sleep(retry_interval)
-        if self._driver:
-            self._driver.close()
+        if driver:
+            return driver
         else:
             raise TimeoutError(
                 "Neo4j server did not become available within the specified time."
@@ -45,7 +43,8 @@ class GraphQuestionRepository(QuestionRepository):
             "OPTIONAL MATCH (q)-[:PREVIOUS]->(prev:Question)"
             "RETURN q, COLLECT(a) AS answers, prev.id AS previous_question_id"
         )
-        with self._driver.session() as session:
+        driver = self.__open_connection()
+        with driver.session() as session:
             res: list[dict] = session.run(query).data()
             questions: list[Question] = []
             for r in res:
@@ -70,6 +69,7 @@ class GraphQuestionRepository(QuestionRepository):
                 ).data()
                 question["enabled_by"] = [{"code": a} for a in res[0]["enabled_by"]]
                 questions.append(deserialize(question, Question))
+
             return questions
 
     def get_question_by_id(self, question_id: QuestionId) -> Optional[Question]:
@@ -78,7 +78,8 @@ class GraphQuestionRepository(QuestionRepository):
             "OPTIONAL MATCH (q)-[:PREVIOUS]->(prev:Question)"
             "RETURN q, COLLECT(a) AS answers, prev.id AS previous_question_id"
         )
-        with self._driver.session() as session:
+        driver = self.__open_connection()
+        with driver.session() as session:
             res: list[dict] = session.run(query, question_id=question_id.code).data()
             if len(res) == 0:
                 return None
@@ -100,13 +101,15 @@ class GraphQuestionRepository(QuestionRepository):
             )
             res: list[dict] = session.run(query, question_id=question_id.code).data()
             question["enabled_by"] = [{"code": a} for a in res[0]["enabled_by"]]
+            driver.close()
             return deserialize(question, Question)
 
     def insert_question(self, question: Question) -> None:
         res: Optional[Question] = self.get_question_by_id(question.id)
         if res:
             raise ValueError(f"Question with id {question.id} already exists")
-        with self._driver.session() as session:
+        driver = self.__open_connection()
+        with driver.session() as session:
             q: dict = self.__convert_question_in_node(question)
             prev_question_id: str = (
                 question.previous_question_id.code
@@ -140,6 +143,7 @@ class GraphQuestionRepository(QuestionRepository):
                     question_id=question.id.code,
                     answer_id=answer_id.code,
                 ).data()
+            driver.close()
 
     def update_question(self, question_id: QuestionId, question: Question) -> None:
         q: Question = self.get_question_by_id(question_id)
@@ -153,8 +157,10 @@ class GraphQuestionRepository(QuestionRepository):
             "MATCH (q:Question {id: $question_id})-[:HAS_ANSWER]->(a:Answer)"
             "DETACH DELETE q, a"
         )
-        with self._driver.session() as session:
+        driver = self.__open_connection()
+        with driver.session() as session:
             session.run(query, question_id=question_id.code).data()
+            driver.close()
 
     def __convert_question_in_node(self, question: Question) -> dict:
         q: dict = serialize(question)
@@ -170,9 +176,11 @@ class GraphQuestionRepository(QuestionRepository):
         return a
 
     def delete_all_questions(self) -> None:
-        with self._driver.session() as session:
+        driver = self.__open_connection()
+        with driver.session() as session:
             session.run("MATCH (n:Question) DETACH DELETE n").data()
             session.run("MATCH (n:Answer) DETACH DELETE n").data()
+            driver.close()
 
 
 if __name__ == "__main__":
