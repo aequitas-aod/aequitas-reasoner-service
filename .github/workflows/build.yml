@@ -31,8 +31,10 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Install poetry
-        run: pipx install poetry
+      - name: Install poetry and poethepoet
+        run: |
+          pipx install poetry
+          pipx install poethepoet
 
       - name: Check poetry
         run: poetry check
@@ -65,8 +67,10 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Install poetry
-        run: pipx install poetry
+      - name: Install poetry and poethepoet
+        run: |
+          pipx install poetry
+          pipx install poethepoet
 
       - name: Setup Python
         uses: actions/setup-python@v5
