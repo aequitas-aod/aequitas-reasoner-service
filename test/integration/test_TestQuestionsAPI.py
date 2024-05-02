@@ -2,6 +2,9 @@ import json
 import unittest
 from typing import Set
 
+from dotenv import find_dotenv
+from python_on_whales import DockerClient
+
 from domain.graph.core import Question, QuestionId, AnswerId
 from domain.graph.core.enum import QuestionType
 from domain.graph.factories import AnswerFactory, QuestionFactory
@@ -11,9 +14,13 @@ from ws.main import create_app
 
 class TestQuestionsAPI(unittest.TestCase):
 
-    def setUp(self):
-        self.app = create_app().test_client()
-        self.question: Question = QuestionFactory().create_question(
+    @classmethod
+    def setUpClass(cls):
+        raise NotImplementedError(f"ENV FILE {find_dotenv('.env')}")
+        cls.docker = DockerClient(compose_env_file=find_dotenv(".env"))
+        cls.docker.compose.up(detach=True)
+        cls.app = create_app().test_client()
+        cls.question: Question = QuestionFactory().create_question(
             QuestionId(code="test-question"),
             "Test question",
             QuestionType.SINGLE_CHOICE,
@@ -31,9 +38,13 @@ class TestQuestionsAPI(unittest.TestCase):
                 }
             ),
         )
-        self.question2: Question = QuestionFactory().create_boolean_question(
+        cls.question2: Question = QuestionFactory().create_boolean_question(
             QuestionId(code="test-question-2"), "Test question 2"
         )
+
+    @classmethod
+    def tearDownClass(cls):
+        cls.docker.compose.down(volumes=True)
 
     def test_get_all_questions(self):
         self.app.post("/questions", json=serialize(self.question))

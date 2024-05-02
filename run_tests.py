@@ -5,9 +5,8 @@ import sys
 from python_on_whales import DockerClient
 
 if __name__ == "__main__":
-    docker = DockerClient(compose_env_file=".")
-    docker.compose.up(detach=True)
-    os.environ["TEST"] = "true"
+    # docker = DockerClient(compose_env_file=".")
+    # docker.compose.up(detach=True)
     process = subprocess.run(
         args=[
             sys.executable,
@@ -22,5 +21,5 @@ if __name__ == "__main__":
         ],
         env=os.environ,
     )
-    docker.compose.down(volumes=True)
+    # docker.compose.down(volumes=True)
     exit(process.returncode)
