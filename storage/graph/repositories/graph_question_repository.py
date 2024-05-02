@@ -19,7 +19,6 @@ class GraphQuestionRepository(QuestionRepository):
             f"neo4j://{DB_HOST}",
             auth=(DB_USER, DB_PASSWORD),
         )
-        driver.verify_connectivity()
         retries = 0
         while retries < max_retries:
             try:
