@@ -50,7 +50,7 @@ jobs:
         run: python -m compileall ws test run_tests.py
 
       - name: Run tests
-        run: poetry run python run_tests.py
+        run: TEST=true poetry run python run_tests.py
 
   release:
     needs:

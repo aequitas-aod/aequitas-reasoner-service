@@ -2,7 +2,6 @@ import json
 import unittest
 from typing import Set
 
-from dotenv import find_dotenv
 from python_on_whales import DockerClient
 
 from domain.graph.core import Question, QuestionId, AnswerId
