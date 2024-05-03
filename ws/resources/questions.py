@@ -6,7 +6,6 @@ from flask_restful import Api, Resource
 from domain.graph.core import Question, QuestionId
 from presentation.presentation import serialize, deserialize
 from ws.setup import question_service
-from ws.utils.logger import logger
 
 questions_bp = Blueprint("questions", __name__)
 api = Api(questions_bp)
@@ -19,14 +18,11 @@ class QuestionResource(Resource):
             question: Optional[Question] = question_service.get_question_by_id(
                 QuestionId(code=question_id)
             )
-            logger.info(f"Question: {question}")
             if question is None:
-                logger.info(f"E QUINDI")
                 return "", 204
             else:
                 return serialize(question), 200
         else:
-            logger.info(f"NON QUI")
             all_questions: List = question_service.get_all_questions()
             return [serialize(question) for question in all_questions], 200
 
