@@ -224,5 +224,5 @@ if __name__ == "__main__":
     )
     GraphQuestionRepository().insert_question(q2)
     # GraphQuestionRepository().delete_question("ci-question")
-    print(GraphQuestionRepository().get_question_by_id(QuestionId(code="cd-question")))
+    # print(GraphQuestionRepository().get_question_by_id(QuestionId(code="cd-question")))
     # print(GraphQuestionRepository().delete_all_questions())

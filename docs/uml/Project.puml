@@ -10,19 +10,13 @@ entity ProjectId {
 }
 
 entity Answer {
-  +id: AnswerId
-  +value: string
-  +text: string
-}
-
-entity AnswerId {
-  +code: string
 }
 
 entity Question {
 }
 
 entity SelectableQuestion {
+  +projectId: ProjectId
   +selectionStrategy: SelectionStrategy
   +selectedAnswers: Set<Answer>
   +selectAnswer(answer): Question
@@ -35,17 +29,10 @@ entity SelectionStrategy {
 }
 
 entity SelectionStrategyImpl {
-  +selectAnswer(question, answer): Question
-  +deselectAnswer(question, answer): Question
 }
 
 entity ProjectFactory {
   +createProject(projectId, name): Project
-}
-
-entity AnswerFactory {
-  +createAnswer(text, value): Answer
-  +createBooleanAnswer(value): Answer
 }
 
 entity QuestionFactory {
@@ -54,14 +41,19 @@ entity QuestionFactory {
   +createBooleanQuestion(id, text, actionNeeded): Question
 }
 
-Project *- ProjectId
-Answer *- AnswerId
+entity QuestionnaireService {
+  +createQuestionnaire(projectId)
+  +getNthQuestion(projectId, n): Question
+}
+
+Project *-- ProjectId
 ProjectFactory --> Project : creates
-AnswerFactory --> Answer : creates
 QuestionFactory --> Question : creates
 SelectableQuestion -up-|> Question
-
-
+SelectableQuestion o- ProjectId
+SelectableQuestion o-- Answer
+SelectionStrategy -right-o SelectableQuestion
+SelectionStrategyImpl -up-|> SelectionStrategy
 
 
 @enduml
