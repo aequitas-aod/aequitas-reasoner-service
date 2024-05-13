@@ -183,6 +183,7 @@ class GraphQuestionRepository(QuestionRepository):
 
 
 if __name__ == "__main__":
+    GraphQuestionRepository().delete_all_questions()
     q1: Question = QuestionFactory().create_question(
         QuestionId(code="ci-question"),
         "Do you use CI?",
@@ -201,7 +202,6 @@ if __name__ == "__main__":
         None,
         action_needed=Action.METRICS_CHECK,
     )
-    GraphQuestionRepository().delete_all_questions()
     GraphQuestionRepository().insert_question(q1)
     q2: Question = QuestionFactory().create_question(
         QuestionId(code="cd-question"),
