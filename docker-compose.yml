@@ -1,16 +1,25 @@
 services:
 
-  aequitas-reasoner-db:
+  db:
     image: neo4j:latest
-    container_name: aequitas-reasoner-db
+#    container_name: aequitas-reasoner-db
     restart: always
     environment:
-      - NEO4J_AUTH=neo4j/${DB_PASSWORD}
+      NEO4J_AUTH: neo4j/${DB_PASSWORD}
+      DB_USER: ${DB_USER}
+      DB_PASSWORD: ${DB_PASSWORD}
     ports:
       - '7474:7474'
       - '7687:7687'
     volumes:
       - data:/data
+      - type: bind
+        source: ./neo4j-healthcheck.sh
+        target: /neo4j-healthcheck.sh
+    healthcheck:
+      test: bash /neo4j-healthcheck.sh
+      start_period: 5s
+      interval: 10s
 
 volumes:
   data:

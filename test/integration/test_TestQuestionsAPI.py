@@ -15,8 +15,9 @@ class TestQuestionsAPI(unittest.TestCase):
 
     @classmethod
     def setUpClass(cls):
-        cls.docker = DockerClient(compose_env_file=".env.test")
-        cls.docker.compose.up(detach=True)
+        cls.docker = DockerClient(compose_env_file=".env")
+        cls.docker.compose.down(volumes=True)
+        cls.docker.compose.up(detach=True, wait=True)
         cls.app = create_app().test_client()
         cls.question: Question = QuestionFactory().create_question(
             QuestionId(code="test-question"),
