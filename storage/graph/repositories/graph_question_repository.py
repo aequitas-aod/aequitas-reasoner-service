@@ -1,16 +1,15 @@
 import time
-from typing import List, Optional, FrozenSet
+from typing import List, Optional
 
 from neo4j import GraphDatabase, Driver
 from neo4j.exceptions import ServiceUnavailable
 
 from domain.graph.core import QuestionId, Question, AnswerId, Answer
-from domain.graph.core.enum import QuestionType, Action
+from domain.graph.core.enum import QuestionType
 from domain.graph.factories import AnswerFactory, QuestionFactory
 from domain.graph.repositories import QuestionRepository
 from presentation.presentation import serialize, deserialize
 from utils.env import DB_HOST, DB_USER, DB_PASSWORD
-from ws.utils.logger import logger
 
 
 class GraphQuestionRepository(QuestionRepository):

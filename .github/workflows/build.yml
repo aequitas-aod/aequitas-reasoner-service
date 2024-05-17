@@ -15,6 +15,9 @@ on:
 
 env:
   ENV: test
+  DB_USER: neo4j
+  DB_HOST: localhost
+  DB_PASSWORD: password
 
 jobs:
   unit-test:
@@ -98,7 +101,7 @@ jobs:
       - integration-test
     if: github.ref_name == 'main'
     uses: ./.github/workflows/release.yml
-#    secrets: inherit
+  #    secrets: inherit
 
   style:
     runs-on: ubuntu-latest

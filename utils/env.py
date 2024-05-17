@@ -1,10 +1,9 @@
 import os
 from pathlib import Path
+
 from dotenv import load_dotenv
 
-
 _home = Path.home()
-
 
 _descending_priority_env_paths = [
     Path(os.getcwd()) / ".env",
@@ -22,7 +21,6 @@ def _get_env_var_or_fail(var_name: str) -> str:
 for path in _descending_priority_env_paths:
     if path.exists():
         load_dotenv(path, override=False)
-
 
 ENV = _get_env_var_or_fail("ENV")
 DB_HOST = _get_env_var_or_fail("DB_HOST")
