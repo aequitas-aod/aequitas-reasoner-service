@@ -4,7 +4,6 @@ from domain.graph.core import AnswerId, Answer, Question, QuestionId
 from domain.graph.core.enum import Action, QuestionType
 from domain.graph.factories import AnswerFactory, QuestionFactory
 from presentation.presentation import deserialize
-from ws.utils.logger import logger
 
 
 class TestQuestionDeserialization(unittest.TestCase):
@@ -33,7 +32,7 @@ class TestQuestionDeserialization(unittest.TestCase):
                 },
             ],
             "previous_question_id": None,
-            "selected_answers": [],
+            "enabled_by": [{"code": "answer-code"}],
             "action_needed": Action.METRICS_CHECK.value,
         }
 
@@ -61,6 +60,7 @@ class TestQuestionDeserialization(unittest.TestCase):
         expected: Question = QuestionFactory().create_boolean_question(
             QuestionId(code="boolean_question_id"),
             "Do you practice TDD?",
+            enabled_by=frozenset({AnswerId(code="answer-code")}),
             action_needed=Action.METRICS_CHECK,
         )
         actual: Question = deserialize(self.question, Question)

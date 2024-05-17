@@ -10,7 +10,9 @@ from domain.project.factories import SelectableQuestionFactory
 class TestSelectableQuestion(unittest.TestCase):
 
     def setUp(self):
-        self.question: SelectableQuestion = SelectableQuestionFactory().create_question(
+        self.question: (
+            SelectableQuestion
+        ) = SelectableQuestionFactory().create_selectable_question(
             QuestionId(code="question_id"),
             "Do you practice TDD?",
             QuestionType.SINGLE_CHOICE,
@@ -64,7 +66,7 @@ class TestBooleanQuestion(unittest.TestCase):
         self.answer_factory = AnswerFactory()
         self.question: (
             SelectableQuestion
-        ) = SelectableQuestionFactory().create_boolean_question(
+        ) = SelectableQuestionFactory().create_selectable_boolean_question(
             QuestionId(code="boolean_question_id"), "Do you practice TDD?"
         )
 

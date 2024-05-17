@@ -1,4 +1,4 @@
-from typing import FrozenSet, Optional, List
+from typing import FrozenSet, Optional
 
 from domain.graph.core import Answer, AnswerId, QuestionId, Question
 from domain.graph.core.enum import Action, QuestionType

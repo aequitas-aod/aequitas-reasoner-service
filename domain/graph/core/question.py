@@ -12,8 +12,8 @@ class Question(BaseModel):
     type: QuestionType
     available_answers: FrozenSet[Answer]
     previous_question_id: Optional[QuestionId]
-    enabled_by: FrozenSet[AnswerId] = frozenset()
-    action_needed: Optional[Action] = None
+    enabled_by: FrozenSet[AnswerId]
+    action_needed: Optional[Action]
 
     @field_serializer("available_answers", when_used="json")
     def serialize_available_answers_in_order(self, answers: FrozenSet[Answer]):

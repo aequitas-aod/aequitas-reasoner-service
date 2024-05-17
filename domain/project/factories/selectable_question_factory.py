@@ -15,13 +15,14 @@ class SelectableQuestionFactory:
     def __init__(self):
         self._answer_factory = AnswerFactory()
 
-    def create_question(
+    def create_selectable_question(
         self,
         question_id: QuestionId,
         text: str,
         question_type: QuestionType,
         available_answers: FrozenSet[Answer],
         previous_question_id: Optional[QuestionId] = None,
+        enabled_by: FrozenSet[AnswerId] = frozenset(),
         action_needed: Optional[Action] = None,
         selected_answers: FrozenSet[Answer] = frozenset(),
     ) -> SelectableQuestion:
@@ -43,16 +44,18 @@ class SelectableQuestionFactory:
             type=question_type,
             available_answers=available_answers,
             previous_question_id=previous_question_id,
+            enabled_by=enabled_by,
             action_needed=action_needed,
             selection_strategy=selection_strategy,
             selected_answers=selected_answers,
         )
 
-    def create_boolean_question(
+    def create_selectable_boolean_question(
         self,
         question_id: QuestionId,
         text: str,
         previous_question_id: Optional[QuestionId] = None,
+        enabled_by: FrozenSet[AnswerId] = frozenset(),
         action_needed: Optional[Action] = None,
     ) -> SelectableQuestion:
         available_answers: FrozenSet[Answer] = frozenset(
@@ -65,11 +68,12 @@ class SelectableQuestionFactory:
                 ),
             }
         )
-        return self.create_question(
+        return self.create_selectable_question(
             question_id,
             text,
             QuestionType.BOOLEAN,
             available_answers,
             previous_question_id,
+            enabled_by,
             action_needed,
         )

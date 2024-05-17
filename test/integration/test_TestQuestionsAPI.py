@@ -9,6 +9,7 @@ from domain.graph.core.enum import QuestionType
 from domain.graph.factories import AnswerFactory, QuestionFactory
 from presentation.presentation import serialize, deserialize
 from ws.main import create_app
+from ws.utils.logger import logger
 
 
 class TestQuestionsAPI(unittest.TestCase):
