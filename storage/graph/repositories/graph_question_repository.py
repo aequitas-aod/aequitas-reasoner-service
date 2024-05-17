@@ -1,14 +1,16 @@
 import time
-from typing import List, Optional
+from typing import List, Optional, FrozenSet
+
+from neo4j import GraphDatabase, Driver
+from neo4j.exceptions import ServiceUnavailable
 
 from domain.graph.core import QuestionId, Question, AnswerId, Answer
 from domain.graph.core.enum import QuestionType, Action
 from domain.graph.factories import AnswerFactory, QuestionFactory
 from domain.graph.repositories import QuestionRepository
-from neo4j import GraphDatabase, Driver
-from neo4j.exceptions import ServiceUnavailable
 from presentation.presentation import serialize, deserialize
 from utils.env import DB_HOST, DB_USER, DB_PASSWORD
+from ws.utils.logger import logger
 
 
 class GraphQuestionRepository(QuestionRepository):
@@ -47,28 +49,10 @@ class GraphQuestionRepository(QuestionRepository):
             res: list[dict] = session.run(query).data()
             questions: list[Question] = []
             for r in res:
-                question: dict = r["q"]
-                question["id"] = {"code": question["id"]}
-                question["available_answers"] = [
-                    {"id": {"code": a["id"]}, "text": a["text"], "value": a["value"]}
-                    for a in r["answers"]
-                ]
-                question["previous_question_id"] = (
-                    {"code": r["previous_question_id"]}
-                    if r["previous_question_id"]
-                    else None
+                question: Question = self.__convert_node_in_question(
+                    r["q"], r["answers"], r["previous_question_id"]
                 )
-                query = (
-                    "MATCH (q:Question {id: $question_id})"
-                    "OPTIONAL MATCH (q)-[:ENABLED_BY]->(a:Answer)"
-                    "RETURN COLLECT(a.id) AS enabled_by"
-                )
-                res: list[dict] = session.run(
-                    query, question_id=question["id"]["code"]
-                ).data()
-                question["enabled_by"] = [{"code": a} for a in res[0]["enabled_by"]]
-                questions.append(deserialize(question, Question))
-
+                questions.append(question)
             return questions
 
     def get_question_by_id(self, question_id: QuestionId) -> Optional[Question]:
@@ -79,29 +63,14 @@ class GraphQuestionRepository(QuestionRepository):
         )
         driver = self.__open_connection()
         with driver.session() as session:
-            res: list[dict] = session.run(query, question_id=question_id.code).data()
-            if len(res) == 0:
+            r: list[dict] = session.run(query, question_id=question_id.code).data()
+            if len(r) == 0:
                 return None
-            question: dict = res[0]["q"]
-            question["id"] = {"code": question["id"]}
-            question["available_answers"] = [
-                {"id": {"code": a["id"]}, "text": a["text"], "value": a["value"]}
-                for a in res[0]["answers"]
-            ]
-            question["previous_question_id"] = (
-                {"code": res[0]["previous_question_id"]}
-                if res[0]["previous_question_id"]
-                else None
-            )
-            query = (
-                "MATCH (q:Question {id: $question_id}) "
-                "OPTIONAL MATCH (q)-[:ENABLED_BY]->(a:Answer) "
-                "RETURN COLLECT(a.id) AS enabled_by"
-            )
-            res: list[dict] = session.run(query, question_id=question_id.code).data()
-            question["enabled_by"] = [{"code": a} for a in res[0]["enabled_by"]]
             driver.close()
-            return deserialize(question, Question)
+            question: Question = self.__convert_node_in_question(
+                r[0]["q"], r[0]["answers"], r[0]["previous_question_id"]
+            )
+            return question
 
     def insert_question(self, question: Question) -> None:
         res: Optional[Question] = self.get_question_by_id(question.id)
@@ -110,11 +79,9 @@ class GraphQuestionRepository(QuestionRepository):
         driver = self.__open_connection()
         with driver.session() as session:
             q: dict = self.__convert_question_in_node(question)
-            prev_question_id: str = (
-                question.previous_question_id.code
-                if question.previous_question_id
-                else None
-            )
+            prev_question_id: Optional[str] = None
+            if question.previous_question_id:
+                prev_question_id = question.previous_question_id.code
             session.run("CREATE (:Question $question)", question=q).data()
 
             for answer in question.available_answers:
@@ -161,6 +128,18 @@ class GraphQuestionRepository(QuestionRepository):
             session.run(query, question_id=question_id.code).data()
             driver.close()
 
+    def __get_enabled_by(self, question_id: QuestionId) -> List[dict]:
+        driver = self.__open_connection()
+        with driver.session() as session:
+            query = (
+                "MATCH (q:Question {id: $question_id}) "
+                "OPTIONAL MATCH (q)-[:ENABLED_BY]->(a:Answer) "
+                "RETURN COLLECT(a.id) AS enabled_by"
+            )
+            r: list[dict] = session.run(query, question_id=question_id["code"]).data()
+            driver.close()
+            return [{"code": code} for code in r[0]["enabled_by"]]
+
     def __convert_question_in_node(self, question: Question) -> dict:
         q: dict = serialize(question)
         q["id"] = question.id.code
@@ -168,6 +147,26 @@ class GraphQuestionRepository(QuestionRepository):
         del q["previous_question_id"]
         del q["enabled_by"]
         return q
+
+    def __convert_node_in_question(
+        self, q: dict, answers: List, previous_question_id: QuestionId
+    ) -> Question:
+        question: dict = q
+        question["id"] = {"code": question["id"]}
+        question["available_answers"] = [
+            {"id": {"code": a["id"]}, "text": a["text"], "value": a["value"]}
+            for a in answers
+        ]
+        question["previous_question_id"] = (
+            {"code": previous_question_id} if previous_question_id else None
+        )
+        enabled_by: List[dict] = self.__get_enabled_by(question["id"])
+        question["enabled_by"] = enabled_by
+        if "action_needed" in question:
+            question["action_needed"] = question["action_needed"]
+        else:
+            question["action_needed"] = None
+        return deserialize(question, Question)
 
     def __convert_answer_in_node(self, answer: Answer) -> dict:
         a: dict = serialize(answer)
@@ -185,8 +184,8 @@ class GraphQuestionRepository(QuestionRepository):
 if __name__ == "__main__":
     GraphQuestionRepository().delete_all_questions()
     q1: Question = QuestionFactory().create_question(
-        QuestionId(code="ci-question"),
-        "Do you use CI?",
+        QuestionId(code="test-question"),
+        "Test question",
         QuestionType.SINGLE_CHOICE,
         frozenset(
             {
@@ -199,30 +198,32 @@ if __name__ == "__main__":
                 AnswerFactory().create_answer(AnswerId(code="answer-no"), "No", "no"),
             }
         ),
-        None,
-        action_needed=Action.METRICS_CHECK,
-    )
-    GraphQuestionRepository().insert_question(q1)
-    q2: Question = QuestionFactory().create_question(
-        QuestionId(code="cd-question"),
-        "Do you use CD?",
-        QuestionType.SINGLE_CHOICE,
-        frozenset(
-            {
-                AnswerFactory().create_answer(AnswerId(code="yes"), "Yes", "yes"),
-                AnswerFactory().create_answer(
-                    AnswerId(code="little-bit"), "A little bit", "little-bit"
-                ),
-                AnswerFactory().create_answer(AnswerId(code="no"), "No", "no"),
-            }
-        ),
-        previous_question_id=QuestionId(code="ci-question"),
         enabled_by=frozenset(
             {AnswerId(code="answer-yes"), AnswerId(code="answer-little-bit")}
         ),
-        action_needed=Action.METRICS_CHECK,
     )
-    GraphQuestionRepository().insert_question(q2)
-    # GraphQuestionRepository().delete_question("ci-question")
+    GraphQuestionRepository().insert_question(q1)
+    # q2: Question = QuestionFactory().create_question(
+    #     QuestionId(code="cd-question"),
+    #     "Do you use CD?",
+    #     QuestionType.SINGLE_CHOICE,
+    #     frozenset(
+    #         {
+    #             AnswerFactory().create_answer(AnswerId(code="yes"), "Yes", "yes"),
+    #             AnswerFactory().create_answer(
+    #                 AnswerId(code="little-bit"), "A little bit", "little-bit"
+    #             ),
+    #             AnswerFactory().create_answer(AnswerId(code="no"), "No", "no"),
+    #         }
+    #     ),
+    #     previous_question_id=QuestionId(code="ci-question"),
+    #     enabled_by=frozenset(
+    #         {AnswerId(code="answer-yes"), AnswerId(code="answer-little-bit")}
+    #     ),
+    #     action_needed=Action.METRICS_CHECK,
+    # )
+    # GraphQuestionRepository().insert_question(q2)
+    print(GraphQuestionRepository().get_all_questions())
+    GraphQuestionRepository().delete_question(QuestionId(code="test-question"))
     # print(GraphQuestionRepository().get_question_by_id(QuestionId(code="cd-question")))
     # print(GraphQuestionRepository().delete_all_questions())
