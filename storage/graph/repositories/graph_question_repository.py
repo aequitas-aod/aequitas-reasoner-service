@@ -10,6 +10,7 @@ from domain.graph.factories import AnswerFactory, QuestionFactory
 from domain.graph.repositories import QuestionRepository
 from presentation.presentation import serialize, deserialize
 from utils.env import DB_HOST, DB_USER, DB_PASSWORD
+from utils.errors import NotFoundError, ConflictError
 
 
 class GraphQuestionRepository(QuestionRepository):
@@ -73,7 +74,7 @@ class GraphQuestionRepository(QuestionRepository):
 
     def insert_question(self, question: Question) -> None:
         if self.__check_question_exists(question.id):
-            raise ValueError(f"Question with id {question.id} already exists")
+            raise ConflictError(f"Question with id {question.id} already exists")
         driver = self.__open_connection()
         with driver.session() as session:
             q: dict = self.__convert_question_in_node(question)
@@ -111,13 +112,13 @@ class GraphQuestionRepository(QuestionRepository):
 
     def update_question(self, question_id: QuestionId, question: Question) -> None:
         if not self.__check_question_exists(question_id):
-            raise ValueError(f"Question with id {question_id} does not exist")
+            raise NotFoundError(f"Question with id {question_id} does not exist")
         self.delete_question(question_id)
         self.insert_question(question)
 
     def delete_question(self, question_id: QuestionId) -> None:
         if not self.__check_question_exists(question_id):
-            raise ValueError(f"Question with id {question_id} does not exist")
+            raise NotFoundError(f"Question with id {question_id} does not exist")
         query = (
             "MATCH (q:Question {id: $question_id})-[:HAS_ANSWER]->(a:Answer)"
             "DETACH DELETE q, a"

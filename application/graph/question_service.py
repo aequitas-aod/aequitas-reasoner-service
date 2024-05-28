@@ -2,6 +2,7 @@ from typing import Optional, List
 
 from domain.graph.core import Question, QuestionId
 from domain.graph.repositories import QuestionRepository
+from utils.errors import BadRequestError
 
 
 class QuestionService:
@@ -29,7 +30,7 @@ class QuestionService:
         Inserts a question
         :param question: the question to insert
         :return: the id of the inserted question
-        :raises ValueError: if the question already exists
+        :raises ConflictError: if the question already exists
         """
         return self.question_repository.insert_question(question)
 
@@ -38,17 +39,18 @@ class QuestionService:
         Updates an existing question
         :param question_id: the id of the question to update
         :param question: the updated question
-        :raises ValueError: if the question does not exist or if the question id does not match the existing question id
+        :raises BadRequestError: if the question id does not match the existing question id
+        :raises NotFoundError: if the question does not exist
         """
         if question_id != question.id:
-            raise ValueError("Question id does not match")
+            raise BadRequestError("Updated question id does not match")
         self.question_repository.update_question(question_id, question)
 
     def delete_question(self, question_id: QuestionId) -> None:
         """
         Deletes a question
         :param question_id: the id of the question to delete
-        :raises ValueError: if the question does not exist
+        :raises NotFoundError: if the question does not exist
         """
         self.question_repository.delete_question(question_id)
 

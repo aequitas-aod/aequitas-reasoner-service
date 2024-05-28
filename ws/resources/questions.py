@@ -5,6 +5,7 @@ from flask_restful import Api, Resource
 
 from domain.graph.core import Question, QuestionId
 from presentation.presentation import serialize, deserialize
+from utils.errors import BadRequestError, ConflictError, NotFoundError
 from utils.status_code import StatusCode
 from ws.setup import question_service
 
@@ -32,17 +33,30 @@ class QuestionResource(Resource):
         new_question: Question = deserialize(request.get_json(), Question)
         try:
             question_service.add_question(new_question)
-        except ValueError:
-            return "Question already exists", StatusCode.CONFLICT
+        except ConflictError as e:
+            return e.message, e.status_code
         return serialize(new_question.id), StatusCode.CREATED
+
+    def put(self, question_id=None):
+        if question_id:
+            updated_question: Question = deserialize(request.get_json(), Question)
+            try:
+                question_service.update_question(QuestionId(code=question_id), updated_question)
+                return "Question updated successfully", StatusCode.OK
+            except BadRequestError as e:
+                return e.message, e.status_code
+            except ConflictError as e:
+                return e.message, e.status_code
+        else:
+            return "Missing question id", StatusCode.BAD_REQUEST
 
     def delete(self, question_id=None):
         if question_id:
             try:
                 question_service.delete_question(QuestionId(code=question_id))
                 return "Question deleted successfully", StatusCode.OK
-            except ValueError:
-                return "Question not found", StatusCode.NOT_FOUND
+            except NotFoundError as e:
+                return e.message, e.status_code
         else:
             return "Missing question id", StatusCode.BAD_REQUEST
 

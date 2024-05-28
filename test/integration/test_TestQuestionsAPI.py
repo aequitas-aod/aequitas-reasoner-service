@@ -9,7 +9,6 @@ from domain.graph.core.enum import QuestionType
 from domain.graph.factories import AnswerFactory, QuestionFactory
 from presentation.presentation import serialize, deserialize
 from ws.main import create_app
-from ws.utils.logger import logger
 
 
 class TestQuestionsAPI(unittest.TestCase):
@@ -90,6 +89,25 @@ class TestQuestionsAPI(unittest.TestCase):
         self.app.post("/questions", json=serialize(self.question))
         response = self.app.post("/questions", json=serialize(self.question))
         self.assertEqual(response.status_code, 409)
+
+    def test_update_question(self):
+        self.app.post("/questions", json=serialize(self.question))
+        updated_question: Question = self.question.copy()
+        updated_question.text = "Updated text"
+        updated_question.type = QuestionType.MULTIPLE_CHOICE
+        response = self.app.put(
+            f"/questions/{self.question.id.code}", json=serialize(updated_question)
+        )
+        self.assertEqual(response.status_code, 200)
+        response = self.app.get(f"/questions/{self.question.id.code}")
+        self.assertEqual(
+            updated_question, deserialize(json.loads(response.data), Question)
+        )
+        response = self.app.put(
+            f"/questions/{self.question2.id.code}", json=serialize(self.question)
+        )
+        self.assertEqual(response.status_code, 400)
+        self.assertEqual(json.loads(response.data), "Updated question id does not match")
 
     def test_delete_question(self):
         self.app.post("/questions", json=serialize(self.question))
