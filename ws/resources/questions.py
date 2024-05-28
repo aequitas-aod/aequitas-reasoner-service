@@ -46,4 +46,4 @@ class NewCandidateID(Resource):
 
 
 api.add_resource(QuestionResource, "/questions", "/questions/<string:question_id>")
-api.add_resource(NewCandidateID, '/questions/new-candidate-id')
+api.add_resource(NewCandidateID, "/questions/new-candidate-id")

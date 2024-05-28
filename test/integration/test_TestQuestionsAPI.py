@@ -110,4 +110,3 @@ class TestQuestionsAPI(unittest.TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertEqual("q-1", json.loads(response.data))
         self.__delete_all_questions()
-

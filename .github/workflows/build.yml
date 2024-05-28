@@ -99,6 +99,7 @@ jobs:
     needs:
       - unit-test
       - integration-test
+      - style
     if: github.ref_name == 'main'
     uses: ./.github/workflows/release.yml
   #    secrets: inherit
