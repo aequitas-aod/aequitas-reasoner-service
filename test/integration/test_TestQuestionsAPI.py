@@ -46,6 +46,12 @@ class TestQuestionsAPI(unittest.TestCase):
     def tearDownClass(cls):
         cls.docker.compose.down(volumes=True)
 
+    def __delete_all_questions(self):
+        response = self.app.get("/questions")
+        questions_dict = json.loads(response.data)
+        for question in questions_dict:
+            self.app.delete(f"/questions/{question['id']['code']}")
+
     def test_get_all_questions(self):
         self.app.post("/questions", json=serialize(self.question))
         self.app.post("/questions", json=serialize(self.question2))
@@ -57,8 +63,7 @@ class TestQuestionsAPI(unittest.TestCase):
             [deserialize(question, Question) for question in questions_dict]
         )
         self.assertEqual({self.question, self.question2}, all_questions)
-        self.app.delete(f"/questions/{self.question.id.code}")
-        self.app.delete(f"/questions/{self.question2.id.code}")
+        self.__delete_all_questions()
 
     def test_get_question(self):
         self.app.post("/questions", json=serialize(self.question))
@@ -67,7 +72,7 @@ class TestQuestionsAPI(unittest.TestCase):
         self.assertEqual(
             self.question, deserialize(json.loads(response.data), Question)
         )
-        self.app.delete(f"/questions/{self.question.id.code}")
+        self.__delete_all_questions()
 
     def test_get_non_existent_question(self):
         response = self.app.get("/questions/does-not-exist")
@@ -79,7 +84,7 @@ class TestQuestionsAPI(unittest.TestCase):
         self.assertEqual(
             self.question, deserialize(json.loads(response.data), Question)
         )
-        self.app.delete(f"/questions/{self.question.id.code}")
+        self.__delete_all_questions()
 
     def test_delete_question(self):
         self.app.post("/questions", json=serialize(self.question))
@@ -96,7 +101,7 @@ class TestQuestionsAPI(unittest.TestCase):
         response = self.app.get("/questions/new-candidate-id")
         self.assertEqual(response.status_code, 200)
         self.assertEqual("q-2", json.loads(response.data))
-        self.app.delete(f"/questions/{self.question.id.code}")
+        self.__delete_all_questions()
 
     def test_get_new_candidate_id_after_deletion(self):
         self.app.post("/questions", json=serialize(self.question))
@@ -104,3 +109,5 @@ class TestQuestionsAPI(unittest.TestCase):
         response = self.app.get("/questions/new-candidate-id")
         self.assertEqual(response.status_code, 200)
         self.assertEqual("q-1", json.loads(response.data))
+        self.__delete_all_questions()
+
