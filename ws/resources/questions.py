@@ -39,4 +39,11 @@ class QuestionResource(Resource):
             return "", 401
 
 
+class NewCandidateID(Resource):
+
+    def get(self):
+        return question_service.get_new_candidate_id()
+
+
 api.add_resource(QuestionResource, "/questions", "/questions/<string:question_id>")
+api.add_resource(NewCandidateID, '/questions/new-candidate-id')

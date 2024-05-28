@@ -23,3 +23,6 @@ class QuestionService:
 
     def delete_question(self, question_id: QuestionId) -> None:
         self.question_repository.delete_question(question_id)
+
+    def get_new_candidate_id(self) -> str:
+        return f"q-{len(self.get_all_questions()) + 1}"
