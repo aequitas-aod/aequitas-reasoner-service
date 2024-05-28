@@ -20,11 +20,10 @@ class QuestionResource(Resource):
             question: Optional[Question] = question_service.get_question_by_id(
                 QuestionId(code=question_id)
             )
-            return (
-                (serialize(question), StatusCode.OK)
-                if question
-                else ("Question not found", StatusCode.NOT_FOUND)
-            )
+            if question:
+                return serialize(question), StatusCode.OK
+            else:
+                return "Question not found", StatusCode.NOT_FOUND
         else:
             all_questions: List = question_service.get_all_questions()
             return [serialize(question) for question in all_questions], StatusCode.OK
@@ -41,7 +40,9 @@ class QuestionResource(Resource):
         if question_id:
             updated_question: Question = deserialize(request.get_json(), Question)
             try:
-                question_service.update_question(QuestionId(code=question_id), updated_question)
+                question_service.update_question(
+                    QuestionId(code=question_id), updated_question
+                )
                 return "Question updated successfully", StatusCode.OK
             except BadRequestError as e:
                 return e.message, e.status_code

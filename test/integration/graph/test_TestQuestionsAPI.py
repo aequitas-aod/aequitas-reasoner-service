@@ -107,7 +107,9 @@ class TestQuestionsAPI(unittest.TestCase):
             f"/questions/{self.question2.id.code}", json=serialize(self.question)
         )
         self.assertEqual(response.status_code, 400)
-        self.assertEqual(json.loads(response.data), "Updated question id does not match")
+        self.assertEqual(
+            json.loads(response.data), "Updated question id does not match"
+        )
 
     def test_delete_question(self):
         self.app.post("/questions", json=serialize(self.question))
