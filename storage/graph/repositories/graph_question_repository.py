@@ -131,7 +131,6 @@ class GraphQuestionRepository(QuestionRepository):
         q: Question = self.get_question_by_id(question_id)
         return q is not None
 
-
     def __get_enabled_by(self, question_id: QuestionId) -> List[dict]:
         driver = self.__open_connection()
         with driver.session() as session:

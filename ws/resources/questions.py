@@ -5,6 +5,7 @@ from flask_restful import Api, Resource
 
 from domain.graph.core import Question, QuestionId
 from presentation.presentation import serialize, deserialize
+from utils.status_code import StatusCode
 from ws.setup import question_service
 
 questions_bp = Blueprint("questions", __name__)
@@ -18,28 +19,32 @@ class QuestionResource(Resource):
             question: Optional[Question] = question_service.get_question_by_id(
                 QuestionId(code=question_id)
             )
-            return (serialize(question), 200) if question else ("Question not found", 404)
+            return (
+                (serialize(question), StatusCode.OK)
+                if question
+                else ("Question not found", StatusCode.NOT_FOUND)
+            )
         else:
             all_questions: List = question_service.get_all_questions()
-            return [serialize(question) for question in all_questions], 200
+            return [serialize(question) for question in all_questions], StatusCode.OK
 
     def post(self):
         new_question: Question = deserialize(request.get_json(), Question)
         try:
             question_service.add_question(new_question)
         except ValueError:
-            return "Question already exists", 409
-        return serialize(new_question.id), 201
+            return "Question already exists", StatusCode.CONFLICT
+        return serialize(new_question.id), StatusCode.CREATED
 
     def delete(self, question_id=None):
         if question_id:
             try:
                 question_service.delete_question(QuestionId(code=question_id))
-                return "Question deleted successfully", 200
+                return "Question deleted successfully", StatusCode.OK
             except ValueError:
-                return "Question not found", 404
+                return "Question not found", StatusCode.NOT_FOUND
         else:
-            return "Missing question id", 400
+            return "Missing question id", StatusCode.BAD_REQUEST
 
 
 class NewCandidateID(Resource):

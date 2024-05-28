@@ -38,7 +38,7 @@ class TestProjectsAPI(unittest.TestCase):
 
     def test_get_non_existent_project(self):
         response = self.app.get("/projects/does-not-exist")
-        self.assertEqual(response.status_code, 204)
+        self.assertEqual(response.status_code, 404)
 
     def test_insert_project(self):
         response = self.app.post("/projects", json=serialize(self.project))
@@ -50,4 +50,4 @@ class TestProjectsAPI(unittest.TestCase):
         response = self.app.delete("/projects", json=serialize(self.project.id))
         self.assertEqual(response.status_code, 200)
         response = self.app.get("/projects/test-core")
-        self.assertEqual(response.status_code, 204)
+        self.assertEqual(response.status_code, 404)
