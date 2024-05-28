@@ -18,25 +18,28 @@ class QuestionResource(Resource):
             question: Optional[Question] = question_service.get_question_by_id(
                 QuestionId(code=question_id)
             )
-            if question is None:
-                return "", 204
-            else:
-                return serialize(question), 200
+            return (serialize(question), 200) if question else ("Question not found", 404)
         else:
             all_questions: List = question_service.get_all_questions()
             return [serialize(question) for question in all_questions], 200
 
     def post(self):
         new_question: Question = deserialize(request.get_json(), Question)
-        question_service.add_question(new_question)
-        return serialize(new_question), 201
+        try:
+            question_service.add_question(new_question)
+        except ValueError:
+            return "Question already exists", 409
+        return serialize(new_question.id), 201
 
     def delete(self, question_id=None):
         if question_id:
-            question_service.delete_question(QuestionId(code=question_id))
-            return "", 200
+            try:
+                question_service.delete_question(QuestionId(code=question_id))
+                return "Question deleted successfully", 200
+            except ValueError:
+                return "Question not found", 404
         else:
-            return "", 401
+            return "Missing question id", 400
 
 
 class NewCandidateID(Resource):

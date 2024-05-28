@@ -72,8 +72,7 @@ class GraphQuestionRepository(QuestionRepository):
             return question
 
     def insert_question(self, question: Question) -> None:
-        res: Optional[Question] = self.get_question_by_id(question.id)
-        if res:
+        if self.__check_question_exists(question.id):
             raise ValueError(f"Question with id {question.id} already exists")
         driver = self.__open_connection()
         with driver.session() as session:
@@ -111,13 +110,14 @@ class GraphQuestionRepository(QuestionRepository):
             driver.close()
 
     def update_question(self, question_id: QuestionId, question: Question) -> None:
-        q: Question = self.get_question_by_id(question_id)
-        if not q:
+        if not self.__check_question_exists(question_id):
             raise ValueError(f"Question with id {question_id} does not exist")
         self.delete_question(question_id)
         self.insert_question(question)
 
     def delete_question(self, question_id: QuestionId) -> None:
+        if not self.__check_question_exists(question_id):
+            raise ValueError(f"Question with id {question_id} does not exist")
         query = (
             "MATCH (q:Question {id: $question_id})-[:HAS_ANSWER]->(a:Answer)"
             "DETACH DELETE q, a"
@@ -126,6 +126,11 @@ class GraphQuestionRepository(QuestionRepository):
         with driver.session() as session:
             session.run(query, question_id=question_id.code).data()
             driver.close()
+
+    def __check_question_exists(self, question_id: QuestionId) -> bool:
+        q: Question = self.get_question_by_id(question_id)
+        return q is not None
+
 
     def __get_enabled_by(self, question_id: QuestionId) -> List[dict]:
         driver = self.__open_connection()
