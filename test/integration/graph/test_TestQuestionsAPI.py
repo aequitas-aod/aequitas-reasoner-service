@@ -125,15 +125,18 @@ class TestQuestionsAPI(unittest.TestCase):
     def test_get_new_candidate_id(self):
         response = self.app.get("/questions/new-candidate-id")
         self.assertEqual(response.status_code, 200)
-        self.assertEqual("q-1", json.loads(response.data))
+        expected_question_id = serialize(QuestionId(code="q-1"))
+        self.assertEqual(expected_question_id, json.loads(response.data))
         self.app.post("/questions", json=serialize(self.question))
         response = self.app.get("/questions/new-candidate-id")
         self.assertEqual(response.status_code, 200)
-        self.assertEqual("q-2", json.loads(response.data))
+        expected_question_id = serialize(QuestionId(code="q-2"))
+        self.assertEqual(expected_question_id, json.loads(response.data))
 
     def test_get_new_candidate_id_after_deletion(self):
         self.app.post("/questions", json=serialize(self.question))
         self.app.delete(f"/questions/{self.question.id.code}")
         response = self.app.get("/questions/new-candidate-id")
         self.assertEqual(response.status_code, 200)
-        self.assertEqual("q-1", json.loads(response.data))
+        expected_question_id = serialize(QuestionId(code="q-1"))
+        self.assertEqual(expected_question_id, json.loads(response.data))

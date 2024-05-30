@@ -54,9 +54,17 @@ class QuestionService:
         """
         self.question_repository.delete_question(question_id)
 
-    def get_new_candidate_id(self) -> str:
+    def get_new_candidate_id(self) -> QuestionId:
         """
         Gets a new candidate id for a question
         :return: the new candidate id
         """
-        return f"q-{len(self.get_all_questions()) + 1}"
+        increment = 1
+        questions_number = len(self.get_all_questions())
+        candidate_id: QuestionId = QuestionId(code=f"q-{questions_number + increment}")
+        check = self.question_repository.get_question_by_id(candidate_id)
+        while check is not None:
+            increment += 1
+            candidate_id = QuestionId(code=f"q-{questions_number + increment}")
+            check = self.question_repository.get_question_by_id(candidate_id)
+        return candidate_id

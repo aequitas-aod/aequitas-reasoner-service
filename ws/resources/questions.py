@@ -65,7 +65,7 @@ class QuestionResource(Resource):
 class NewCandidateID(Resource):
 
     def get(self):
-        return question_service.get_new_candidate_id()
+        return serialize(question_service.get_new_candidate_id())
 
 
 api.add_resource(QuestionResource, "/questions", "/questions/<string:question_id>")
