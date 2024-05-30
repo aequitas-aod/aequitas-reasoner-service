@@ -27,10 +27,12 @@ class GraphQuestionRepository(QuestionRepository):
                 # Try to execute a simple query to ensure the server is ready
                 with driver.session() as session:
                     session.run("RETURN 1")
+                    driver.close()
                 break
             except ServiceUnavailable as e:
                 retries += 1
                 time.sleep(retry_interval)
+
         if driver:
             return driver
         else:
@@ -53,6 +55,7 @@ class GraphQuestionRepository(QuestionRepository):
                     r["q"], r["answers"], r["previous_question_id"]
                 )
                 questions.append(question)
+            driver.close()
             return questions
 
     def get_question_by_id(self, question_id: QuestionId) -> Optional[Question]:

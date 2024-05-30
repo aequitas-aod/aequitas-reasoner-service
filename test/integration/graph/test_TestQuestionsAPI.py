@@ -92,7 +92,7 @@ class TestQuestionsAPI(unittest.TestCase):
 
     def test_update_question(self):
         self.app.post("/questions", json=serialize(self.question))
-        updated_question: Question = self.question.copy()
+        updated_question: Question = self.question.model_copy()
         updated_question.text = "Updated text"
         updated_question.type = QuestionType.MULTIPLE_CHOICE
         response = self.app.put(
