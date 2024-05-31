@@ -1,3 +1,4 @@
+from datetime import datetime
 from typing import FrozenSet, Optional
 
 from domain.graph.core import Answer, AnswerId, QuestionId
@@ -24,6 +25,7 @@ class SelectableQuestionFactory:
         previous_question_id: Optional[QuestionId] = None,
         enabled_by: FrozenSet[AnswerId] = frozenset(),
         action_needed: Optional[Action] = None,
+        created_at: datetime = datetime.now(),
         selected_answers: FrozenSet[Answer] = frozenset(),
     ) -> SelectableQuestion:
         match question_type:
@@ -46,6 +48,7 @@ class SelectableQuestionFactory:
             previous_question_id=previous_question_id,
             enabled_by=enabled_by,
             action_needed=action_needed,
+            created_at=created_at,
             selection_strategy=selection_strategy,
             selected_answers=selected_answers,
         )
@@ -57,6 +60,7 @@ class SelectableQuestionFactory:
         previous_question_id: Optional[QuestionId] = None,
         enabled_by: FrozenSet[AnswerId] = frozenset(),
         action_needed: Optional[Action] = None,
+        created_at: datetime = datetime.now(),
     ) -> SelectableQuestion:
         available_answers: FrozenSet[Answer] = frozenset(
             {
@@ -76,4 +80,5 @@ class SelectableQuestionFactory:
             previous_question_id,
             enabled_by,
             action_needed,
+            created_at,
         )

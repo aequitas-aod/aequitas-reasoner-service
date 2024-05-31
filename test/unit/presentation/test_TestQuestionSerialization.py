@@ -1,4 +1,5 @@
 import unittest
+from datetime import datetime
 from typing import FrozenSet
 
 from domain.graph.core import AnswerId, Answer, QuestionId, Question
@@ -23,12 +24,14 @@ class TestQuestionSerialization(unittest.TestCase):
                 AnswerId(code="enabling-answer-2"),
             }
         )
+        self.question_timestamp = datetime.now()
         self.question: Question = QuestionFactory().create_boolean_question(
             QuestionId(code="boolean_question_id"),
             "Do you practice TDD?",
             QuestionId(code="previous_question_id"),
             self.enabled_by,
             Action.METRICS_CHECK,
+            self.question_timestamp,
         )
 
     def test_serialize_answer(self):
@@ -78,6 +81,7 @@ class TestQuestionSerialization(unittest.TestCase):
                 {"code": "enabling-answer-2"},
             ],
             "action_needed": Action.METRICS_CHECK.value,
+            "created_at": self.question_timestamp.isoformat(),
         }
         actual: dict = serialize(self.question)
         self.assertEqual(

@@ -1,4 +1,5 @@
 import unittest
+from datetime import datetime
 
 from domain.graph.core import AnswerId, Answer, Question, QuestionId
 from domain.graph.core.enum import Action, QuestionType
@@ -15,6 +16,7 @@ class TestQuestionDeserialization(unittest.TestCase):
             "text": "No",
             "value": "False",
         }
+        self.question_timestamp = datetime.now()
         self.question: dict = {
             "id": {"code": "boolean_question_id"},
             "text": "Do you practice TDD?",
@@ -34,6 +36,7 @@ class TestQuestionDeserialization(unittest.TestCase):
             "previous_question_id": None,
             "enabled_by": [{"code": "answer-code"}],
             "action_needed": Action.METRICS_CHECK.value,
+            "created_at": self.question_timestamp.isoformat(),
         }
 
     def test_deserialize_answer(self):
@@ -62,6 +65,7 @@ class TestQuestionDeserialization(unittest.TestCase):
             "Do you practice TDD?",
             enabled_by=frozenset({AnswerId(code="answer-code")}),
             action_needed=Action.METRICS_CHECK,
+            created_at=self.question_timestamp,
         )
         actual: Question = deserialize(self.question, Question)
         self.assertEqual(

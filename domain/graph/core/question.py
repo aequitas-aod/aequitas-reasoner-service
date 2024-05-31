@@ -1,3 +1,4 @@
+from datetime import datetime
 from typing import Optional, FrozenSet
 
 from pydantic import BaseModel, field_serializer
@@ -14,6 +15,7 @@ class Question(BaseModel):
     previous_question_id: Optional[QuestionId]
     enabled_by: FrozenSet[AnswerId]
     action_needed: Optional[Action]
+    created_at: datetime
 
     @field_serializer("available_answers", when_used="json")
     def serialize_available_answers_in_order(self, answers: FrozenSet[Answer]):
@@ -26,7 +28,8 @@ class Question(BaseModel):
     def __str__(self) -> str:
         return (
             f"Question(\n id={self.id},\n text='{self.text}',\n type={self.type},\n previous_question_id={self.previous_question_id},\n"
-            f" available_answers={self.available_answers},\n enabled_by={self.enabled_by},\n action_needed={self.action_needed}\n)"
+            f" available_answers={self.available_answers},\n enabled_by={self.enabled_by},\n action_needed={self.action_needed}"
+            f" created_at={self.created_at}\n)"
         )
 
     def __hash__(self):
@@ -38,5 +41,6 @@ class Question(BaseModel):
                 self.available_answers,
                 self.enabled_by,
                 self.action_needed,
+                self.created_at,
             )
         )

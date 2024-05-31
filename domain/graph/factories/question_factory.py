@@ -1,3 +1,4 @@
+from datetime import datetime
 from typing import FrozenSet, Optional
 
 from domain.graph.core import Answer, AnswerId, QuestionId, Question
@@ -19,6 +20,7 @@ class QuestionFactory:
         previous_question_id: Optional[QuestionId] = None,
         enabled_by: FrozenSet[AnswerId] = frozenset(),
         action_needed: Optional[Action] = None,
+        created_at: datetime = datetime.now(),
     ) -> Question:
         return Question(
             id=question_id,
@@ -28,6 +30,7 @@ class QuestionFactory:
             previous_question_id=previous_question_id,
             enabled_by=enabled_by,
             action_needed=action_needed,
+            created_at=created_at,
         )
 
     def create_boolean_question(
@@ -37,6 +40,7 @@ class QuestionFactory:
         previous_question_id: Optional[QuestionId] = None,
         enabled_by: FrozenSet[AnswerId] = frozenset(),
         action_needed: Optional[Action] = None,
+        created_at: datetime = datetime.now(),
     ) -> Question:
         available_answers: FrozenSet[Answer] = frozenset(
             {
@@ -56,4 +60,5 @@ class QuestionFactory:
             previous_question_id,
             enabled_by,
             action_needed,
+            created_at,
         )

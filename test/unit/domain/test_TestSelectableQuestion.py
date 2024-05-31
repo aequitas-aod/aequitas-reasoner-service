@@ -1,4 +1,5 @@
 import unittest
+from datetime import datetime
 
 from domain.graph.core import Answer, AnswerId, QuestionId
 from domain.graph.core.enum import QuestionType
@@ -10,6 +11,7 @@ from domain.project.factories import SelectableQuestionFactory
 class TestSelectableQuestion(unittest.TestCase):
 
     def setUp(self):
+        self.question_timestamp = datetime.now()
         self.question: (
             SelectableQuestion
         ) = SelectableQuestionFactory().create_selectable_question(
@@ -26,6 +28,7 @@ class TestSelectableQuestion(unittest.TestCase):
                     ),
                 }
             ),
+            created_at=self.question_timestamp,
         )
 
     def test_select_answer(self):

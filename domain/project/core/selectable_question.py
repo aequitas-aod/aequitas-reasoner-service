@@ -28,6 +28,7 @@ class SelectableQuestion(Question):
             previous_question_id=self.previous_question_id,
             enabled_by=self.enabled_by,
             action_needed=self.action_needed,
+            created_at=self.created_at,
             selection_strategy=self.selection_strategy,
             selected_answers=selected_answers,
         )
@@ -44,6 +45,7 @@ class SelectableQuestion(Question):
             previous_question_id=self.previous_question_id,
             enabled_by=self.enabled_by,
             action_needed=self.action_needed,
+            created_at=self.created_at,
             selection_strategy=self.selection_strategy,
             selected_answers=selected_answers,
         )
@@ -66,5 +68,6 @@ class SelectableQuestion(Question):
                 self.available_answers,
                 self.selected_answers,
                 self.action_needed,
+                self.created_at,
             )
         )

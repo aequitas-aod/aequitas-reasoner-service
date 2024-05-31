@@ -1,5 +1,6 @@
 import json
 import unittest
+from datetime import datetime
 from typing import Set
 
 from python_on_whales import DockerClient
@@ -19,6 +20,7 @@ class TestQuestionsAPI(unittest.TestCase):
         cls.docker.compose.down(volumes=True)
         cls.docker.compose.up(detach=True, wait=True)
         cls.app = create_app().test_client()
+        cls.question_timestamp = datetime.now()
         cls.question: Question = QuestionFactory().create_question(
             QuestionId(code="test-question"),
             "Test question",
@@ -36,9 +38,11 @@ class TestQuestionsAPI(unittest.TestCase):
                     ),
                 }
             ),
+            created_at=cls.question_timestamp,
         )
         cls.question2: Question = QuestionFactory().create_boolean_question(
-            QuestionId(code="test-question-2"), "Test question 2"
+            QuestionId(code="test-question-2"), "Test question 2",
+            created_at=cls.question_timestamp,
         )
 
     @classmethod
