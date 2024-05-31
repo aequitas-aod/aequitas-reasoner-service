@@ -140,3 +140,15 @@ class TestQuestionsAPI(unittest.TestCase):
         self.assertEqual(response.status_code, 200)
         expected_question_id = serialize(QuestionId(code="q-1"))
         self.assertEqual(expected_question_id, json.loads(response.data))
+
+    def test_last_inserted_question(self):
+        self.app.post("/questions", json=serialize(self.question))
+        response = self.app.get("/questions/last-inserted")
+        self.assertEqual(response.status_code, 200)
+        expected_question = serialize(self.question)
+        self.assertEqual(expected_question, json.loads(response.data))
+        self.app.post("/questions", json=serialize(self.question2))
+        response = self.app.get("/questions/last-inserted")
+        self.assertEqual(response.status_code, 200)
+        expected_question = serialize(self.question2)
+        self.assertEqual(expected_question, json.loads(response.data))

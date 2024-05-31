@@ -68,5 +68,18 @@ class NewCandidateID(Resource):
         return serialize(question_service.get_new_candidate_id())
 
 
+class LastInsertedQuestion(Resource):
+
+    def get(self):
+        last_inserted_question: Optional[Question] = (
+            question_service.get_last_inserted_question()
+        )
+        if last_inserted_question:
+            return serialize(last_inserted_question), StatusCode.OK
+        else:
+            return "No questions found", StatusCode.NOT_FOUND
+
+
 api.add_resource(QuestionResource, "/questions", "/questions/<string:question_id>")
 api.add_resource(NewCandidateID, "/questions/new-candidate-id")
+api.add_resource(LastInsertedQuestion, "/questions/last-inserted")

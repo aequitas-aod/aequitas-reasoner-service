@@ -68,3 +68,10 @@ class QuestionService:
             candidate_id = QuestionId(code=f"q-{questions_number + increment}")
             check = self.question_repository.get_question_by_id(candidate_id)
         return candidate_id
+
+    def get_last_inserted_question(self) -> Optional[Question]:
+        """
+        Gets the last inserted question
+        :return: the last inserted question
+        """
+        return self.question_repository.get_last_inserted_question()
