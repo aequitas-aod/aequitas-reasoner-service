@@ -21,6 +21,7 @@ class TestQuestionsAPI(unittest.TestCase):
         cls.docker.compose.up(detach=True, wait=True)
         cls.app = create_app().test_client()
         cls.question_timestamp = datetime.now()
+        cls.question_timestamp_2 = datetime.now()
         cls.question: Question = QuestionFactory().create_question(
             QuestionId(code="test-question"),
             "Test question",
@@ -41,8 +42,9 @@ class TestQuestionsAPI(unittest.TestCase):
             created_at=cls.question_timestamp,
         )
         cls.question2: Question = QuestionFactory().create_boolean_question(
-            QuestionId(code="test-question-2"), "Test question 2",
-            created_at=cls.question_timestamp,
+            QuestionId(code="test-question-2"),
+            "Test question 2",
+            created_at=cls.question_timestamp_2,
         )
 
     @classmethod

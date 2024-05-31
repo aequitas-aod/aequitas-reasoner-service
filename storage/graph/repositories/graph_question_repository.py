@@ -131,6 +131,24 @@ class GraphQuestionRepository(QuestionRepository):
             session.run(query, question_id=question_id.code).data()
             driver.close()
 
+    def get_last_inserted_question(self) -> Optional[Question]:
+        query = (
+            "MATCH (q:Question)-[:HAS_ANSWER]->(a:Answer)"
+            "OPTIONAL MATCH (q)-[:PREVIOUS]->(prev:Question)"
+            "RETURN q, COLLECT(a) AS answers, prev.id AS previous_question_id"
+            " ORDER BY q.created_at DESC LIMIT 1"
+        )
+        driver = self.__open_connection()
+        with driver.session() as session:
+            r: list[dict] = session.run(query).data()
+            if len(r) == 0:
+                return None
+            driver.close()
+            question: Question = self.__convert_node_in_question(
+                r[0]["q"], r[0]["answers"], r[0]["previous_question_id"]
+            )
+            return question
+
     def __check_question_exists(self, question_id: QuestionId) -> bool:
         q: Question = self.get_question_by_id(question_id)
         return q is not None
@@ -150,6 +168,7 @@ class GraphQuestionRepository(QuestionRepository):
     def __convert_question_in_node(self, question: Question) -> dict:
         q: dict = serialize(question)
         q["id"] = question.id.code
+        q["created_at"] = question.created_at.isoformat()
         del q["available_answers"]
         del q["previous_question_id"]
         del q["enabled_by"]
@@ -160,6 +179,7 @@ class GraphQuestionRepository(QuestionRepository):
     ) -> Question:
         question: dict = q
         question["id"] = {"code": question["id"]}
+        question["created_at"] = question["created_at"]
         question["available_answers"] = [
             {"id": {"code": a["id"]}, "text": a["text"], "value": a["value"]}
             for a in answers

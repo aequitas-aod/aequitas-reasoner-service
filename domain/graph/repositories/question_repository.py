@@ -41,3 +41,9 @@ class QuestionRepository(ABC):
         :param question_id: the id of the question to delete
         :raises ValueError: if the question does not exist"""
         pass
+
+    @abstractmethod
+    def get_last_inserted_question(self) -> Optional[Question]:
+        """Gets the last inserted question
+        :return: the last inserted question"""
+        pass
