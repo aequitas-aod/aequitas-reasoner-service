@@ -1,5 +1,6 @@
 from typing import List, Optional
 
+import yaml
 from flask import Blueprint, request
 from flask_restful import Api, Resource
 
@@ -80,6 +81,25 @@ class LastInsertedQuestion(Resource):
             return "No questions found", StatusCode.NOT_FOUND
 
 
+class LoadQuestions(Resource):
+
+    def post(self):
+        if not request.data:
+            return {"error": "No data provided"}, StatusCode.BAD_REQUEST
+
+        if request.content_type != "text/yaml":
+            return {
+                "error": "Unsupported media type"
+            }, StatusCode.UNSUPPORTED_MEDIA_TYPE
+
+        try:
+            yaml_content = yaml.safe_load(request.data)
+            return "Questions loaded successfully", StatusCode.CREATED
+        except yaml.YAMLError:
+            return {"error": "Invalid YAML file"}, StatusCode.BAD_REQUEST
+
+
 api.add_resource(QuestionResource, "/questions", "/questions/<string:question_id>")
 api.add_resource(NewCandidateID, "/questions/new-candidate-id")
 api.add_resource(LastInsertedQuestion, "/questions/last-inserted")
+api.add_resource(LoadQuestions, "/questions/load")

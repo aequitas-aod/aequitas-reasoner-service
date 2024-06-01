@@ -1,9 +1,10 @@
 import json
-import yaml
 import unittest
 from datetime import datetime
+from pathlib import Path
 from typing import Set
 
+import yaml
 from python_on_whales import DockerClient
 
 from domain.graph.core import Question, QuestionId, AnswerId
@@ -161,11 +162,16 @@ class TestQuestionsAPI(unittest.TestCase):
         self.assertEqual(expected_question, json.loads(response.data))
 
     def test_questions_load(self):
-        questions_file_yaml = open("../../resources/questions-example.yaml", "r")
-        questions_yaml: str = questions_file_yaml.read()
-        response = self.app.post("/questions/load", content_type="text/yaml", data=questions_yaml)
-        self.assertEqual(response.status_code, 201)
-        response = self.app.get("/questions")
-        self.assertEqual(response.status_code, 200)
-        expected_questions: dict = yaml.load(questions_yaml)
-        self.assertEqual(expected_questions, json.loads(response.data))
+        current_file = Path(__file__).resolve()
+        root_dir = current_file.parents[3]
+        yaml_file_path = root_dir / "test" / "resources" / "questions-example.yml"
+        with yaml_file_path.open("r") as file:
+            questions_yaml: str = file.read()
+            response = self.app.post(
+                "/questions/load", content_type="text/yaml", data=questions_yaml
+            )
+            self.assertEqual(response.status_code, 201)
+            response = self.app.get("/questions")
+            self.assertEqual(response.status_code, 200)
+            expected_questions: dict = yaml.safe_load(questions_yaml)
+            self.assertEqual(expected_questions, json.loads(response.data))

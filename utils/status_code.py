@@ -8,3 +8,4 @@ class StatusCode(int, Enum):
     NOT_FOUND = 404
     CONFLICT = 409
     INTERNAL_SERVER_ERROR = 500
+    UNSUPPORTED_MEDIA_TYPE = 415
