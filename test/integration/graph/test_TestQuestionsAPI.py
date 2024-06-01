@@ -1,4 +1,5 @@
 import json
+import yaml
 import unittest
 from datetime import datetime
 from typing import Set
@@ -158,3 +159,13 @@ class TestQuestionsAPI(unittest.TestCase):
         self.assertEqual(response.status_code, 200)
         expected_question = serialize(self.question2)
         self.assertEqual(expected_question, json.loads(response.data))
+
+    def test_questions_load(self):
+        questions_file_yaml = open("../../resources/questions-example.yaml", "r")
+        questions_yaml: str = questions_file_yaml.read()
+        response = self.app.post("/questions/load", content_type="text/yaml", data=questions_yaml)
+        self.assertEqual(response.status_code, 201)
+        response = self.app.get("/questions")
+        self.assertEqual(response.status_code, 200)
+        expected_questions: dict = yaml.load(questions_yaml)
+        self.assertEqual(expected_questions, json.loads(response.data))
