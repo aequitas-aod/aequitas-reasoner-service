@@ -93,7 +93,9 @@ class LoadQuestions(Resource):
             }, StatusCode.UNSUPPORTED_MEDIA_TYPE
 
         try:
-            yaml_content = yaml.safe_load(request.data)
+            questions_dict: dict = yaml.safe_load(request.data)
+            for question in questions_dict:
+                question_service.add_question(deserialize(question, Question))
             return "Questions loaded successfully", StatusCode.CREATED
         except yaml.YAMLError:
             return {"error": "Invalid YAML file"}, StatusCode.BAD_REQUEST
