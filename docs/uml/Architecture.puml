@@ -1,0 +1,28 @@
+@startuml
+
+left to right direction
+
+rectangle {
+    portin entrypoint
+
+    cloud Broker as broker
+
+    component "Frontend" as frontend
+    component "Backend" as reasoner
+    component "Autonomous Worker" as worker
+    component "Aequitas Library" as library
+
+}
+actor "Business User" as bu
+actor "Technical User" as tu
+
+bu --> entrypoint
+tu --> library
+entrypoint --> frontend
+
+frontend --> reasoner
+broker -- reasoner
+broker -- library
+broker -- worker
+
+@enduml

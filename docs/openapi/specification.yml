@@ -233,6 +233,28 @@ paths:
         400:
           description: The request was invalid
 
+    post:
+      summary: Add a new question to the core questionnaire
+      tags: [ Questionnaires ]
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+            description: ID of the core
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: './schemas.yaml#/components/schemas/Question'
+      responses:
+        201:
+          description: The question was added successfully
+        400:
+          description: The request was invalid
+
     put:
       summary: Update the n-th question of core questionnaire,
         this operation implies the deletion of all successive questions
