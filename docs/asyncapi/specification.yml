@@ -1,0 +1,104 @@
+asyncapi: 3.0.0
+info:
+    title: Aequitas Async API
+    version: 1.0.0
+    description: This is the Async API specification for the Aequitas system.
+    tags:
+        - name: Questions
+          description: Events about questions asked in the system
+
+servers:
+    firstKafkaServer:
+        host: kafka-broker-1:8092
+        description: First instance of Kafka
+        protocol: kafka
+    secondKafkaServer:
+        host: kafka-broker-2:8092
+        description: Second instance of Kafka
+        protocol: kafka
+
+operations:
+    publishQuestionShown:
+        action: send
+        summary: Publish a message to the QuestionShown channel
+        channel:
+            $ref: "#/channels/questions.shown"
+    onQuestionShown:
+        action: receive
+        summary: Receive a message from the QuestionShown channel
+        channel:
+            $ref: "#/channels/questions.shown"
+
+channels:
+    questions.shown:
+        tags:
+            - name: Questions
+        description: This channel contains a message per each question shown in the system.
+        address: questions.shown
+        messages:
+            Question:
+                $ref: "#/components/messages/Question"
+        servers:
+            - $ref: "#/servers/firstKafkaServer"
+            - $ref: "#/servers/secondKafkaServer"
+
+    questions.answered:
+        tags:
+            - name: Questions
+        description: This channel contains a message per each question answered in the system.
+        address: questions.answered
+        messages:
+            Measurement:
+                $ref: "#/components/messages/Question"
+        servers:
+            - $ref: "#/servers/firstKafkaServer"
+            - $ref: "#/servers/secondKafkaServer"
+
+components:
+    messages:
+        Question:
+            payload:
+                $ref: "#/components/schemas/Question"
+
+    schemas:
+        QuestionId:
+            additionalProperties: false
+            type: object
+            properties:
+                code:
+                    type: string
+                    description: The unique code of the question
+        AnswerId:
+            additionalProperties: false
+            type: object
+            properties:
+                code:
+                    type: string
+                    description: The unique code of the answer
+
+        Answer:
+            additionalProperties: false
+            type: object
+            properties:
+                answerId:
+                    $ref: "#/components/schemas/AnswerId"
+                text:
+                    type: string
+                    description: The text of the answer
+
+        Question:
+            additionalProperties: false
+            type: object
+            properties:
+                questionId:
+                    $ref: "#/components/schemas/QuestionId"
+                text:
+                    type: string
+                    description: The text of the question
+                type:
+                    type: string
+                    description: The type of the question (e.g. single, multiple)
+                availableAnswers:
+                    type: array
+                    items:
+                        $ref: "#/components/schemas/Answer"
