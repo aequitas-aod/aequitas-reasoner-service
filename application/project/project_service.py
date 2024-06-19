@@ -4,7 +4,7 @@ import shortuuid
 
 from domain.project.core import Project, ProjectId
 from domain.project.factories import ProjectFactory
-from domain.project.repository import ProjectRepository
+from domain.project.repositories import ProjectRepository
 from utils.errors import BadRequestError
 
 

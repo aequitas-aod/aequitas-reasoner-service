@@ -2,7 +2,7 @@ from typing import List, Optional
 
 from domain.project.core import ProjectId, Project
 from domain.project.factories import ProjectFactory
-from domain.project.repository.project_repository import ProjectRepository
+from domain.project.repositories.project_repository import ProjectRepository
 from presentation.presentation import deserialize, serialize
 from utils.env import DB_HOST, DB_USER, DB_PASSWORD
 from utils.errors import NotFoundError, ConflictError
