@@ -10,7 +10,7 @@ from utils.errors import NotFoundError, ConflictError
 from utils.neo4j_driver import Neo4jDriver, Credentials, Neo4jQuery
 
 
-class GraphQuestionRepository(QuestionRepository):
+class Neo4jQuestionRepository(QuestionRepository):
 
     def __init__(self):
         self.driver: Neo4jDriver = Neo4jDriver(
@@ -184,7 +184,7 @@ class GraphQuestionRepository(QuestionRepository):
 
 
 if __name__ == "__main__":
-    GraphQuestionRepository().delete_all_questions()
+    Neo4jQuestionRepository().delete_all_questions()
     q1: Question = QuestionFactory().create_question(
         QuestionId(code="test-question"),
         "Test question",
@@ -201,7 +201,7 @@ if __name__ == "__main__":
             }
         ),
     )
-    GraphQuestionRepository().insert_question(q1)
+    Neo4jQuestionRepository().insert_question(q1)
     # q2: Question = QuestionFactory().create_question(
     #     QuestionId(code="cd-question"),
     #     "Do you use CD?",
