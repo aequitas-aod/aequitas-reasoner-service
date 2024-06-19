@@ -18,7 +18,7 @@ flask-cors = "4.0.1"
 pyyaml = "6.0.1"
 
 [tool.poetry.group.dev.dependencies]
-black = "24.3.0"
+black = "24.4.2"
 python-on-whales = "0.71.0"
 
 [build-system]
