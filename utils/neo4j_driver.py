@@ -1,7 +1,7 @@
-from time import sleep
 from typing import List
 
-from neo4j import GraphDatabase, Driver, Result
+import backoff
+from neo4j import GraphDatabase, Driver
 from neo4j.exceptions import ServiceUnavailable
 
 
@@ -20,7 +20,6 @@ class Neo4jQuery:
 class Neo4jDriver:
 
     def __init__(self, host: str, credentials: Credentials):
-        print(f"Connecting to Neo4j at {host}")
         self.retries = 10
         self.delay = 1
         self.driver: Driver = GraphDatabase.driver(
@@ -28,15 +27,17 @@ class Neo4jDriver:
             auth=(credentials.user, credentials.password),
         )
 
-    def query(self, query: Neo4jQuery) -> Result:
+    @backoff.on_exception(backoff.expo, ServiceUnavailable, max_tries=10)
+    def query(self, query: Neo4jQuery) -> List[dict]:
         with self.driver.session() as session:
-            return session.run(query.query, query.params)
+            return session.run(query.query, **query.params).data()
 
+    @backoff.on_exception(backoff.expo, ServiceUnavailable, max_tries=10)
     def transaction(self, queries: List[Neo4jQuery]) -> None:
         with self.driver.session() as session:
             with session.begin_transaction() as tx:
                 for query in queries:
-                    tx.run(query.query, query.params)
+                    tx.run(query.query, **query.params)
                 tx.commit()
 
     def close(self):
