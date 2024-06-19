@@ -101,11 +101,12 @@ class Neo4jQuestionRepository(QuestionRepository):
     def delete_question(self, question_id: QuestionId) -> None:
         if not self._check_question_exists(question_id):
             raise NotFoundError(f"Question with id {question_id} does not exist")
-        query = (
-            "MATCH (q:Question {id: $question_id})-[:HAS_ANSWER]->(a:Answer)"
-            "DETACH DELETE q, a"
+        self.driver.query(
+            Neo4jQuery(
+                "MATCH (q:Question {id: $question_id})-[:HAS_ANSWER]->(a:Answer) DETACH DELETE q, a",
+                {"question_id": question_id.code},
+            )
         )
-        self.driver.query(Neo4jQuery(query, {"question_id": question_id.code}))
 
     def get_last_inserted_question(self) -> Optional[Question]:
         query_string = (
