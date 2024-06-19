@@ -159,7 +159,9 @@ class GraphQuestionRepository(QuestionRepository):
         question["previous_question_id"] = (
             {"code": previous_question_id} if previous_question_id else None
         )
-        enabled_by: List[dict] = self._get_enabled_by(QuestionId(code=question["id"]["code"]))
+        enabled_by: List[dict] = self._get_enabled_by(
+            QuestionId(code=question["id"]["code"])
+        )
         question["enabled_by"] = enabled_by
         if "action_needed" in question:
             question["action_needed"] = question["action_needed"]
@@ -198,7 +200,6 @@ if __name__ == "__main__":
                 AnswerFactory().create_answer(AnswerId(code="answer-no"), "No", "no"),
             }
         ),
-
     )
     GraphQuestionRepository().insert_question(q1)
     # q2: Question = QuestionFactory().create_question(
