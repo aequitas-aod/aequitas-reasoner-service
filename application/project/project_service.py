@@ -1,6 +1,9 @@
 from typing import Optional, List
 
+import shortuuid
+
 from domain.project.core import Project, ProjectId
+from domain.project.factories import ProjectFactory
 from domain.project.repository import ProjectRepository
 from utils.errors import BadRequestError
 
@@ -25,13 +28,16 @@ class ProjectService:
         """
         return self.project_repository.get_project_by_id(project_id)
 
-    def add_project(self, project: Project) -> ProjectId:
+    def add_project(self, name: str) -> ProjectId:
         """
         Inserts a project
-        :param project: the project to insert
+        :param name: the project name
         :return: the id of the inserted project
         :raises ConflictError: if the project already exists
         """
+        project: Project = ProjectFactory.create_project(
+            ProjectId(code=shortuuid.uuid()), name
+        )
         return self.project_repository.insert_project(project)
 
     def update_project(self, project_id: ProjectId, project: Project) -> None:
@@ -53,18 +59,3 @@ class ProjectService:
         :raises NotFoundError: if the project does not exist
         """
         self.project_repository.delete_project(project_id)
-
-    def get_new_candidate_id(self) -> ProjectId:
-        """
-        Gets a new candidate id for a project
-        :return: the new candidate id
-        """
-        increment = 1
-        projects_number = len(self.get_all_projects())
-        candidate_id: ProjectId = ProjectId(code=f"q-{projects_number + increment}")
-        check = self.project_repository.get_project_by_id(candidate_id)
-        while check is not None:
-            increment += 1
-            candidate_id = ProjectId(code=f"q-{projects_number + increment}")
-            check = self.project_repository.get_project_by_id(candidate_id)
-        return candidate_id
