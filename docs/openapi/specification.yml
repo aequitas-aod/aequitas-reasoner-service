@@ -28,7 +28,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: './schemas.yaml#/components/schemas/Question'
+              $ref: './schemas.yml#/components/schemas/Question'
       responses:
         201:
           description: The question was created successfully
@@ -52,7 +52,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: './schemas.yaml#/components/schemas/Question'
+                $ref: './schemas.yml#/components/schemas/Question'
         400:
           description: Invalid input
 
@@ -71,7 +71,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: './schemas.yaml#/components/schemas/Question'
+              $ref: './schemas.yml#/components/schemas/Question'
       responses:
         200:
           description: The question was updated successfully
@@ -106,7 +106,7 @@ paths:
               schema:
                 type: array
                 items:
-                  $ref: "./schemas.yaml#/components/schemas/Project"
+                  $ref: "./schemas.yml#/components/schemas/Project"
     post:
       summary: Create a new project
       tags: [ Projects ]
@@ -115,7 +115,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: './schemas.yaml#/components/schemas/Project'
+              $ref: './schemas.yml#/components/schemas/Project'
       responses:
         201:
           description: The resource was created successfully
@@ -139,7 +139,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: './schemas.yaml#/components/schemas/Project'
+                $ref: './schemas.yml#/components/schemas/Project'
         400:
           description: The request was invalid
 
@@ -158,7 +158,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: './schemas.yaml#/components/schemas/Project'
+              $ref: './schemas.yml#/components/schemas/Project'
       responses:
         200:
           description: The project was updated successfully
@@ -248,7 +248,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: './schemas.yaml#/components/schemas/Question'
+              $ref: './schemas.yml#/components/schemas/Question'
       responses:
         201:
           description: The question was added successfully
@@ -277,7 +277,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: './schemas.yaml#/components/schemas/Question'
+              type: object # TODO: to be defined
       responses:
         200:
           description: The question was updated successfully
