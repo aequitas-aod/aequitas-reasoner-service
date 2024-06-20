@@ -1,5 +1,5 @@
 from flask import Blueprint
-from flask_restful import Api, Resource
+from flask_restx import Api, Resource
 
 from utils.status_code import StatusCode
 

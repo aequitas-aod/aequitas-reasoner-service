@@ -2,7 +2,7 @@ from typing import List, Optional
 
 import yaml
 from flask import Blueprint, request
-from flask_restful import Api, Resource
+from flask_restx import Api, Resource
 
 from domain.graph.core import Question, QuestionId
 from presentation.presentation import serialize, deserialize

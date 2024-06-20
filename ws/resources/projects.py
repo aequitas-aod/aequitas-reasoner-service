@@ -1,7 +1,7 @@
 from typing import List, Set, Optional
 
 from flask import Blueprint, request
-from flask_restful import Api, Resource
+from flask_restx import Api, Resource
 
 from domain.project.core import Project, ProjectId
 from presentation.presentation import serialize, deserialize
@@ -11,8 +11,6 @@ from ws.setup import project_service
 
 projects_bp = Blueprint("projects", __name__)
 api = Api(projects_bp)
-
-projects: Set = set()
 
 
 class ProjectResource(Resource):
