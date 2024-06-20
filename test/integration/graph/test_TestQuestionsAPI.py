@@ -45,7 +45,7 @@ class TestQuestionsAPI(unittest.TestCase):
             ),
             created_at=cls.question_timestamp,
         )
-        cls.question2: Question = QuestionFactory().create_boolean_question(
+        cls.question2: Question = QuestionFactory.create_boolean_question(
             QuestionId(code="test-question-2"),
             "Test question 2",
             created_at=cls.question_timestamp_2,

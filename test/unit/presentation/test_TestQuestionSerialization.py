@@ -25,7 +25,7 @@ class TestQuestionSerialization(unittest.TestCase):
             }
         )
         self.question_timestamp = datetime.now()
-        self.question: Question = QuestionFactory().create_boolean_question(
+        self.question: Question = QuestionFactory.create_boolean_question(
             QuestionId(code="boolean_question_id"),
             "Do you practice TDD?",
             QuestionId(code="previous_question_id"),

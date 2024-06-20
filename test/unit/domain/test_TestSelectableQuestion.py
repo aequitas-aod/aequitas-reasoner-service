@@ -14,7 +14,7 @@ class TestSelectableQuestion(unittest.TestCase):
         self.question_timestamp = datetime.now()
         self.question: (
             SelectableQuestion
-        ) = SelectableQuestionFactory().create_selectable_question(
+        ) = SelectableQuestionFactory.create_selectable_question(
             QuestionId(code="question_id"),
             "Do you practice TDD?",
             QuestionType.SINGLE_CHOICE,
@@ -68,7 +68,7 @@ class TestBooleanQuestion(unittest.TestCase):
     def setUp(self):
         self.question: (
             SelectableQuestion
-        ) = SelectableQuestionFactory().create_selectable_boolean_question(
+        ) = SelectableQuestionFactory.create_selectable_boolean_question(
             QuestionId(code="boolean_question_id"), "Do you practice TDD?"
         )
 

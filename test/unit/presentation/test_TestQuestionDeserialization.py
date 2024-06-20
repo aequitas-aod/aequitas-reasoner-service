@@ -60,7 +60,7 @@ class TestQuestionDeserialization(unittest.TestCase):
         )
 
     def test_deserialize_question(self):
-        expected: Question = QuestionFactory().create_boolean_question(
+        expected: Question = QuestionFactory.create_boolean_question(
             QuestionId(code="boolean_question_id"),
             "Do you practice TDD?",
             enabled_by=frozenset({AnswerId(code="answer-code")}),

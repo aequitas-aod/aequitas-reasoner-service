@@ -8,7 +8,7 @@ from presentation.presentation import serialize, deserialize
 class TestProjectSerialization(unittest.TestCase):
 
     def setUp(self):
-        self.project: Project = ProjectFactory().create_project(
+        self.project: Project = ProjectFactory.create_project(
             ProjectId(code="project1"),
             "project_name",
         )
@@ -29,7 +29,7 @@ class TestProjectSerialization(unittest.TestCase):
         )
 
     def test_deserialize_project(self):
-        expected: Project = ProjectFactory().create_project(
+        expected: Project = ProjectFactory.create_project(
             ProjectId(code="project1"),
             "project_name",
         )

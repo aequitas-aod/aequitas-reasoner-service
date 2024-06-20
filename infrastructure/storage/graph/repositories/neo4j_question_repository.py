@@ -201,7 +201,7 @@ if __name__ == "__main__":
         ),
     )
     Neo4jQuestionRepository().insert_question(q1)
-    # q2: Question = QuestionFactory().create_question(
+    # q2: Question = QuestionFactory.create_question(
     #     QuestionId(code="cd-question"),
     #     "Do you use CD?",
     #     QuestionType.SINGLE_CHOICE,
