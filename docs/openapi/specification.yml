@@ -34,6 +34,8 @@ paths:
           description: The question was created successfully
         400:
           description: Invalid input
+        409:
+          description: The question already exists
 
   /questions/{id}:
     get:
@@ -89,7 +91,7 @@ paths:
             type: integer
             description: ID of the question
       responses:
-        204:
+        200:
           description: The resource was deleted successfully
         400:
           description: The request was invalid
@@ -121,6 +123,8 @@ paths:
           description: The resource was created successfully
         400:
           description: The request was invalid
+        409:
+          description: The project already exists
 
   /projects/{id}:
     get:
@@ -164,9 +168,11 @@ paths:
           description: The project was updated successfully
         400:
           description: The request was invalid
+        404:
+          description: The resource was not found
 
     delete:
-      summary: Delete all projects
+      summary: Delete a project
       tags: [ Projects ]
       parameters:
         - in: path
@@ -176,10 +182,12 @@ paths:
             type: integer
             description: ID of the core
       responses:
-        204:
+        200:
           description: The resource was deleted successfully
         400:
           description: The request was invalid
+        404:
+          description: The resource was not found
 
   /projects/{id}/questionnaire:
     get:
@@ -207,8 +215,12 @@ paths:
             type: integer
             description: ID of the core
       responses:
-        204:
+        200:
           description: Questions deleted successfully
+        400:
+          description: The request was invalid
+        404:
+          description: The resource was not found
 
   /projects/{id}/questionnaire/{number}:
     get:
@@ -254,6 +266,8 @@ paths:
           description: The question was added successfully
         400:
           description: The request was invalid
+        409:
+          description: The question already exists
 
     put:
       summary: Update the n-th question of core questionnaire,

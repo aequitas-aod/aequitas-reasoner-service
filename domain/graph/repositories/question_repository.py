@@ -24,7 +24,7 @@ class QuestionRepository(ABC):
         """Inserts a question
         :param question: the question to insert
         :return: the id of the inserted question
-        :raises ValueError: if the question already exists"""
+        :raises ConflictError: if the question already exists"""
         pass
 
     @abstractmethod
@@ -32,14 +32,14 @@ class QuestionRepository(ABC):
         """Updates an existing question
         :param question_id: the id of the question to update
         :param question: the updated question
-        :raises ValueError: if the question does not exist"""
+        :raises NotFound: if the question does not exist"""
         pass
 
     @abstractmethod
     def delete_question(self, question_id: QuestionId) -> None:
         """Deletes a question
         :param question_id: the id of the question to delete
-        :raises ValueError: if the question does not exist"""
+        :raises NotFound: if the question does not exist"""
         pass
 
     @abstractmethod

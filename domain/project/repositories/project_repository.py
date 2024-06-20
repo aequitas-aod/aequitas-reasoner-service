@@ -24,7 +24,7 @@ class ProjectRepository(ABC):
         """Inserts a project
         :param project: the project to insert
         :return: the id of the inserted project
-        :raises ValueError: if the project already exists"""
+        :raises ConflictError: if the project already exists"""
         pass
 
     @abstractmethod
@@ -32,12 +32,12 @@ class ProjectRepository(ABC):
         """Updates an existing project
         :param project_id: the id of the project to update
         :param project: the updated project
-        :raises ValueError: if the project does not exist"""
+        :raises NotFoundError: if the project does not exist"""
         pass
 
     @abstractmethod
     def delete_project(self, project_id: ProjectId) -> None:
         """Deletes a project
         :param project_id: the id of the project to delete
-        :raises ValueError: if the project does not exist"""
+        :raises NotFoundError: if the project does not exist"""
         pass
