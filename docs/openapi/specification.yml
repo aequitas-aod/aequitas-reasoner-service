@@ -204,24 +204,6 @@ paths:
         200:
           description: The actual list of questions composing the questionnaire of the core
 
-    delete:
-      summary: Delete all questions filled in by the user for a core
-      tags: [ Questionnaires ]
-      parameters:
-        - in: path
-          name: id
-          required: true
-          schema:
-            type: integer
-            description: ID of the core
-      responses:
-        200:
-          description: Questions deleted successfully
-        400:
-          description: The request was invalid
-        404:
-          description: The resource was not found
-
   /projects/{id}/questionnaire/{number}:
     get:
       summary: Get the n-th question of core questionnaire
@@ -297,3 +279,28 @@ paths:
           description: The question was updated successfully
         400:
           description: The request was invalid
+
+    delete:
+      summary: Delete the n-th question of core questionnaire,
+        this operation implies the deletion of all successive questions
+      tags: [ Questionnaires ]
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+            description: ID of the core
+        - in: path
+          name: number
+          required: true
+          schema:
+            type: integer
+            description: Number of the question
+      responses:
+        200:
+          description: The question was deleted successfully
+        400:
+          description: The request was invalid
+        404:
+          description: The resource was not found
