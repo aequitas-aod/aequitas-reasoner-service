@@ -1,4 +1,3 @@
-import json
 from typing import List, Set, Optional
 
 from flask import Blueprint, request
@@ -6,10 +5,9 @@ from flask_restful import Api, Resource
 
 from domain.project.core import Project, ProjectId
 from presentation.presentation import serialize, deserialize
-from utils.errors import ConflictError
+from utils.errors import ConflictError, NotFoundError, BadRequestError
 from utils.status_code import StatusCode
 from ws.setup import project_service
-from ws.utils.logger import logger
 
 projects_bp = Blueprint("projects", __name__)
 api = Api(projects_bp)
@@ -34,18 +32,36 @@ class ProjectResource(Resource):
 
     def post(self):
         body: dict = request.get_json()
-        logger.info(f"Received request {body}")
         try:
             project_id: ProjectId = project_service.add_project(body["name"])
         except ConflictError as e:
             return e.message, e.status_code
-        project_created: Project = project_service.get_project_by_id(project_id)
-        return serialize(project_created), StatusCode.CREATED
+        return serialize(project_id), StatusCode.CREATED
 
-    def delete(self):
-        project_id: ProjectId = deserialize(request.get_json(), ProjectId)
-        projects.remove(list(filter(lambda q: q.id == project_id, projects)).pop())
-        return "", StatusCode.OK
+    def put(self, project_id=None):
+        if project_id:
+            updated_project: Project = deserialize(request.get_json(), Project)
+            try:
+                project_service.update_project(
+                    ProjectId(code=project_id), updated_project
+                )
+                return "Project updated successfully", StatusCode.OK
+            except BadRequestError as e:
+                return e.message, e.status_code
+            except ConflictError as e:
+                return e.message, e.status_code
+        else:
+            return "Missing project id", StatusCode.BAD_REQUEST
+
+    def delete(self, project_id=None):
+        if project_id:
+            try:
+                project_service.delete_project(ProjectId(code=project_id))
+                return "Project deleted successfully", StatusCode.OK
+            except NotFoundError as e:
+                return e.message, e.status_code
+        else:
+            return "Missing project id", StatusCode.BAD_REQUEST
 
 
 api.add_resource(ProjectResource, "/projects", "/projects/<string:project_id>")

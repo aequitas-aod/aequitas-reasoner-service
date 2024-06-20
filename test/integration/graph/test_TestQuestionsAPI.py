@@ -17,10 +17,14 @@ from ws.main import create_app
 class TestQuestionsAPI(unittest.TestCase):
 
     @classmethod
-    def setUpClass(cls):
+    def startDocker(cls):
         cls.docker = DockerClient()
         cls.docker.compose.down(volumes=True)
         cls.docker.compose.up(detach=True, wait=True)
+
+    @classmethod
+    def setUpClass(cls):
+        cls.startDocker()
         cls.app = create_app().test_client()
         cls.question_timestamp = datetime.now()
         cls.question_timestamp_2 = datetime.now()
@@ -36,9 +40,7 @@ class TestQuestionsAPI(unittest.TestCase):
                     AnswerFactory.create_answer(
                         AnswerId(code="answer-little-bit"), "A little bit", "little-bit"
                     ),
-                    AnswerFactory.create_answer(
-                        AnswerId(code="answer-no"), "No", "no"
-                    ),
+                    AnswerFactory.create_answer(AnswerId(code="answer-no"), "No", "no"),
                 }
             ),
             created_at=cls.question_timestamp,
@@ -54,9 +56,9 @@ class TestQuestionsAPI(unittest.TestCase):
         cls.docker.compose.down(volumes=True)
 
     def tearDown(self):
-        self.__delete_all_questions()
+        self._delete_all_questions()
 
-    def __delete_all_questions(self):
+    def _delete_all_questions(self):
         response = self.app.get("/questions")
         questions_dict = json.loads(response.data)
         for question in questions_dict:

@@ -35,7 +35,7 @@ class Neo4jProjectRepository(ProjectRepository):
         project: Project = self._convert_node_in_project(r[0]["p"])
         return project
 
-    def insert_project(self, project: Project) -> None:
+    def insert_project(self, project: Project) -> ProjectId:
         if self._check_project_exists(project.id):
             raise ConflictError(f"Project with id {project.id} already exists")
 
@@ -46,6 +46,7 @@ class Neo4jProjectRepository(ProjectRepository):
                 {"project": p},
             )
         )
+        return project.id
 
     def update_project(self, project_id: ProjectId, project: Project) -> None:
         if not self._check_project_exists(project_id):

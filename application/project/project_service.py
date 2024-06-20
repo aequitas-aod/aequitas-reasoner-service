@@ -35,7 +35,9 @@ class ProjectService:
         :return: the id of the inserted project
         :raises ConflictError: if the project already exists
         """
-        project: Project = ProjectFactory.create_project(ProjectId(code=shortuuid.uuid()), name)
+        project: Project = ProjectFactory.create_project(
+            ProjectId(code=shortuuid.uuid()), name
+        )
         return self.project_repository.insert_project(project)
 
     def update_project(self, project_id: ProjectId, project: Project) -> None:

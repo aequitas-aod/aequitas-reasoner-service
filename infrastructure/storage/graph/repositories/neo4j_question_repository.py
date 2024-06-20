@@ -192,9 +192,7 @@ if __name__ == "__main__":
         QuestionType.SINGLE_CHOICE,
         frozenset(
             {
-                AnswerFactory.create_answer(
-                    AnswerId(code="answer-yes"), "Yes", "yes"
-                ),
+                AnswerFactory.create_answer(AnswerId(code="answer-yes"), "Yes", "yes"),
                 AnswerFactory.create_answer(
                     AnswerId(code="answer-little-bit"), "A little bit", "little-bit"
                 ),
