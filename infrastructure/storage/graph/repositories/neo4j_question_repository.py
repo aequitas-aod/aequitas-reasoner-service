@@ -186,19 +186,19 @@ class Neo4jQuestionRepository(QuestionRepository):
 
 if __name__ == "__main__":
     Neo4jQuestionRepository().delete_all_questions()
-    q1: Question = QuestionFactory().create_question(
+    q1: Question = QuestionFactory.create_question(
         QuestionId(code="test-question"),
         "Test question",
         QuestionType.SINGLE_CHOICE,
         frozenset(
             {
-                AnswerFactory().create_answer(
+                AnswerFactory.create_answer(
                     AnswerId(code="answer-yes"), "Yes", "yes"
                 ),
-                AnswerFactory().create_answer(
+                AnswerFactory.create_answer(
                     AnswerId(code="answer-little-bit"), "A little bit", "little-bit"
                 ),
-                AnswerFactory().create_answer(AnswerId(code="answer-no"), "No", "no"),
+                AnswerFactory.create_answer(AnswerId(code="answer-no"), "No", "no"),
             }
         ),
     )
@@ -209,11 +209,11 @@ if __name__ == "__main__":
     #     QuestionType.SINGLE_CHOICE,
     #     frozenset(
     #         {
-    #             AnswerFactory().create_answer(AnswerId(code="yes"), "Yes", "yes"),
-    #             AnswerFactory().create_answer(
+    #             AnswerFactory.create_answer(AnswerId(code="yes"), "Yes", "yes"),
+    #             AnswerFactory.create_answer(
     #                 AnswerId(code="little-bit"), "A little bit", "little-bit"
     #             ),
-    #             AnswerFactory().create_answer(AnswerId(code="no"), "No", "no"),
+    #             AnswerFactory.create_answer(AnswerId(code="no"), "No", "no"),
     #         }
     #     ),
     #     previous_question_id=QuestionId(code="ci-question"),

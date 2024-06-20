@@ -24,19 +24,19 @@ class TestQuestionsAPI(unittest.TestCase):
         cls.app = create_app().test_client()
         cls.question_timestamp = datetime.now()
         cls.question_timestamp_2 = datetime.now()
-        cls.question: Question = QuestionFactory().create_question(
+        cls.question: Question = QuestionFactory.create_question(
             QuestionId(code="test-question"),
             "Test question",
             QuestionType.SINGLE_CHOICE,
             frozenset(
                 {
-                    AnswerFactory().create_answer(
+                    AnswerFactory.create_answer(
                         AnswerId(code="answer-yes"), "Yes", "yes"
                     ),
-                    AnswerFactory().create_answer(
+                    AnswerFactory.create_answer(
                         AnswerId(code="answer-little-bit"), "A little bit", "little-bit"
                     ),
-                    AnswerFactory().create_answer(
+                    AnswerFactory.create_answer(
                         AnswerId(code="answer-no"), "No", "no"
                     ),
                 }

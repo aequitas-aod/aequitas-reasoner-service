@@ -40,7 +40,7 @@ class TestQuestionDeserialization(unittest.TestCase):
         }
 
     def test_deserialize_answer(self):
-        expected: Answer = AnswerFactory().create_answer(
+        expected: Answer = AnswerFactory.create_answer(
             AnswerId(code="answer"), "Always.", "always"
         )
         actual: Answer = deserialize(self.answer, Answer)
@@ -50,7 +50,7 @@ class TestQuestionDeserialization(unittest.TestCase):
         )
 
     def test_deserialize_boolean_answer(self):
-        expected: Answer = AnswerFactory().create_boolean_answer(
+        expected: Answer = AnswerFactory.create_boolean_answer(
             AnswerId(code="boolean-answer"), False
         )
         actual: Answer = deserialize(self.boolean_answer, Answer)

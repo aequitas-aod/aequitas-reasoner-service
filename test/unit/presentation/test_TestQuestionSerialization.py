@@ -12,10 +12,10 @@ from presentation.presentation import serialize
 class TestQuestionSerialization(unittest.TestCase):
 
     def setUp(self):
-        self.answer: Answer = AnswerFactory().create_answer(
+        self.answer: Answer = AnswerFactory.create_answer(
             AnswerId(code="answer"), "Always.", "always"
         )
-        self.boolean_answer: Answer = AnswerFactory().create_boolean_answer(
+        self.boolean_answer: Answer = AnswerFactory.create_boolean_answer(
             AnswerId(code="boolean-answer"), False
         )
         self.enabled_by: FrozenSet[AnswerId] = frozenset(

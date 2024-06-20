@@ -13,11 +13,8 @@ from domain.project.core.selection import (
 
 class SelectableQuestionFactory:
 
-    def __init__(self):
-        self._answer_factory = AnswerFactory()
-
+    @staticmethod
     def create_selectable_question(
-        self,
         question_id: QuestionId,
         text: str,
         question_type: QuestionType,
@@ -53,8 +50,8 @@ class SelectableQuestionFactory:
             selected_answers=selected_answers,
         )
 
+    @staticmethod
     def create_selectable_boolean_question(
-        self,
         question_id: QuestionId,
         text: str,
         previous_question_id: Optional[QuestionId] = None,
@@ -64,15 +61,15 @@ class SelectableQuestionFactory:
     ) -> SelectableQuestion:
         available_answers: FrozenSet[Answer] = frozenset(
             {
-                self._answer_factory.create_boolean_answer(
+                AnswerFactory.create_boolean_answer(
                     AnswerId(code=f"{question_id.code}-true"), True
                 ),
-                self._answer_factory.create_boolean_answer(
+                AnswerFactory.create_boolean_answer(
                     AnswerId(code=f"{question_id.code}-false"), False
                 ),
             }
         )
-        return self.create_selectable_question(
+        return SelectableQuestionFactory.create_selectable_question(
             question_id,
             text,
             QuestionType.BOOLEAN,

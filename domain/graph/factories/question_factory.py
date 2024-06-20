@@ -8,11 +8,8 @@ from domain.graph.factories import AnswerFactory
 
 class QuestionFactory:
 
-    def __init__(self):
-        self._answer_factory = AnswerFactory()
-
+    @staticmethod
     def create_question(
-        self,
         question_id: QuestionId,
         text: str,
         question_type: QuestionType,
@@ -33,8 +30,8 @@ class QuestionFactory:
             created_at=created_at,
         )
 
+    @staticmethod
     def create_boolean_question(
-        self,
         question_id: QuestionId,
         text: str,
         previous_question_id: Optional[QuestionId] = None,
@@ -44,15 +41,15 @@ class QuestionFactory:
     ) -> Question:
         available_answers: FrozenSet[Answer] = frozenset(
             {
-                self._answer_factory.create_boolean_answer(
+                AnswerFactory.create_boolean_answer(
                     AnswerId(code=f"{question_id.code}-true"), True
                 ),
-                self._answer_factory.create_boolean_answer(
+                AnswerFactory.create_boolean_answer(
                     AnswerId(code=f"{question_id.code}-false"), False
                 ),
             }
         )
-        return self.create_question(
+        return QuestionFactory.create_question(
             question_id,
             text,
             QuestionType.BOOLEAN,

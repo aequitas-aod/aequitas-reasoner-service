@@ -66,7 +66,6 @@ class TestSelectableQuestion(unittest.TestCase):
 
 class TestBooleanQuestion(unittest.TestCase):
     def setUp(self):
-        self.answer_factory = AnswerFactory()
         self.question: (
             SelectableQuestion
         ) = SelectableQuestionFactory().create_selectable_boolean_question(
@@ -78,10 +77,10 @@ class TestBooleanQuestion(unittest.TestCase):
             self.question.available_answers,
             frozenset(
                 {
-                    self.answer_factory.create_boolean_answer(
+                    AnswerFactory.create_boolean_answer(
                         AnswerId(code="boolean_question_id-true"), True
                     ),
-                    self.answer_factory.create_boolean_answer(
+                    AnswerFactory.create_boolean_answer(
                         AnswerId(code="boolean_question_id-false"), False
                     ),
                 }
