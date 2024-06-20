@@ -1,12 +1,15 @@
 import json
-from typing import List, Set
+from typing import List, Set, Optional
 
 from flask import Blueprint, request
 from flask_restful import Api, Resource
 
 from domain.project.core import Project, ProjectId
 from presentation.presentation import serialize, deserialize
+from utils.errors import ConflictError
 from utils.status_code import StatusCode
+from ws.setup import project_service
+from ws.utils.logger import logger
 
 projects_bp = Blueprint("projects", __name__)
 api = Api(projects_bp)
@@ -18,23 +21,26 @@ class ProjectResource(Resource):
 
     def get(self, project_id=None):
         if project_id:
-            filtered_projects: List[Project] = list(
-                filter(lambda project: project.id.code == project_id, projects)
+            project: Optional[Project] = project_service.get_project_by_id(
+                ProjectId(code=project_id)
             )
-            if len(filtered_projects) == 0:
-                return "", StatusCode.NOT_FOUND
+            if project:
+                return serialize(project), StatusCode.OK
             else:
-                return serialize(filtered_projects.pop()), StatusCode.OK
+                return "Project not found", StatusCode.NOT_FOUND
         else:
-            all_projects: List[dict] = [
-                json.loads(project.model_dump_json()) for project in projects
-            ]
-            return all_projects, StatusCode.OK
+            all_projects: List = project_service.get_all_projects()
+            return [serialize(project) for project in all_projects], StatusCode.OK
 
     def post(self):
-        new_project: Project = deserialize(request.get_json(), Project)
-        projects.add(new_project)
-        return serialize(new_project), StatusCode.CREATED
+        body: dict = request.get_json()
+        logger.info(f"Received request {body}")
+        try:
+            project_id: ProjectId = project_service.add_project(body["name"])
+        except ConflictError as e:
+            return e.message, e.status_code
+        project_created: Project = project_service.get_project_by_id(project_id)
+        return serialize(project_created), StatusCode.CREATED
 
     def delete(self):
         project_id: ProjectId = deserialize(request.get_json(), ProjectId)
