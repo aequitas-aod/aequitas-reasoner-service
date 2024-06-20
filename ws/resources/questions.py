@@ -47,7 +47,7 @@ class QuestionResource(Resource):
                 return "Question updated successfully", StatusCode.OK
             except BadRequestError as e:
                 return e.message, e.status_code
-            except ConflictError as e:
+            except NotFoundError as e:
                 return e.message, e.status_code
         else:
             return "Missing question id", StatusCode.BAD_REQUEST
