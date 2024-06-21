@@ -51,7 +51,7 @@ class ProjectQuestion(Question):
 
     def __str__(self) -> str:
         return (
-            f"SelectableQuestion(id={self.id}, text={self.text}, type={self.type}, \n"
+            f"ProjectQuestion(id={self.id}, text={self.text}, type={self.type}, \n"
             f"selection_strategy={self.selection_strategy}, selected_answers={self.selected_answers})"
         )
 

@@ -20,9 +20,9 @@ class GraphQuestion(Question):
 
     def __str__(self) -> str:
         return (
-            f"Question(\n id={self.id},\n text='{self.text}',\n type={self.type}, \n"
+            f"Question(\n id={self.id},\n text='{self.text}',\n type={self.type},\n "
             f"available_answers={self.available_answers},\n enabled_by={self.enabled_by},\n "
-            f"action_needed={self.action_needed}, created_at={self.created_at}\n)"
+            f"action_needed={self.action_needed},\n created_at={self.created_at}\n)"
         )
 
     def __hash__(self):

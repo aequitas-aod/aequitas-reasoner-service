@@ -14,7 +14,7 @@ from domain.project.core.selection import (
 class ProjectQuestionFactory:
 
     @staticmethod
-    def create_selectable_question(
+    def create_project_question(
         question_id: QuestionId,
         text: str,
         question_type: QuestionType,
@@ -35,7 +35,9 @@ class ProjectQuestionFactory:
                 raise ValueError(f"Unsupported question type {question_type}")
 
         if len(selected_answers) > 0 and question_type != QuestionType.MULTIPLE_CHOICE:
-            raise ValueError("Selected answers are only allowed for multiple choice questions")
+            raise ValueError(
+                "Selected answers are only allowed for multiple choice questions"
+            )
         return ProjectQuestion(
             id=question_id,
             text=text,
@@ -47,7 +49,7 @@ class ProjectQuestionFactory:
         )
 
     @staticmethod
-    def create_selectable_boolean_question(
+    def create_project_boolean_question(
         question_id: QuestionId,
         text: str,
         created_at: datetime = datetime.now(),
@@ -62,7 +64,7 @@ class ProjectQuestionFactory:
                 ),
             }
         )
-        return ProjectQuestionFactory.create_selectable_question(
+        return ProjectQuestionFactory.create_project_question(
             question_id,
             text,
             QuestionType.BOOLEAN,

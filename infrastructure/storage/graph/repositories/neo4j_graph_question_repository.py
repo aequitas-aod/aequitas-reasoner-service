@@ -1,8 +1,9 @@
 from typing import List, Optional
 
-from domain.common.core import QuestionId, Answer
-from domain.graph.core import GraphQuestion
+from domain.common.core import QuestionId, Answer, AnswerId
 from domain.common.core.enum import QuestionType
+from domain.common.factories import AnswerFactory
+from domain.graph.core import GraphQuestion
 from domain.graph.factories import GraphQuestionFactory
 from domain.graph.repositories import GraphQuestionRepository
 from presentation.presentation import serialize, deserialize
@@ -20,32 +21,32 @@ class Neo4JGraphQuestionRepository(GraphQuestionRepository):
 
     def get_all_questions(self) -> List[GraphQuestion]:
         query_string = (
-            "MATCH (q:Question)-[:HAS_ANSWER]->(a:Answer)"
-            "OPTIONAL MATCH (q)-[:PREVIOUS]->(prev:Question)"
-            "RETURN q, COLLECT(a) AS answers, prev.id AS previous_question_id"
+            "MATCH (q:GraphQuestion)-[:HAS_ANSWER]->(a:Answer) "
+            "OPTIONAL MATCH (q)-[:PREVIOUS]->(prev:GraphQuestion) "
+            "RETURN q, COLLECT(a) AS answers"
         )
         query: Neo4jQuery = Neo4jQuery(query_string, {})
         res: List[dict] = self.driver.query(query)
         questions: List[GraphQuestion] = []
         for r in res:
             question: GraphQuestion = self._convert_node_in_question(
-                r["q"], r["answers"], r["previous_question_id"]
+                r["q"], r["answers"]
             )
             questions.append(question)
         return questions
 
     def get_question_by_id(self, question_id: QuestionId) -> Optional[GraphQuestion]:
         query_string = (
-            "MATCH (q:Question {id: $question_id})-[:HAS_ANSWER]->(a:Answer)"
-            "OPTIONAL MATCH (q)-[:PREVIOUS]->(prev:Question)"
-            "RETURN q, COLLECT(a) AS answers, prev.id AS previous_question_id"
+            "MATCH (q:GraphQuestion {id: $question_id})-[:HAS_ANSWER]->(a:Answer)"
+            "OPTIONAL MATCH (q)-[:PREVIOUS]->(prev:GraphQuestion)"
+            "RETURN q, COLLECT(a) AS answers"
         )
         query: Neo4jQuery = Neo4jQuery(query_string, {"question_id": question_id.code})
         r: List[dict] = self.driver.query(query)
         if len(r) == 0:
             return None
         question: GraphQuestion = self._convert_node_in_question(
-            r[0]["q"], r[0]["answers"], r[0]["previous_question_id"]
+            r[0]["q"], r[0]["answers"]
         )
         return question
 
@@ -54,13 +55,9 @@ class Neo4JGraphQuestionRepository(GraphQuestionRepository):
             raise ConflictError(f"Question with id {question.id} already exists")
 
         q: dict = self._convert_question_in_node(question)
-        prev_question_id: Optional[str] = None
-        if question.previous_question_id:
-            prev_question_id = question.previous_question_id.code
-
         queries: List[Neo4jQuery] = [
             Neo4jQuery(
-                "CREATE (:Question $question)",
+                "CREATE (:GraphQuestion $question)",
                 {"question": q},
             )
         ]
@@ -69,24 +66,18 @@ class Neo4JGraphQuestionRepository(GraphQuestionRepository):
             queries.append(Neo4jQuery("CREATE (:Answer $answer)", {"answer": a}))
             queries.append(
                 Neo4jQuery(
-                    "MATCH (q:Question {id: $question_id}) MATCH (a:Answer {id: $answer_id}) CREATE (q)-[:HAS_ANSWER]->(a)",
+                    "MATCH (q:GraphQuestion {id: $question_id}) "
+                    "MATCH (a:Answer {id: $answer_id}) "
+                    "CREATE (q)-[:HAS_ANSWER]->(a)",
                     {"question_id": question.id.code, "answer_id": answer.id.code},
-                )
-            )
-        if prev_question_id:
-            queries.append(
-                Neo4jQuery(
-                    "MATCH (q1:Question {id: $question_id}) MATCH (q2:Question {id: $prev_question_id}) CREATE (q1)-[:PREVIOUS]->(q2)",
-                    {
-                        "question_id": question.id.code,
-                        "prev_question_id": prev_question_id,
-                    },
                 )
             )
         for answer_id in question.enabled_by:
             queries.append(
                 Neo4jQuery(
-                    "MATCH (q1:Question {id: $question_id}) MATCH (a:Answer {id: $answer_id}) CREATE (q1)-[:ENABLED_BY]->(a)",
+                    "MATCH (q1:GraphQuestion {id: $question_id}) "
+                    "MATCH (a:Answer {id: $answer_id}) "
+                    "CREATE (q1)-[:ENABLED_BY]->(a)",
                     {"question_id": question.id.code, "answer_id": answer_id.code},
                 )
             )
@@ -104,24 +95,25 @@ class Neo4JGraphQuestionRepository(GraphQuestionRepository):
             raise NotFoundError(f"Question with id {question_id} does not exist")
         self.driver.query(
             Neo4jQuery(
-                "MATCH (q:Question {id: $question_id})-[:HAS_ANSWER]->(a:Answer) DETACH DELETE q, a",
+                "MATCH (q:GraphQuestion {id: $question_id})-[:HAS_ANSWER]->(a:Answer) "
+                "DETACH DELETE q, a",
                 {"question_id": question_id.code},
             )
         )
 
     def get_last_inserted_question(self) -> Optional[GraphQuestion]:
         query_string = (
-            "MATCH (q:Question)-[:HAS_ANSWER]->(a:Answer)"
-            "OPTIONAL MATCH (q)-[:PREVIOUS]->(prev:Question)"
-            "RETURN q, COLLECT(a) AS answers, prev.id AS previous_question_id"
-            " ORDER BY q.created_at DESC LIMIT 1"
+            "MATCH (q:GraphQuestion)-[:HAS_ANSWER]->(a:Answer) "
+            "OPTIONAL MATCH (q)-[:PREVIOUS]->(prev:GraphQuestion) "
+            "RETURN q, COLLECT(a) AS answers "
+            "ORDER BY q.created_at DESC LIMIT 1"
         )
         query: Neo4jQuery = Neo4jQuery(query_string, {})
         r: List[dict] = self.driver.query(query)
         if len(r) == 0:
             return None
         question: GraphQuestion = self._convert_node_in_question(
-            r[0]["q"], r[0]["answers"], r[0]["previous_question_id"]
+            r[0]["q"], r[0]["answers"]
         )
         return question
 
@@ -131,7 +123,7 @@ class Neo4JGraphQuestionRepository(GraphQuestionRepository):
 
     def _get_enabled_by(self, question_id: QuestionId) -> List[dict]:
         query_string = (
-            "MATCH (q:Question {id: $question_id}) "
+            "MATCH (q:GraphQuestion {id: $question_id}) "
             "OPTIONAL MATCH (q)-[:ENABLED_BY]->(a:Answer) "
             "RETURN COLLECT(a.id) AS enabled_by"
         )
@@ -144,23 +136,16 @@ class Neo4JGraphQuestionRepository(GraphQuestionRepository):
         q["id"] = question.id.code
         q["created_at"] = question.created_at.isoformat()
         del q["available_answers"]
-        del q["previous_question_id"]
         del q["enabled_by"]
         return q
 
-    def _convert_node_in_question(
-        self, q: dict, answers: List, previous_question_id: QuestionId
-    ) -> GraphQuestion:
+    def _convert_node_in_question(self, q: dict, answers: List) -> GraphQuestion:
         question: dict = q
         question["id"] = {"code": question["id"]}
         question["created_at"] = question["created_at"]
         question["available_answers"] = [
-            {"id": {"code": a["id"]}, "text": a["text"], "value": a["value"]}
-            for a in answers
+            {"id": {"code": a["id"]}, "text": a["text"]} for a in answers
         ]
-        question["previous_question_id"] = (
-            {"code": previous_question_id} if previous_question_id else None
-        )
         enabled_by: List[dict] = self._get_enabled_by(
             QuestionId(code=question["id"]["code"])
         )
@@ -179,7 +164,7 @@ class Neo4JGraphQuestionRepository(GraphQuestionRepository):
     def delete_all_questions(self) -> None:
         self.driver.transaction(
             [
-                Neo4jQuery("MATCH (n:Question) DETACH DELETE n", {}),
+                Neo4jQuery("MATCH (n:GraphQuestion) DETACH DELETE n", {}),
                 Neo4jQuery("MATCH (n:Answer) DETACH DELETE n", {}),
             ]
         )
@@ -193,36 +178,39 @@ if __name__ == "__main__":
         QuestionType.SINGLE_CHOICE,
         frozenset(
             {
-                AnswerFactory.create_answer(AnswerId(code="answer-yes"), "Yes", "yes"),
+                AnswerFactory.create_answer(AnswerId(code="answer-yes"), "Yes"),
                 AnswerFactory.create_answer(
-                    AnswerId(code="answer-little-bit"), "A little bit", "little-bit"
+                    AnswerId(code="answer-little-bit"), "A little bit"
                 ),
-                AnswerFactory.create_answer(AnswerId(code="answer-no"), "No", "no"),
+                AnswerFactory.create_answer(AnswerId(code="answer-no"), "No"),
             }
         ),
     )
+    print(q1)
     Neo4JGraphQuestionRepository().insert_question(q1)
-    # q2: Question = QuestionFactory.create_question(
-    #     QuestionId(code="cd-question"),
-    #     "Do you use CD?",
-    #     QuestionType.SINGLE_CHOICE,
-    #     frozenset(
-    #         {
-    #             AnswerFactory.create_answer(AnswerId(code="yes"), "Yes", "yes"),
-    #             AnswerFactory.create_answer(
-    #                 AnswerId(code="little-bit"), "A little bit", "little-bit"
-    #             ),
-    #             AnswerFactory.create_answer(AnswerId(code="no"), "No", "no"),
-    #         }
-    #     ),
-    #     previous_question_id=QuestionId(code="ci-question"),
-    #     enabled_by=frozenset(
-    #         {AnswerId(code="answer-yes"), AnswerId(code="answer-little-bit")}
-    #     ),
-    #     action_needed=Action.METRICS_CHECK,
-    # )
-    # GraphQuestionRepository().insert_question(q2)
-    # print(GraphQuestionRepository().get_all_questions())
-    # GraphQuestionRepository().delete_question(QuestionId(code="test-question"))
-    # print(GraphQuestionRepository().get_question_by_id(QuestionId(code="cd-question")))
-    # print(GraphQuestionRepository().delete_all_questions())
+    q2: GraphQuestion = GraphQuestionFactory.create_question(
+        QuestionId(code="cd-question"),
+        "Do you use CD?",
+        QuestionType.SINGLE_CHOICE,
+        frozenset(
+            {
+                AnswerFactory.create_answer(AnswerId(code="yes"), "Yes"),
+                AnswerFactory.create_answer(
+                    AnswerId(code="little-bit"), "A little bit"
+                ),
+                AnswerFactory.create_answer(AnswerId(code="no"), "No"),
+            }
+        ),
+        enabled_by=frozenset(
+            {AnswerId(code="answer-yes"), AnswerId(code="answer-little-bit")}
+        ),
+    )
+    Neo4JGraphQuestionRepository().insert_question(q2)
+    print(Neo4JGraphQuestionRepository().get_all_questions())
+    # Neo4JGraphQuestionRepository().delete_question(QuestionId(code="test-question"))
+    print(
+        Neo4JGraphQuestionRepository().get_question_by_id(
+            QuestionId(code="cd-question")
+        )
+    )
+    # print(Neo4JGraphQuestionRepository().delete_all_questions())

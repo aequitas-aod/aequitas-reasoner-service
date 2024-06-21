@@ -1,14 +1,15 @@
 from typing import Optional, List
 
-from domain.graph.core import GraphQuestion, QuestionId
+from domain.common.core import QuestionId
+from domain.graph.core import GraphQuestion
 from domain.graph.repositories import GraphQuestionRepository
 from utils.errors import BadRequestError
 
 
-class QuestionService:
+class GraphQuestionService:
 
-    def __init__(self, question_repository: GraphQuestionRepository):
-        self.question_repository = question_repository
+    def __init__(self, graph_question_repository: GraphQuestionRepository):
+        self.question_repository = graph_question_repository
 
     def get_all_questions(self) -> List[GraphQuestion]:
         """

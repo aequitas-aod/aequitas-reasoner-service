@@ -1,1 +1,1 @@
-from application.graph.question_service import QuestionService
+from application.graph.graph_question_service import GraphQuestionService

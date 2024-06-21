@@ -4,7 +4,8 @@ import yaml
 from flask import Blueprint, request
 from flask_restful import Api, Resource
 
-from domain.graph.core import GraphQuestion, QuestionId
+from domain.common.core import QuestionId
+from domain.graph.core import GraphQuestion
 from presentation.presentation import serialize, deserialize
 from utils.errors import BadRequestError, ConflictError, NotFoundError
 from utils.status_code import StatusCode

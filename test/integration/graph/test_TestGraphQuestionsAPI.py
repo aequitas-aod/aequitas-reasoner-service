@@ -7,9 +7,11 @@ from typing import Set
 import yaml
 from python_on_whales import DockerClient
 
-from domain.graph.core import GraphQuestion, QuestionId, AnswerId
-from domain.graph.core.enum import QuestionType
-from domain.graph.factories import AnswerFactory, GraphQuestionFactory
+from domain.common.core import QuestionId, AnswerId
+from domain.common.factories import AnswerFactory
+from domain.graph.core import GraphQuestion
+from domain.common.core.enum import QuestionType
+from domain.graph.factories import GraphQuestionFactory
 from presentation.presentation import serialize, deserialize
 from test.utils.utils import get_file_path
 from ws.main import create_app
@@ -35,13 +37,11 @@ class TestGraphQuestionsAPI(unittest.TestCase):
             QuestionType.SINGLE_CHOICE,
             frozenset(
                 {
+                    AnswerFactory.create_answer(AnswerId(code="answer-yes"), "Yes"),
                     AnswerFactory.create_answer(
-                        AnswerId(code="answer-yes"), "Yes", "yes"
+                        AnswerId(code="answer-little-bit"), "A little bit"
                     ),
-                    AnswerFactory.create_answer(
-                        AnswerId(code="answer-little-bit"), "A little bit", "little-bit"
-                    ),
-                    AnswerFactory.create_answer(AnswerId(code="answer-no"), "No", "no"),
+                    AnswerFactory.create_answer(AnswerId(code="answer-no"), "No"),
                 }
             ),
             created_at=cls.question_timestamp,

@@ -8,12 +8,12 @@ from domain.project.core import ProjectQuestion
 from domain.project.factories import ProjectQuestionFactory
 
 
-class TestSelectableQuestion(unittest.TestCase):
+class TestProjectQuestion(unittest.TestCase):
 
     def setUp(self):
         self.question_timestamp = datetime.now()
         self.question: ProjectQuestion = (
-            ProjectQuestionFactory.create_selectable_question(
+            ProjectQuestionFactory.create_project_question(
                 QuestionId(code="question_id"),
                 "Do you practice TDD?",
                 QuestionType.SINGLE_CHOICE,
@@ -42,9 +42,9 @@ class TestSelectableQuestion(unittest.TestCase):
 
     def test_select_answer_twice(self):
         answer, _ = self.question.available_answers
-        question: ProjectQuestion = self.question.select_answer(
+        question: ProjectQuestion = self.question.select_answer(answer).select_answer(
             answer
-        ).select_answer(answer)
+        )
         self.assertEqual(question.selected_answers, {answer})
 
     def test_select_wrong_answer(self):
@@ -57,9 +57,9 @@ class TestSelectableQuestion(unittest.TestCase):
 
     def test_deselect_answer(self):
         answer, _ = self.question.available_answers
-        question: ProjectQuestion = self.question.select_answer(
+        question: ProjectQuestion = self.question.select_answer(answer).deselect_answer(
             answer
-        ).deselect_answer(answer)
+        )
         self.assertEqual(question.selected_answers, frozenset())
 
     def test_deselect_not_selected_answer(self):
@@ -71,7 +71,7 @@ class TestSelectableQuestion(unittest.TestCase):
 class TestBooleanQuestion(unittest.TestCase):
     def setUp(self):
         self.question: ProjectQuestion = (
-            ProjectQuestionFactory.create_selectable_boolean_question(
+            ProjectQuestionFactory.create_project_boolean_question(
                 QuestionId(code="boolean_question_id"), "Do you practice TDD?"
             )
         )
