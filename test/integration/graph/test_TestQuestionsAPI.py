@@ -11,6 +11,7 @@ from domain.graph.core import Question, QuestionId, AnswerId
 from domain.graph.core.enum import QuestionType
 from domain.graph.factories import AnswerFactory, QuestionFactory
 from presentation.presentation import serialize, deserialize
+from test.utils.utils import get_file_path
 from ws.main import create_app
 
 
@@ -164,9 +165,7 @@ class TestQuestionsAPI(unittest.TestCase):
         self.assertEqual(expected_question, json.loads(response.data))
 
     def test_questions_load(self):
-        current_file = Path(__file__).resolve()
-        root_dir = current_file.parents[3]
-        yaml_file_path = root_dir / "test" / "resources" / "questions-load-example.yml"
+        yaml_file_path: Path = get_file_path("test/resources/questions-load-example.yml")
         with yaml_file_path.open("r") as file:
             questions_yaml: str = file.read()
             response = self.app.post(
