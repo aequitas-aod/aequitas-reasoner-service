@@ -5,7 +5,7 @@ from domain.project.factories import ProjectFactory
 from presentation.presentation import serialize, deserialize
 
 
-class TestProjectSerialization(unittest.TestCase):
+class TestProjectPresentation(unittest.TestCase):
 
     def setUp(self):
         self.project: Project = ProjectFactory.create_project(

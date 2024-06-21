@@ -39,27 +39,7 @@ class TestQuestionDeserialization(unittest.TestCase):
             "created_at": self.question_timestamp.isoformat(),
         }
 
-    def test_deserialize_answer(self):
-        expected: Answer = AnswerFactory.create_answer(
-            AnswerId(code="answer"), "Always."
-        )
-        actual: Answer = deserialize(self.answer, Answer)
-        self.assertEqual(
-            expected,
-            actual,
-        )
-
-    def test_deserialize_boolean_answer(self):
-        expected: Answer = AnswerFactory.create_boolean_answer(
-            AnswerId(code="boolean-answer"), False
-        )
-        actual: Answer = deserialize(self.boolean_answer, Answer)
-        self.assertEqual(
-            expected,
-            actual,
-        )
-
-    def test_deserialize_question(self):
+    def test_deserialize_graph_question(self):
         expected: GraphQuestion = GraphQuestionFactory.create_boolean_question(
             QuestionId(code="boolean_question_id"),
             "Do you practice TDD?",
@@ -72,3 +52,4 @@ class TestQuestionDeserialization(unittest.TestCase):
             expected,
             actual,
         )
+
