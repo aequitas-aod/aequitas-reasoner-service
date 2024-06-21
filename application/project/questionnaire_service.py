@@ -1,26 +1,23 @@
 from domain.graph.core import QuestionId, Answer
-from domain.graph.repositories import QuestionRepository
 from domain.project.core import ProjectId, SelectableQuestion
+from domain.project.repositories.questionnaire_repository import QuestionnaireRepository
 
 
 class QuestionnaireService:
 
-    def __init__(self, question_repository: QuestionRepository):
-        self.question_repository = question_repository
+    def __init__(self, questionnaire_repository: QuestionnaireRepository):
+        self.questionnaire_repository = questionnaire_repository
 
-    def get_first_question(self, project_id: ProjectId):
-        pass
+    def get_nth_question(self, project_id: ProjectId, nth: int) -> SelectableQuestion:
+        self.questionnaire_repository
 
     def insert_answer(
         self, project_id: ProjectId, question_id: QuestionId, answer: Answer
-    ):
+    ) -> None:
         pass
 
-    def get_next_question(self, project_id: ProjectId, question: SelectableQuestion):
+    def reset_questionnaire(self, project_id: ProjectId) -> None:
         pass
 
-    def go_back_to_question(self, project_id: ProjectId, question: QuestionId):
-        pass
-
-    def reset_questionnaire(self, project_id: ProjectId):
+    def _get_question_from_graph(self, question_id: QuestionId):
         pass

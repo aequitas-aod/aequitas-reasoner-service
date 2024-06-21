@@ -103,10 +103,9 @@ class Neo4jQuestionnaireRepository(QuestionnaireRepository):
         q: dict = serialize(question)
         q["id"] = question.id.code
         q["created_at"] = question.created_at.isoformat()
-        del q["available_answers"]
-        del q["previous_question_id"]
-        del q["enabled_by"]
-        del q["selection_strategy"]
+        q["available_answers"] = map(lambda a: a.id.code, question.available_answers)
+        q["previous_question_id"] = question.previous_question_id.code
+        q["selection_strategy"] = question.selection_strategy.__class__.__name__
         del q["selected_answers"]
         return q
 
@@ -148,7 +147,8 @@ if __name__ == "__main__":
         AnswerFactory.create_answer(AnswerId(code="p1-Q-1-A-1"), "Red", "red")
     )
     # questionnaire_repository.insert_selectable_question(selectable_question)
-    questionnaire_repository.update_selectable_question(
-        selectable_question.id, updated_question
-    )
+    # questionnaire_repository.update_selectable_question(
+    #     selectable_question.id, updated_question
+    # )
+    print(updated_question.selection_strategy.__class__.__name__)
     # questionnaire_repository.delete_selectable_question(selectable_question.id)
