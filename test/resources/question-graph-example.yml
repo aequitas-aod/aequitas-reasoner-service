@@ -1,0 +1,311 @@
+- id: { code: q1 }
+  text: Do you have some AI system already in place, or are you developing an AI system?
+  type: single
+  available_answers:
+      - id: { code: q1-a1 }
+        text: I already have an AI system in place
+        value: ""
+      - id: { code: q1-a2 }
+        text: I am bootstrapping an AI system from scratch
+        value: ""
+  previous_question_id: null
+  enabled_by: []
+  action_needed: null
+  created_at: "2024-05-31T18:20:23.0"
+
+- id: { code: q2 }
+  text: In what area / sector is the AI system intended to be used?
+  type: multiple
+  available_answers:
+      - id: { code: q2-a1 }
+        text: Biometrics
+        value: ""
+      - id: { code: q2-a2 }
+        text: Critical infrastructure
+        value: ""
+      - id: { code: q2-a3 }
+        text: Education and Vocational training+
+        value: ""
+      - id: { code: q2-a4 }
+        text: Recruiting
+        value: ""
+      - id: { code: q2-a5 }
+        text: Employment
+        value: ""
+      - id: { code: q2-a6 }
+        text: Access to essential private and public services
+        value: ""
+      - id: { code: q2-a7 }
+        text: Access to benefits
+        value: ""
+      - id: { code: q2-a8 }
+        text: Law enforcement
+        value: ""
+      - id: { code: q2-a9 }
+        text: Migration, asylum and border control
+        value: ""
+      - id: { code: q2-a10 }
+        text: Administration of justice
+        value: ""
+      - id: { code: q2-a11 }
+        text: Democratic processes
+        value: ""
+      - id: { code: q2-a12 }
+        text: Healthcare
+        value: ""
+      - id: { code: q2-a13 }
+        text: Marketing
+        value: ""
+      - id: { code: q2-a14 }
+        text: Online platforms
+        value: ""
+      - id: { code: q2-a15 }
+        text: Content Generation
+        value: ""
+      - id: { code: q2-a16 }
+        text: Social Media
+        value: ""
+  previous_question_id: { code: q1 }
+  enabled_by:
+      - { code: q1-a1 }
+      - { code: q1-a2 }
+  action_needed: null
+  created_at: "2024-05-31T18:20:24.0"
+
+- id: { code: "q3" }
+  text: "Which AI methods will the AI system adopt?"
+  type: multiple
+  available_answers:
+      - id: { code: "q3-a1" }
+        text: "Uninformed search"
+        value: ""
+      - id: { code: "q3-a2" }
+        text: "Informed search"
+        value: ""
+      - id: { code: "q3-a3" }
+        text: "Local search"
+        value: ""
+      - id: { code: "q3-a4" }
+        text: "Constraint satisfaction"
+        value: ""
+      - id: { code: "q3-a5" }
+        text: "Constraint optimization"
+        value: ""
+      - id: { code: "q3-a6" }
+        text: "Adversarial search"
+        value: ""
+      - id: { code: "q3-a7" }
+        text: "Inductive logic programming"
+        value: ""
+      - id: { code: "q3-a8" }
+        text: "Decision trees"
+        value: ""
+      - id: { code: "q3-a9" }
+        text: "Deep learning"
+        value: ""
+      - id: { code: "q3-a10" }
+        text: "Support vector machines"
+        value: ""
+      - id: { code: "q3-a11" }
+        text: "Nearest neighbours"
+        value: ""
+      - id: { code: "q3-a12" }
+        text: "Generalised-linear models"
+        value: ""
+      - id: { code: "q3-a13" }
+        text: "Ensemble learning"
+        value: ""
+      - id: { code: "q3-a14" }
+        text: "Principal component analysis"
+        value: ""
+      - id: { code: "q3-a15" }
+        text: "K-Means"
+        value: ""
+      - id: { code: "q3-a16" }
+        text: "Mixture models"
+        value: ""
+      - id: { code: "q3-a17" }
+        text: "A-priori"
+        value: ""
+      - id: { code: "q3-a18" }
+        text: "Large language models"
+        value: ""
+      - id: { code: "q3-a19" }
+        text: "Phrase structure grammars"
+        value: ""
+      - id: { code: "q3-a20" }
+        text: "Parsing"
+        value: ""
+      - id: { code: "q3-a21" }
+        text: "Machine translation"
+        value: ""
+      - id: { code: "q3-a22" }
+        text: "Speech recognition"
+        value: ""
+  previous_question_id: { code: "q2" }
+  enabled_by:
+      - { code: "q2-a1" }
+      - { code: "q2-a2" }
+      - { code: "q2-a3" }
+      - { code: "q2-a4" }
+      - { code: "q2-a5" }
+      - { code: "q2-a6" }
+      - { code: "q2-a7" }
+      - { code: "q2-a8" }
+      - { code: "q2-a9" }
+      - { code: "q2-a10" }
+      - { code: "q2-a11" }
+      - { code: "q2-a12" }
+      - { code: "q2-a13" }
+      - { code: "q2-a14" }
+      - { code: "q2-a15" }
+      - { code: "q2-a16" }
+  action_needed: null
+  created_at: "2024-05-31T18:20:25.0"
+
+- id: { code: "q4" }
+  text: "Is the AI model developed using techniques that involve the model's training with data?"
+  type: single
+  available_answers:
+      - id: { code: "q4-a1" }
+        text: "Yes"
+        value: ""
+      - id: { code: "q4-a2" }
+        text: "No"
+        value: ""
+  previous_question_id: { code: "q3" }
+  enabled_by:
+      - { code: "q3-a1" }
+      - { code: "q3-a2" }
+      - { code: "q3-a3" }
+      - { code: "q3-a4" }
+      - { code: "q3-a5" }
+      - { code: "q3-a6" }
+      - { code: "q3-a7" }
+      - { code: "q3-a8" }
+      - { code: "q3-a9" }
+      - { code: "q3-a10" }
+      - { code: "q3-a11" }
+      - { code: "q3-a12" }
+      - { code: "q3-a13" }
+      - { code: "q3-a14" }
+      - { code: "q3-a15" }
+      - { code: "q3-a16" }
+      - { code: "q3-a17" }
+      - { code: "q3-a18" }
+      - { code: "q3-a19" }
+      - { code: "q3-a20" }
+      - { code: "q3-a21" }
+      - { code: "q3-a22" }
+  action_needed: null
+  created_at: "2024-05-31T18:20:26.0"
+
+- id: { code: "q5" }
+  text: "Are you using readily-available data sets?"
+  type: single
+  available_answers:
+      - id: { code: "q5-a1" }
+        text: "Yes"
+        value: ""
+      - id: { code: "q5-a2" }
+        text: "No"
+        value: ""
+  previous_question_id: { code: "q4" }
+  enabled_by:
+      - { code: "q4-a1" }
+      - { code: "q4-a2" }
+  action_needed: null
+  created_at: "2024-05-31T18:20:27.0"
+
+- id: { code: "q6" }
+  text: "Was the readily available dataset obtained by sampling the same population that where the system is going to be used?"
+  type: single
+  available_answers:
+      - id: { code: "q6-a1" }
+        text: "Yes"
+        value: ""
+      - id: { code: "q6-a2" }
+        text: "No"
+        value: ""
+  previous_question_id: { code: "q5" }
+  enabled_by:
+      - { code: q5-a1 }
+      - { code: q5-a2 }
+  action_needed: null
+  created_at: "2024-05-31T18:20:28.0"
+
+- id: { code: "q7" }
+  text: "Is the data set sufficiently representative of the population where the system will be used?"
+  type: single
+  available_answers:
+      - id: { code: "q7-a1" }
+        text: "Yes"
+        value: ""
+      - id: { code: "q7-a2" }
+        text: "No"
+        value: ""
+  previous_question_id: { code: "q6" }
+  enabled_by:
+      - { code: q6-a1 }
+      - { code: q6-a2 }
+  action_needed: null
+  created_at: "2024-05-31T18:20:29.0"
+
+- id: { code: "q8" }
+  text: "Which sensitive attributes are included in the dataset (or inferrable from the included ones)?"
+  type: multiple
+  available_answers:
+      - id: { code: "q8-a1" }
+        text: "Sex"
+        value: ""
+      - id: { code: "q8-a2" }
+        text: "Race"
+        value: ""
+      - id: { code: "q8-a3" }
+        text: "Colour"
+        value: ""
+      - id: { code: "q8-a4" }
+        text: "Ethnic origin"
+        value: ""
+      - id: { code: "q8-a5" }
+        text: "Social origin"
+        value: ""
+      - id: { code: "q8-a6" }
+        text: "Genetic features"
+        value: ""
+      - id: { code: "q8-a7" }
+        text: "Language"
+        value: ""
+      - id: { code: "q8-a8" }
+        text: "Religion or belief"
+        value: ""
+      - id: { code: "q8-a9" }
+        text: "Political or any other opinion"
+        value: ""
+      - id: { code: "q8-a10" }
+        text: "Membership of a minority"
+        value: ""
+      - id: { code: "q8-a11" }
+        text: "Property"
+        value: ""
+      - id: { code: "q8-a12" }
+        text: "Birth"
+        value: ""
+      - id: { code: "q8-a13" }
+        text: "Disability"
+        value: ""
+      - id: { code: "q8-a14" }
+        text: "Age"
+        value: ""
+      - id: { code: "q8-a15" }
+        text: "Sexual orientation"
+        value: ""
+      - id: { code: "q8-a16" }
+        text: "Other"
+        value: ""
+  previous_question_id: { code: "q7" }
+  enabled_by:
+      - { code: q7-a1 }
+      - { code: q7-a2 }
+  action_needed: null
+  created_at: "2024-05-31T18:20:30.0"
