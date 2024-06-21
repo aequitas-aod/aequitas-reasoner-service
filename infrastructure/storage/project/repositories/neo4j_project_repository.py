@@ -91,5 +91,5 @@ class Neo4jProjectRepository(ProjectRepository):
 
 if __name__ == "__main__":
     Neo4jProjectRepository().delete_all_projects()
-    p1: Project = ProjectFactory.create_project(ProjectId(code="1"), "Project name")
+    p1: Project = ProjectFactory.create_project(ProjectId(code="p1"), "Project 1")
     Neo4jProjectRepository().insert_project(p1)

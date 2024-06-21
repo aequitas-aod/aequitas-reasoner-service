@@ -1,7 +1,7 @@
 from typing import List, Optional
 
 from domain.graph.core import QuestionId, Question, AnswerId, Answer
-from domain.graph.core.enum import QuestionType
+from domain.graph.core.enum import QuestionType, Action
 from domain.graph.factories import AnswerFactory, QuestionFactory
 from domain.graph.repositories import QuestionRepository
 from presentation.presentation import serialize, deserialize
@@ -201,27 +201,27 @@ if __name__ == "__main__":
         ),
     )
     Neo4jQuestionRepository().insert_question(q1)
-    # q2: Question = QuestionFactory.create_question(
-    #     QuestionId(code="cd-question"),
-    #     "Do you use CD?",
-    #     QuestionType.SINGLE_CHOICE,
-    #     frozenset(
-    #         {
-    #             AnswerFactory.create_answer(AnswerId(code="yes"), "Yes", "yes"),
-    #             AnswerFactory.create_answer(
-    #                 AnswerId(code="little-bit"), "A little bit", "little-bit"
-    #             ),
-    #             AnswerFactory.create_answer(AnswerId(code="no"), "No", "no"),
-    #         }
-    #     ),
-    #     previous_question_id=QuestionId(code="ci-question"),
-    #     enabled_by=frozenset(
-    #         {AnswerId(code="answer-yes"), AnswerId(code="answer-little-bit")}
-    #     ),
-    #     action_needed=Action.METRICS_CHECK,
-    # )
-    # GraphQuestionRepository().insert_question(q2)
-    # print(GraphQuestionRepository().get_all_questions())
-    # GraphQuestionRepository().delete_question(QuestionId(code="test-question"))
-    # print(GraphQuestionRepository().get_question_by_id(QuestionId(code="cd-question")))
-    # print(GraphQuestionRepository().delete_all_questions())
+    q2: Question = QuestionFactory.create_question(
+        QuestionId(code="cd-question"),
+        "Do you use CD?",
+        QuestionType.SINGLE_CHOICE,
+        frozenset(
+            {
+                AnswerFactory.create_answer(AnswerId(code="yes"), "Yes", "yes"),
+                AnswerFactory.create_answer(
+                    AnswerId(code="little-bit"), "A little bit", "little-bit"
+                ),
+                AnswerFactory.create_answer(AnswerId(code="no"), "No", "no"),
+            }
+        ),
+        previous_question_id=QuestionId(code="ci-question"),
+        enabled_by=frozenset(
+            {AnswerId(code="answer-yes"), AnswerId(code="answer-little-bit")}
+        ),
+        action_needed=Action.METRICS_CHECK,
+    )
+    Neo4jQuestionRepository().insert_question(q2)
+    # print(Neo4jQuestionRepository().get_all_questions())
+    # Neo4jQuestionRepository().delete_question(QuestionId(code="test-question"))
+    # print(Neo4jQuestionRepository().get_question_by_id(QuestionId(code="cd-question")))
+    # print(Neo4jQuestionRepository().delete_all_questions())
