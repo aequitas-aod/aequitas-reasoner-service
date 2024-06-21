@@ -11,7 +11,7 @@
   previous_question_id: null
   enabled_by: []
   action_needed: null
-  created_at: "2024-05-31T18:20:23.0"
+  created_at: "2024-05-31T18:20:23"
 
 - id: { code: q2 }
   text: In what area / sector is the AI system intended to be used?
@@ -70,7 +70,7 @@
       - { code: q1-a1 }
       - { code: q1-a2 }
   action_needed: null
-  created_at: "2024-05-31T18:20:24.0"
+  created_at: "2024-05-31T18:20:24"
 
 - id: { code: "q3" }
   text: "Which AI methods will the AI system adopt?"
@@ -161,7 +161,7 @@
       - { code: "q2-a15" }
       - { code: "q2-a16" }
   action_needed: null
-  created_at: "2024-05-31T18:20:25.0"
+  created_at: "2024-05-31T18:20:25"
 
 - id: { code: "q4" }
   text: "Is the AI model developed using techniques that involve the model's training with data?"
@@ -198,7 +198,7 @@
       - { code: "q3-a21" }
       - { code: "q3-a22" }
   action_needed: null
-  created_at: "2024-05-31T18:20:26.0"
+  created_at: "2024-05-31T18:20:26"
 
 - id: { code: "q5" }
   text: "Are you using readily-available data sets?"
@@ -215,7 +215,7 @@
       - { code: "q4-a1" }
       - { code: "q4-a2" }
   action_needed: null
-  created_at: "2024-05-31T18:20:27.0"
+  created_at: "2024-05-31T18:20:27"
 
 - id: { code: "q6" }
   text: "Was the readily available dataset obtained by sampling the same population that where the system is going to be used?"
@@ -232,7 +232,7 @@
       - { code: q5-a1 }
       - { code: q5-a2 }
   action_needed: null
-  created_at: "2024-05-31T18:20:28.0"
+  created_at: "2024-05-31T18:20:28"
 
 - id: { code: "q7" }
   text: "Is the data set sufficiently representative of the population where the system will be used?"
@@ -249,7 +249,7 @@
       - { code: q6-a1 }
       - { code: q6-a2 }
   action_needed: null
-  created_at: "2024-05-31T18:20:29.0"
+  created_at: "2024-05-31T18:20:29"
 
 - id: { code: "q8" }
   text: "Which sensitive attributes are included in the dataset (or inferrable from the included ones)?"
@@ -308,4 +308,4 @@
       - { code: q7-a1 }
       - { code: q7-a2 }
   action_needed: null
-  created_at: "2024-05-31T18:20:30.0"
+  created_at: "2024-05-31T18:20:30"

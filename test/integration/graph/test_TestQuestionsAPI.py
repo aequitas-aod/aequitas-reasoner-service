@@ -166,7 +166,7 @@ class TestQuestionsAPI(unittest.TestCase):
     def test_questions_load(self):
         current_file = Path(__file__).resolve()
         root_dir = current_file.parents[3]
-        yaml_file_path = root_dir / "test" / "resources" / "questions-example.yml"
+        yaml_file_path = root_dir / "test" / "resources" / "questions-load-example.yml"
         with yaml_file_path.open("r") as file:
             questions_yaml: str = file.read()
             response = self.app.post(
