@@ -1,19 +1,20 @@
 from abc import ABC, abstractmethod
 from typing import List, Optional
 
-from domain.graph.core import QuestionId, Question
+from domain.common.core import QuestionId
+from domain.graph.core import GraphQuestion
 
 
-class QuestionRepository(ABC):
+class GraphQuestionRepository(ABC):
 
     @abstractmethod
-    def get_all_questions(self) -> List[Question]:
+    def get_all_questions(self) -> List[GraphQuestion]:
         """Gets all questions
         :return: a list of all questions"""
         pass
 
     @abstractmethod
-    def get_question_by_id(self, question_id: QuestionId) -> Optional[Question]:
+    def get_question_by_id(self, question_id: QuestionId) -> Optional[GraphQuestion]:
         """Gets a question by its id
         :param question_id: the question id
         :return: the question or None if it does not exist"""
@@ -43,7 +44,7 @@ class QuestionRepository(ABC):
         pass
 
     @abstractmethod
-    def get_last_inserted_question(self) -> Optional[Question]:
+    def get_last_inserted_question(self) -> Optional[GraphQuestion]:
         """Gets the last inserted question
         :return: the last inserted question"""
         pass

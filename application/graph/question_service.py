@@ -1,23 +1,23 @@
 from typing import Optional, List
 
-from domain.graph.core import Question, QuestionId
-from domain.graph.repositories import QuestionRepository
+from domain.graph.core import GraphQuestion, QuestionId
+from domain.graph.repositories import GraphQuestionRepository
 from utils.errors import BadRequestError
 
 
 class QuestionService:
 
-    def __init__(self, question_repository: QuestionRepository):
+    def __init__(self, question_repository: GraphQuestionRepository):
         self.question_repository = question_repository
 
-    def get_all_questions(self) -> List[Question]:
+    def get_all_questions(self) -> List[GraphQuestion]:
         """
         Gets all questions
         :return: a list of all questions
         """
         return self.question_repository.get_all_questions()
 
-    def get_question_by_id(self, question_id: QuestionId) -> Optional[Question]:
+    def get_question_by_id(self, question_id: QuestionId) -> Optional[GraphQuestion]:
         """
         Gets a question by its id
         :param question_id: the question id
@@ -25,7 +25,7 @@ class QuestionService:
         """
         return self.question_repository.get_question_by_id(question_id)
 
-    def add_question(self, question: Question) -> QuestionId:
+    def add_question(self, question: GraphQuestion) -> QuestionId:
         """
         Inserts a question
         :param question: the question to insert
@@ -34,7 +34,7 @@ class QuestionService:
         """
         return self.question_repository.insert_question(question)
 
-    def update_question(self, question_id: QuestionId, question: Question) -> None:
+    def update_question(self, question_id: QuestionId, question: GraphQuestion) -> None:
         """
         Updates an existing question
         :param question_id: the id of the question to update
@@ -69,7 +69,7 @@ class QuestionService:
             check = self.question_repository.get_question_by_id(candidate_id)
         return candidate_id
 
-    def get_last_inserted_question(self) -> Optional[Question]:
+    def get_last_inserted_question(self) -> Optional[GraphQuestion]:
         """
         Gets the last inserted question
         :return: the last inserted question

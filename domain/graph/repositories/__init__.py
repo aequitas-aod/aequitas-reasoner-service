@@ -1,1 +1,1 @@
-from domain.graph.repositories.question_repository import QuestionRepository
+from domain.graph.repositories.graph_question_repository import GraphQuestionRepository

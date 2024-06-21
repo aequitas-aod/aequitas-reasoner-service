@@ -1,3 +1,3 @@
-from infrastructure.storage.graph.repositories.neo4j_question_repository import (
-    Neo4jQuestionRepository,
+from infrastructure.storage.graph.repositories.neo4j_graph_question_repository import (
+    Neo4JGraphQuestionRepository,
 )

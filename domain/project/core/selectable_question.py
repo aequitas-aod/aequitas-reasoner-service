@@ -3,11 +3,11 @@ from typing import FrozenSet
 from pydantic import field_serializer
 from typing_extensions import Self
 
-from domain.graph.core import Answer, Question
+from domain.graph.core import Answer, GraphQuestion
 from domain.project.core.selection import SelectionStrategy
 
 
-class SelectableQuestion(Question):
+class SelectableQuestion(GraphQuestion):
     selection_strategy: SelectionStrategy
     selected_answers: FrozenSet[Answer] = frozenset()
 

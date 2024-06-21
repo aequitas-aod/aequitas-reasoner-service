@@ -3,11 +3,12 @@ from typing import Type, TypeVar
 
 from pydantic import BaseModel
 
+import domain.common.core as _common_core_domain
 import domain.graph.core as _graph_core_domain
 import domain.project.core as _project_core_domain
 
 T = TypeVar("T", bound=BaseModel)
-core_modules = [_graph_core_domain, _project_core_domain]
+core_modules = [_common_core_domain, _graph_core_domain, _project_core_domain]
 
 
 def _is_admissible_type(obj: type) -> bool:

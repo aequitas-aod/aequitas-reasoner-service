@@ -1,20 +1,22 @@
 import unittest
 from datetime import datetime
 
-from domain.graph.core import AnswerId, Answer, Question, QuestionId
-from domain.graph.core.enum import Action, QuestionType
-from domain.graph.factories import AnswerFactory, QuestionFactory
+from domain.common.core import AnswerId, Answer, QuestionId
+from domain.common.core.enum import QuestionType
+from domain.graph.core import GraphQuestion
+from domain.graph.core.enum import Action
+from domain.common.factories import AnswerFactory
+from domain.graph.factories import GraphQuestionFactory
 from presentation.presentation import deserialize
 
 
 class TestQuestionDeserialization(unittest.TestCase):
 
     def setUp(self):
-        self.answer = {"id": {"code": "answer"}, "text": "Always.", "value": "always"}
+        self.answer = {"id": {"code": "answer"}, "text": "Always."}
         self.boolean_answer = {
             "id": {"code": "boolean-answer"},
             "text": "No",
-            "value": "False",
         }
         self.question_timestamp = datetime.now()
         self.question: dict = {
@@ -25,12 +27,10 @@ class TestQuestionDeserialization(unittest.TestCase):
                 {
                     "id": {"code": "boolean_question_id-false"},
                     "text": "No",
-                    "value": "False",
                 },
                 {
                     "id": {"code": "boolean_question_id-true"},
                     "text": "Yes",
-                    "value": "True",
                 },
             ],
             "previous_question_id": None,
@@ -41,7 +41,7 @@ class TestQuestionDeserialization(unittest.TestCase):
 
     def test_deserialize_answer(self):
         expected: Answer = AnswerFactory.create_answer(
-            AnswerId(code="answer"), "Always.", "always"
+            AnswerId(code="answer"), "Always."
         )
         actual: Answer = deserialize(self.answer, Answer)
         self.assertEqual(
@@ -60,14 +60,14 @@ class TestQuestionDeserialization(unittest.TestCase):
         )
 
     def test_deserialize_question(self):
-        expected: Question = QuestionFactory.create_boolean_question(
+        expected: GraphQuestion = GraphQuestionFactory.create_boolean_question(
             QuestionId(code="boolean_question_id"),
             "Do you practice TDD?",
             enabled_by=frozenset({AnswerId(code="answer-code")}),
             action_needed=Action.METRICS_CHECK,
             created_at=self.question_timestamp,
         )
-        actual: Question = deserialize(self.question, Question)
+        actual: GraphQuestion = deserialize(self.question, GraphQuestion)
         self.assertEqual(
             expected,
             actual,

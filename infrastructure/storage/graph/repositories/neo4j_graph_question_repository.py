@@ -1,23 +1,24 @@
 from typing import List, Optional
 
-from domain.graph.core import QuestionId, Question, AnswerId, Answer
-from domain.graph.core.enum import QuestionType
-from domain.graph.factories import AnswerFactory, QuestionFactory
-from domain.graph.repositories import QuestionRepository
+from domain.common.core import QuestionId, Answer
+from domain.graph.core import GraphQuestion
+from domain.common.core.enum import QuestionType
+from domain.graph.factories import GraphQuestionFactory
+from domain.graph.repositories import GraphQuestionRepository
 from presentation.presentation import serialize, deserialize
 from utils.env import DB_HOST, DB_USER, DB_PASSWORD
 from utils.errors import NotFoundError, ConflictError
 from utils.neo4j_driver import Neo4jDriver, Credentials, Neo4jQuery
 
 
-class Neo4jQuestionRepository(QuestionRepository):
+class Neo4JGraphQuestionRepository(GraphQuestionRepository):
 
     def __init__(self):
         self.driver: Neo4jDriver = Neo4jDriver(
             DB_HOST, Credentials(DB_USER, DB_PASSWORD)
         )
 
-    def get_all_questions(self) -> List[Question]:
+    def get_all_questions(self) -> List[GraphQuestion]:
         query_string = (
             "MATCH (q:Question)-[:HAS_ANSWER]->(a:Answer)"
             "OPTIONAL MATCH (q)-[:PREVIOUS]->(prev:Question)"
@@ -25,15 +26,15 @@ class Neo4jQuestionRepository(QuestionRepository):
         )
         query: Neo4jQuery = Neo4jQuery(query_string, {})
         res: List[dict] = self.driver.query(query)
-        questions: List[Question] = []
+        questions: List[GraphQuestion] = []
         for r in res:
-            question: Question = self._convert_node_in_question(
+            question: GraphQuestion = self._convert_node_in_question(
                 r["q"], r["answers"], r["previous_question_id"]
             )
             questions.append(question)
         return questions
 
-    def get_question_by_id(self, question_id: QuestionId) -> Optional[Question]:
+    def get_question_by_id(self, question_id: QuestionId) -> Optional[GraphQuestion]:
         query_string = (
             "MATCH (q:Question {id: $question_id})-[:HAS_ANSWER]->(a:Answer)"
             "OPTIONAL MATCH (q)-[:PREVIOUS]->(prev:Question)"
@@ -43,12 +44,12 @@ class Neo4jQuestionRepository(QuestionRepository):
         r: List[dict] = self.driver.query(query)
         if len(r) == 0:
             return None
-        question: Question = self._convert_node_in_question(
+        question: GraphQuestion = self._convert_node_in_question(
             r[0]["q"], r[0]["answers"], r[0]["previous_question_id"]
         )
         return question
 
-    def insert_question(self, question: Question) -> None:
+    def insert_question(self, question: GraphQuestion) -> None:
         if self._check_question_exists(question.id):
             raise ConflictError(f"Question with id {question.id} already exists")
 
@@ -92,7 +93,7 @@ class Neo4jQuestionRepository(QuestionRepository):
 
         self.driver.transaction(queries)
 
-    def update_question(self, question_id: QuestionId, question: Question) -> None:
+    def update_question(self, question_id: QuestionId, question: GraphQuestion) -> None:
         if not self._check_question_exists(question_id):
             raise NotFoundError(f"Question with id {question_id} does not exist")
         self.delete_question(question_id)
@@ -108,7 +109,7 @@ class Neo4jQuestionRepository(QuestionRepository):
             )
         )
 
-    def get_last_inserted_question(self) -> Optional[Question]:
+    def get_last_inserted_question(self) -> Optional[GraphQuestion]:
         query_string = (
             "MATCH (q:Question)-[:HAS_ANSWER]->(a:Answer)"
             "OPTIONAL MATCH (q)-[:PREVIOUS]->(prev:Question)"
@@ -119,13 +120,13 @@ class Neo4jQuestionRepository(QuestionRepository):
         r: List[dict] = self.driver.query(query)
         if len(r) == 0:
             return None
-        question: Question = self._convert_node_in_question(
+        question: GraphQuestion = self._convert_node_in_question(
             r[0]["q"], r[0]["answers"], r[0]["previous_question_id"]
         )
         return question
 
     def _check_question_exists(self, question_id: QuestionId) -> bool:
-        q: Question = self.get_question_by_id(question_id)
+        q: GraphQuestion = self.get_question_by_id(question_id)
         return q is not None
 
     def _get_enabled_by(self, question_id: QuestionId) -> List[dict]:
@@ -138,7 +139,7 @@ class Neo4jQuestionRepository(QuestionRepository):
         r: List[dict] = self.driver.query(query)
         return [{"code": code} for code in r[0]["enabled_by"]]
 
-    def _convert_question_in_node(self, question: Question) -> dict:
+    def _convert_question_in_node(self, question: GraphQuestion) -> dict:
         q: dict = serialize(question)
         q["id"] = question.id.code
         q["created_at"] = question.created_at.isoformat()
@@ -149,7 +150,7 @@ class Neo4jQuestionRepository(QuestionRepository):
 
     def _convert_node_in_question(
         self, q: dict, answers: List, previous_question_id: QuestionId
-    ) -> Question:
+    ) -> GraphQuestion:
         question: dict = q
         question["id"] = {"code": question["id"]}
         question["created_at"] = question["created_at"]
@@ -168,7 +169,7 @@ class Neo4jQuestionRepository(QuestionRepository):
             question["action_needed"] = question["action_needed"]
         else:
             question["action_needed"] = None
-        return deserialize(question, Question)
+        return deserialize(question, GraphQuestion)
 
     def _convert_answer_in_node(self, answer: Answer) -> dict:
         a: dict = serialize(answer)
@@ -185,8 +186,8 @@ class Neo4jQuestionRepository(QuestionRepository):
 
 
 if __name__ == "__main__":
-    Neo4jQuestionRepository().delete_all_questions()
-    q1: Question = QuestionFactory.create_question(
+    Neo4JGraphQuestionRepository().delete_all_questions()
+    q1: GraphQuestion = GraphQuestionFactory.create_question(
         QuestionId(code="test-question"),
         "Test question",
         QuestionType.SINGLE_CHOICE,
@@ -200,7 +201,7 @@ if __name__ == "__main__":
             }
         ),
     )
-    Neo4jQuestionRepository().insert_question(q1)
+    Neo4JGraphQuestionRepository().insert_question(q1)
     # q2: Question = QuestionFactory.create_question(
     #     QuestionId(code="cd-question"),
     #     "Do you use CD?",

@@ -7,15 +7,15 @@ from typing import Set
 import yaml
 from python_on_whales import DockerClient
 
-from domain.graph.core import Question, QuestionId, AnswerId
+from domain.graph.core import GraphQuestion, QuestionId, AnswerId
 from domain.graph.core.enum import QuestionType
-from domain.graph.factories import AnswerFactory, QuestionFactory
+from domain.graph.factories import AnswerFactory, GraphQuestionFactory
 from presentation.presentation import serialize, deserialize
 from test.utils.utils import get_file_path
 from ws.main import create_app
 
 
-class TestQuestionsAPI(unittest.TestCase):
+class TestGraphQuestionsAPI(unittest.TestCase):
 
     @classmethod
     def startDocker(cls):
@@ -29,7 +29,7 @@ class TestQuestionsAPI(unittest.TestCase):
         cls.app = create_app().test_client()
         cls.question_timestamp = datetime.now()
         cls.question_timestamp_2 = datetime.now()
-        cls.question: Question = QuestionFactory.create_question(
+        cls.question: GraphQuestion = GraphQuestionFactory.create_question(
             QuestionId(code="test-question"),
             "Test question",
             QuestionType.SINGLE_CHOICE,
@@ -46,7 +46,7 @@ class TestQuestionsAPI(unittest.TestCase):
             ),
             created_at=cls.question_timestamp,
         )
-        cls.question2: Question = QuestionFactory.create_boolean_question(
+        cls.question2: GraphQuestion = GraphQuestionFactory.create_boolean_question(
             QuestionId(code="test-question-2"),
             "Test question 2",
             created_at=cls.question_timestamp_2,
@@ -72,8 +72,8 @@ class TestQuestionsAPI(unittest.TestCase):
         questions_dict = json.loads(response.data)
         self.assertEqual(response.status_code, 200)
         self.assertEqual(2, len(questions_dict))
-        all_questions: Set[Question] = set(
-            [deserialize(question, Question) for question in questions_dict]
+        all_questions: Set[GraphQuestion] = set(
+            [deserialize(question, GraphQuestion) for question in questions_dict]
         )
         self.assertEqual({self.question, self.question2}, all_questions)
 
@@ -82,7 +82,7 @@ class TestQuestionsAPI(unittest.TestCase):
         response = self.app.get(f"/questions/{self.question.id.code}")
         self.assertEqual(response.status_code, 200)
         self.assertEqual(
-            self.question, deserialize(json.loads(response.data), Question)
+            self.question, deserialize(json.loads(response.data), GraphQuestion)
         )
 
     def test_get_non_existent_question(self):
@@ -103,7 +103,7 @@ class TestQuestionsAPI(unittest.TestCase):
 
     def test_update_question(self):
         self.app.post("/questions", json=serialize(self.question))
-        updated_question: Question = self.question.model_copy()
+        updated_question: GraphQuestion = self.question.model_copy()
         updated_question.text = "Updated text"
         updated_question.type = QuestionType.MULTIPLE_CHOICE
         response = self.app.put(
@@ -112,7 +112,7 @@ class TestQuestionsAPI(unittest.TestCase):
         self.assertEqual(response.status_code, 200)
         response = self.app.get(f"/questions/{self.question.id.code}")
         self.assertEqual(
-            updated_question, deserialize(json.loads(response.data), Question)
+            updated_question, deserialize(json.loads(response.data), GraphQuestion)
         )
         response = self.app.put(
             f"/questions/{self.question2.id.code}", json=serialize(self.question)
@@ -165,7 +165,9 @@ class TestQuestionsAPI(unittest.TestCase):
         self.assertEqual(expected_question, json.loads(response.data))
 
     def test_questions_load(self):
-        yaml_file_path: Path = get_file_path("test/resources/questions-load-example.yml")
+        yaml_file_path: Path = get_file_path(
+            "test/resources/questions-load-example.yml"
+        )
         with yaml_file_path.open("r") as file:
             questions_yaml: str = file.read()
             response = self.app.post(

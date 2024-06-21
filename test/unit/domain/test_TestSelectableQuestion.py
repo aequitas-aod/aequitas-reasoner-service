@@ -1,9 +1,9 @@
 import unittest
 from datetime import datetime
 
-from domain.graph.core import Answer, AnswerId, QuestionId
-from domain.graph.core.enum import QuestionType
-from domain.graph.factories.answer_factory import AnswerFactory
+from domain.common.core import Answer, AnswerId, QuestionId
+from domain.common.core.enum import QuestionType
+from domain.common.factories.answer_factory import AnswerFactory
 from domain.project.core import SelectableQuestion
 from domain.project.factories import SelectableQuestionFactory
 
@@ -12,23 +12,27 @@ class TestSelectableQuestion(unittest.TestCase):
 
     def setUp(self):
         self.question_timestamp = datetime.now()
-        self.question: (
-            SelectableQuestion
-        ) = SelectableQuestionFactory.create_selectable_question(
-            QuestionId(code="question_id"),
-            "Do you practice TDD?",
-            QuestionType.SINGLE_CHOICE,
-            frozenset(
-                {
-                    Answer(
-                        id=AnswerId(code="answer-always"), text="Always", value="always"
-                    ),
-                    Answer(
-                        id=AnswerId(code="answer-never"), text="Never", value="never"
-                    ),
-                }
-            ),
-            created_at=self.question_timestamp,
+        self.question: SelectableQuestion = (
+            SelectableQuestionFactory.create_selectable_question(
+                QuestionId(code="question_id"),
+                "Do you practice TDD?",
+                QuestionType.SINGLE_CHOICE,
+                frozenset(
+                    {
+                        Answer(
+                            id=AnswerId(code="answer-always"),
+                            text="Always",
+                            value="always",
+                        ),
+                        Answer(
+                            id=AnswerId(code="answer-never"),
+                            text="Never",
+                            value="never",
+                        ),
+                    }
+                ),
+                created_at=self.question_timestamp,
+            )
         )
 
     def test_select_answer(self):
@@ -66,10 +70,10 @@ class TestSelectableQuestion(unittest.TestCase):
 
 class TestBooleanQuestion(unittest.TestCase):
     def setUp(self):
-        self.question: (
-            SelectableQuestion
-        ) = SelectableQuestionFactory.create_selectable_boolean_question(
-            QuestionId(code="boolean_question_id"), "Do you practice TDD?"
+        self.question: SelectableQuestion = (
+            SelectableQuestionFactory.create_selectable_boolean_question(
+                QuestionId(code="boolean_question_id"), "Do you practice TDD?"
+            )
         )
 
     def test_boolean_answers(self):

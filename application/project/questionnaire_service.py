@@ -1,11 +1,11 @@
-from domain.graph.core import QuestionId, Answer
-from domain.graph.repositories import QuestionRepository
+from domain.common.core import QuestionId, Answer
+from domain.graph.repositories import GraphQuestionRepository
 from domain.project.core import ProjectId, SelectableQuestion
 
 
 class QuestionnaireService:
 
-    def __init__(self, question_repository: QuestionRepository):
+    def __init__(self, question_repository: GraphQuestionRepository):
         self.question_repository = question_repository
 
     def get_first_question(self, project_id: ProjectId):
