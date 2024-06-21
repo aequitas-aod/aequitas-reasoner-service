@@ -1,17 +1,17 @@
 from datetime import datetime
-from typing import FrozenSet, Optional
+from typing import FrozenSet
 
-from domain.graph.core import Answer, AnswerId, QuestionId
-from domain.graph.core.enum import Action, QuestionType
-from domain.graph.factories import AnswerFactory
-from domain.project.core import SelectableQuestion
+from domain.common.core import Answer, AnswerId, QuestionId
+from domain.common.core.enum import QuestionType
+from domain.common.factories import AnswerFactory
+from domain.project.core import ProjectQuestion
 from domain.project.core.selection import (
     MultipleSelectionStrategy,
     SingleSelectionStrategy,
 )
 
 
-class SelectableQuestionFactory:
+class ProjectQuestionFactory:
 
     @staticmethod
     def create_selectable_question(
@@ -19,12 +19,9 @@ class SelectableQuestionFactory:
         text: str,
         question_type: QuestionType,
         available_answers: FrozenSet[Answer],
-        previous_question_id: Optional[QuestionId] = None,
-        enabled_by: FrozenSet[AnswerId] = frozenset(),
-        action_needed: Optional[Action] = None,
         created_at: datetime = datetime.now(),
         selected_answers: FrozenSet[Answer] = frozenset(),
-    ) -> SelectableQuestion:
+    ) -> ProjectQuestion:
         match question_type:
             case QuestionType.BOOLEAN:
                 selection_strategy = SingleSelectionStrategy()
@@ -37,14 +34,13 @@ class SelectableQuestionFactory:
             case _:
                 raise ValueError(f"Unsupported question type {question_type}")
 
-        return SelectableQuestion(
+        if len(selected_answers) > 0 and question_type != QuestionType.MULTIPLE_CHOICE:
+            raise ValueError("Selected answers are only allowed for multiple choice questions")
+        return ProjectQuestion(
             id=question_id,
             text=text,
             type=question_type,
             available_answers=available_answers,
-            previous_question_id=previous_question_id,
-            enabled_by=enabled_by,
-            action_needed=action_needed,
             created_at=created_at,
             selection_strategy=selection_strategy,
             selected_answers=selected_answers,
@@ -54,11 +50,8 @@ class SelectableQuestionFactory:
     def create_selectable_boolean_question(
         question_id: QuestionId,
         text: str,
-        previous_question_id: Optional[QuestionId] = None,
-        enabled_by: FrozenSet[AnswerId] = frozenset(),
-        action_needed: Optional[Action] = None,
         created_at: datetime = datetime.now(),
-    ) -> SelectableQuestion:
+    ) -> ProjectQuestion:
         available_answers: FrozenSet[Answer] = frozenset(
             {
                 AnswerFactory.create_boolean_answer(
@@ -69,13 +62,10 @@ class SelectableQuestionFactory:
                 ),
             }
         )
-        return SelectableQuestionFactory.create_selectable_question(
+        return ProjectQuestionFactory.create_selectable_question(
             question_id,
             text,
             QuestionType.BOOLEAN,
             available_answers,
-            previous_question_id,
-            enabled_by,
-            action_needed,
             created_at,
         )

@@ -4,16 +4,16 @@ from datetime import datetime
 from domain.common.core import Answer, AnswerId, QuestionId
 from domain.common.core.enum import QuestionType
 from domain.common.factories.answer_factory import AnswerFactory
-from domain.project.core import SelectableQuestion
-from domain.project.factories import SelectableQuestionFactory
+from domain.project.core import ProjectQuestion
+from domain.project.factories import ProjectQuestionFactory
 
 
 class TestSelectableQuestion(unittest.TestCase):
 
     def setUp(self):
         self.question_timestamp = datetime.now()
-        self.question: SelectableQuestion = (
-            SelectableQuestionFactory.create_selectable_question(
+        self.question: ProjectQuestion = (
+            ProjectQuestionFactory.create_selectable_question(
                 QuestionId(code="question_id"),
                 "Do you practice TDD?",
                 QuestionType.SINGLE_CHOICE,
@@ -37,12 +37,12 @@ class TestSelectableQuestion(unittest.TestCase):
 
     def test_select_answer(self):
         answer, _ = self.question.available_answers
-        question: SelectableQuestion = self.question.select_answer(answer)
+        question: ProjectQuestion = self.question.select_answer(answer)
         self.assertEqual(question.selected_answers, {answer})
 
     def test_select_answer_twice(self):
         answer, _ = self.question.available_answers
-        question: SelectableQuestion = self.question.select_answer(
+        question: ProjectQuestion = self.question.select_answer(
             answer
         ).select_answer(answer)
         self.assertEqual(question.selected_answers, {answer})
@@ -57,21 +57,21 @@ class TestSelectableQuestion(unittest.TestCase):
 
     def test_deselect_answer(self):
         answer, _ = self.question.available_answers
-        question: SelectableQuestion = self.question.select_answer(
+        question: ProjectQuestion = self.question.select_answer(
             answer
         ).deselect_answer(answer)
         self.assertEqual(question.selected_answers, frozenset())
 
     def test_deselect_not_selected_answer(self):
         answer, _ = self.question.available_answers
-        question: SelectableQuestion = self.question.deselect_answer(answer)
+        question: ProjectQuestion = self.question.deselect_answer(answer)
         self.assertEqual(question.selected_answers, frozenset())
 
 
 class TestBooleanQuestion(unittest.TestCase):
     def setUp(self):
-        self.question: SelectableQuestion = (
-            SelectableQuestionFactory.create_selectable_boolean_question(
+        self.question: ProjectQuestion = (
+            ProjectQuestionFactory.create_selectable_boolean_question(
                 QuestionId(code="boolean_question_id"), "Do you practice TDD?"
             )
         )

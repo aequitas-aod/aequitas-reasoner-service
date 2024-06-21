@@ -1,6 +1,6 @@
 from domain.common.core import QuestionId, Answer
 from domain.graph.repositories import GraphQuestionRepository
-from domain.project.core import ProjectId, SelectableQuestion
+from domain.project.core import ProjectId, ProjectQuestion
 
 
 class QuestionnaireService:
@@ -16,7 +16,7 @@ class QuestionnaireService:
     ):
         pass
 
-    def get_next_question(self, project_id: ProjectId, question: SelectableQuestion):
+    def get_next_question(self, project_id: ProjectId, question: ProjectQuestion):
         pass
 
     def go_back_to_question(self, project_id: ProjectId, question: QuestionId):

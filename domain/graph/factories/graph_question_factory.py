@@ -34,9 +34,9 @@ class GraphQuestionFactory:
     def create_boolean_question(
         question_id: QuestionId,
         text: str,
+        created_at: datetime = datetime.now(),
         enabled_by: FrozenSet[AnswerId] = frozenset(),
         action_needed: Optional[Action] = None,
-        created_at: datetime = datetime.now(),
     ) -> GraphQuestion:
         available_answers: FrozenSet[Answer] = frozenset(
             {

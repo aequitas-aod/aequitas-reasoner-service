@@ -3,11 +3,12 @@ from typing import FrozenSet
 from pydantic import field_serializer
 from typing_extensions import Self
 
-from domain.graph.core import Answer, GraphQuestion
+from domain.common.core import Question
+from domain.common.core import Answer
 from domain.project.core.selection import SelectionStrategy
 
 
-class SelectableQuestion(GraphQuestion):
+class ProjectQuestion(Question):
     selection_strategy: SelectionStrategy
     selected_answers: FrozenSet[Answer] = frozenset()
 
@@ -20,14 +21,11 @@ class SelectableQuestion(GraphQuestion):
         selected_answers = self.selection_strategy.select_answer(
             answer, self.selected_answers
         )
-        return SelectableQuestion(
+        return ProjectQuestion(
             id=self.id,
             text=self.text,
             type=self.type,
             available_answers=self.available_answers,
-            previous_question_id=self.previous_question_id,
-            enabled_by=self.enabled_by,
-            action_needed=self.action_needed,
             created_at=self.created_at,
             selection_strategy=self.selection_strategy,
             selected_answers=selected_answers,
@@ -37,14 +35,11 @@ class SelectableQuestion(GraphQuestion):
         selected_answers = self.selection_strategy.deselect_answer(
             answer, self.selected_answers
         )
-        return SelectableQuestion(
+        return ProjectQuestion(
             id=self.id,
             text=self.text,
             type=self.type,
             available_answers=self.available_answers,
-            previous_question_id=self.previous_question_id,
-            enabled_by=self.enabled_by,
-            action_needed=self.action_needed,
             created_at=self.created_at,
             selection_strategy=self.selection_strategy,
             selected_answers=selected_answers,
@@ -56,8 +51,8 @@ class SelectableQuestion(GraphQuestion):
 
     def __str__(self) -> str:
         return (
-            f"SelectableQuestion(id={self.id}, text={self.text}, type={self.type}, available_answers={self.available_answers},"
-            f"action_needed={self.action_needed}, selection_strategy={self.selection_strategy}, selected_answers={self.selected_answers})"
+            f"SelectableQuestion(id={self.id}, text={self.text}, type={self.type}, \n"
+            f"selection_strategy={self.selection_strategy}, selected_answers={self.selected_answers})"
         )
 
     def __hash__(self):
@@ -66,8 +61,7 @@ class SelectableQuestion(GraphQuestion):
                 self.text,
                 self.type,
                 self.available_answers,
-                self.selected_answers,
-                self.action_needed,
                 self.created_at,
+                self.selected_answers,
             )
         )

@@ -1,6 +1,6 @@
 from typing_extensions import FrozenSet
 
-from domain.graph.core import Answer
+from domain.common.core import Answer
 from domain.project.core.selection import SelectionStrategy
 
 

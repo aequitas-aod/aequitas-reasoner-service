@@ -1,15 +1,18 @@
 from typing import Optional, FrozenSet
 
-from pydantic import BaseModel, field_serializer
+from pydantic import field_serializer
 
 from domain.common.core import AnswerId, Question
 from domain.graph.core.enum import Action
 
 
-class GraphQuestion(Question, BaseModel):
+class GraphQuestion(Question):
 
     enabled_by: FrozenSet[AnswerId]
     action_needed: Optional[Action]
+
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
 
     @field_serializer("enabled_by", when_used="json")
     def serialize_enabled_by_in_order(self, answer_ids: FrozenSet[AnswerId]):
