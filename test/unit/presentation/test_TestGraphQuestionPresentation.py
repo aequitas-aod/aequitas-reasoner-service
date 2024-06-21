@@ -1,25 +1,26 @@
 import unittest
 from datetime import datetime
 
-from domain.common.core import AnswerId, Answer, QuestionId
+from domain.common.core import AnswerId, QuestionId
 from domain.common.core.enum import QuestionType
 from domain.graph.core import GraphQuestion
 from domain.graph.core.enum import Action
-from domain.common.factories import AnswerFactory
 from domain.graph.factories import GraphQuestionFactory
-from presentation.presentation import deserialize
+from presentation.presentation import deserialize, serialize
 
 
-class TestQuestionDeserialization(unittest.TestCase):
+class TestGraphQuestionPresentation(unittest.TestCase):
 
     def setUp(self):
-        self.answer = {"id": {"code": "answer"}, "text": "Always."}
-        self.boolean_answer = {
-            "id": {"code": "boolean-answer"},
-            "text": "No",
-        }
         self.question_timestamp = datetime.now()
-        self.question: dict = {
+        self.question: GraphQuestion = GraphQuestionFactory.create_boolean_question(
+            QuestionId(code="boolean_question_id"),
+            "Do you practice TDD?",
+            created_at=self.question_timestamp,
+            enabled_by=frozenset({AnswerId(code="answer-code")}),
+            action_needed=Action.METRICS_CHECK,
+        )
+        self.question_dict: dict = {
             "id": {"code": "boolean_question_id"},
             "text": "Do you practice TDD?",
             "type": QuestionType.BOOLEAN.value,
@@ -33,23 +34,21 @@ class TestQuestionDeserialization(unittest.TestCase):
                     "text": "Yes",
                 },
             ],
-            "previous_question_id": None,
             "enabled_by": [{"code": "answer-code"}],
             "action_needed": Action.METRICS_CHECK.value,
             "created_at": self.question_timestamp.isoformat(),
         }
 
     def test_deserialize_graph_question(self):
-        expected: GraphQuestion = GraphQuestionFactory.create_boolean_question(
-            QuestionId(code="boolean_question_id"),
-            "Do you practice TDD?",
-            enabled_by=frozenset({AnswerId(code="answer-code")}),
-            action_needed=Action.METRICS_CHECK,
-            created_at=self.question_timestamp,
-        )
-        actual: GraphQuestion = deserialize(self.question, GraphQuestion)
+        actual: GraphQuestion = deserialize(self.question_dict, GraphQuestion)
         self.assertEqual(
-            expected,
+            self.question,
             actual,
         )
 
+    def test_serialize_question(self):
+        actual: dict = serialize(self.question)
+        self.assertEqual(
+            self.question_dict,
+            actual,
+        )
