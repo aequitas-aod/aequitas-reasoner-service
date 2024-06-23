@@ -34,7 +34,7 @@ class ProjectQuestionFactory:
             case _:
                 raise ValueError(f"Unsupported question type {question_type}")
 
-        if len(selected_answers) > 0 and question_type != QuestionType.MULTIPLE_CHOICE:
+        if len(selected_answers) > 1 and question_type != QuestionType.MULTIPLE_CHOICE:
             raise ValueError(
                 "Selected answers are only allowed for multiple choice questions"
             )

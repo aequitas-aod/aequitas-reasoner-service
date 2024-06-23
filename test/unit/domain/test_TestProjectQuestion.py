@@ -12,27 +12,25 @@ class TestProjectQuestion(unittest.TestCase):
 
     def setUp(self):
         self.question_timestamp = datetime.now()
-        self.question: ProjectQuestion = (
-            ProjectQuestionFactory.create_project_question(
-                QuestionId(code="question_id"),
-                "Do you practice TDD?",
-                QuestionType.SINGLE_CHOICE,
-                frozenset(
-                    {
-                        Answer(
-                            id=AnswerId(code="answer-always"),
-                            text="Always",
-                            value="always",
-                        ),
-                        Answer(
-                            id=AnswerId(code="answer-never"),
-                            text="Never",
-                            value="never",
-                        ),
-                    }
-                ),
-                created_at=self.question_timestamp,
-            )
+        self.question: ProjectQuestion = ProjectQuestionFactory.create_project_question(
+            QuestionId(code="question_id"),
+            "Do you practice TDD?",
+            QuestionType.SINGLE_CHOICE,
+            frozenset(
+                {
+                    Answer(
+                        id=AnswerId(code="answer-always"),
+                        text="Always",
+                        value="always",
+                    ),
+                    Answer(
+                        id=AnswerId(code="answer-never"),
+                        text="Never",
+                        value="never",
+                    ),
+                }
+            ),
+            created_at=self.question_timestamp,
         )
 
     def test_select_answer(self):
@@ -68,9 +66,9 @@ class TestProjectQuestion(unittest.TestCase):
         self.assertEqual(question.selected_answers, frozenset())
 
 
-class TestBooleanQuestion(unittest.TestCase):
+class TestBooleanProjectQuestion(unittest.TestCase):
     def setUp(self):
-        self.question: ProjectQuestion = (
+        self.project_question: ProjectQuestion = (
             ProjectQuestionFactory.create_project_boolean_question(
                 QuestionId(code="boolean_question_id"), "Do you practice TDD?"
             )
@@ -78,7 +76,7 @@ class TestBooleanQuestion(unittest.TestCase):
 
     def test_boolean_answers(self):
         self.assertEqual(
-            self.question.available_answers,
+            self.project_question.available_answers,
             frozenset(
                 {
                     AnswerFactory.create_boolean_answer(
