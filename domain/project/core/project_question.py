@@ -10,7 +10,6 @@ from domain.project.core.selection import (
     SingleSelectionStrategy,
     MultipleSelectionStrategy,
 )
-from ws.utils.logger import logger
 
 
 class ProjectQuestion(Question):
@@ -18,7 +17,6 @@ class ProjectQuestion(Question):
     selected_answers: FrozenSet[Answer] = frozenset()
 
     def __init__(self, **kwargs):
-        logger.info(f"Creating ProjectQuestion with {kwargs}")
         super().__init__(**kwargs)
 
     def select_answer(self, answer: Answer) -> Self:
