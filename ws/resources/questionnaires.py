@@ -22,7 +22,6 @@ class QuestionnaireResource(Resource):
         return "", 404
 
 
-"/projects/{self.project_id.code}/questionnaire/1"
 api.add_resource(
     QuestionnaireResource, "/projects/<string:project_id>/questionnaire/<int:index>"
 )

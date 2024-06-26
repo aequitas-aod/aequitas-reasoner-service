@@ -13,7 +13,6 @@ class MultipleSelectionStrategy(SelectionStrategy):
         If the answer is already in the selected answers set, the same question is returned.
         :param answer: the answer to be added to the selected answers set
         :param selected_answers:
-        :raises ValueError: if the answer is not in the available answers set
         """
         return selected_answers.union({answer})
 
@@ -24,7 +23,6 @@ class MultipleSelectionStrategy(SelectionStrategy):
         If the answer is already in the selected answers set, the same question is returned.
         :param answer: the answer to be added to the selected answers set
         :param selected_answers:
-        :raises ValueError: if the answer is not in the available answers set
         """
         return selected_answers.difference({answer})
 
