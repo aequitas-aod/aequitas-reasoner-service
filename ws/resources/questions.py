@@ -4,7 +4,8 @@ import yaml
 from flask import Blueprint, request
 from flask_restful import Api, Resource
 
-from domain.graph.core import Question, QuestionId
+from domain.common.core import QuestionId
+from domain.graph.core import GraphQuestion
 from presentation.presentation import serialize, deserialize
 from utils.errors import BadRequestError, ConflictError, NotFoundError
 from utils.status_code import StatusCode
@@ -18,7 +19,7 @@ class QuestionResource(Resource):
 
     def get(self, question_id=None):
         if question_id:
-            question: Optional[Question] = question_service.get_question_by_id(
+            question: Optional[GraphQuestion] = question_service.get_question_by_id(
                 QuestionId(code=question_id)
             )
             if question:
@@ -30,7 +31,7 @@ class QuestionResource(Resource):
             return [serialize(question) for question in all_questions], StatusCode.OK
 
     def post(self):
-        new_question: Question = deserialize(request.get_json(), Question)
+        new_question: GraphQuestion = deserialize(request.get_json(), GraphQuestion)
         try:
             question_service.add_question(new_question)
         except ConflictError as e:
@@ -39,7 +40,9 @@ class QuestionResource(Resource):
 
     def put(self, question_id=None):
         if question_id:
-            updated_question: Question = deserialize(request.get_json(), Question)
+            updated_question: GraphQuestion = deserialize(
+                request.get_json(), GraphQuestion
+            )
             try:
                 question_service.update_question(
                     QuestionId(code=question_id), updated_question
@@ -72,7 +75,7 @@ class NewCandidateID(Resource):
 class LastInsertedQuestion(Resource):
 
     def get(self):
-        last_inserted_question: Optional[Question] = (
+        last_inserted_question: Optional[GraphQuestion] = (
             question_service.get_last_inserted_question()
         )
         if last_inserted_question:
@@ -95,7 +98,7 @@ class LoadQuestions(Resource):
         try:
             questions_dict: dict = yaml.safe_load(request.data)
             for question in questions_dict:
-                question_service.add_question(deserialize(question, Question))
+                question_service.add_question(deserialize(question, GraphQuestion))
             return "Questions loaded successfully", StatusCode.CREATED
         except yaml.YAMLError:
             return {"error": "Invalid YAML file"}, StatusCode.BAD_REQUEST

@@ -4,8 +4,8 @@ import unittest
 import yaml
 from python_on_whales import DockerClient
 
-from domain.graph.core import Question
-from domain.project.core import ProjectId, SelectableQuestion
+from domain.graph.core import GraphQuestion
+from domain.project.core import ProjectId, ProjectQuestion
 from presentation.presentation import deserialize
 from test.utils.utils import get_file_path
 from ws.main import create_app
@@ -32,8 +32,8 @@ class TestQuestionnairesAPI(unittest.TestCase):
             cls.app.post(
                 "/questions/load", content_type="text/yaml", data=questions_yaml
             )
-            cls.questions: list[Question] = [
-                deserialize(q, Question) for q in yaml.safe_load(questions_yaml)
+            cls.questions: list[GraphQuestion] = [
+                deserialize(q, GraphQuestion) for q in yaml.safe_load(questions_yaml)
             ]
 
     @classmethod
@@ -43,11 +43,11 @@ class TestQuestionnairesAPI(unittest.TestCase):
     def test_get_first_question(self):
         response = self.app.get(f"/projects/{self.project_id.code}/questionnaire/1")
         self.assertEqual(response.status_code, 200)
-        first_question: SelectableQuestion = deserialize(
-            json.loads(response.data), SelectableQuestion
+        first_question: ProjectQuestion = deserialize(
+            json.loads(response.data), ProjectQuestion
         )
         response = self.app.get(f"questions/{self.questions[0].id.code}")
-        related_question: Question = deserialize(json.loads(response.data), Question)
+        related_question: GraphQuestion = deserialize(json.loads(response.data), GraphQuestion)
         self.assertEqual(
             first_question.available_answers, related_question.available_answers
         )

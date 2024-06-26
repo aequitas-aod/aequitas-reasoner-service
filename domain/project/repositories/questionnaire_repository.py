@@ -1,14 +1,14 @@
 from abc import ABC, abstractmethod
 from typing import List, Optional
 
-from domain.graph.core import QuestionId
-from domain.project.core import SelectableQuestion
+from domain.common.core import QuestionId
+from domain.project.core import ProjectQuestion
 
 
 class QuestionnaireRepository(ABC):
 
     @abstractmethod
-    def get_questionnaire(self) -> List[SelectableQuestion]:
+    def get_questionnaire(self) -> List[ProjectQuestion]:
         """Gets all questions of the questionnaire
         :return: a list of all questions"""
         pass
@@ -16,13 +16,13 @@ class QuestionnaireRepository(ABC):
     @abstractmethod
     def get_selectable_question_by_id(
         self, question_id: QuestionId
-    ) -> Optional[SelectableQuestion]:
+    ) -> Optional[ProjectQuestion]:
         """Gets a question by its id
         :param question_id: the question id
         :return: the question or None if it does not exist"""
 
     @abstractmethod
-    def insert_selectable_question(self, question: SelectableQuestion) -> QuestionId:
+    def insert_selectable_question(self, question: ProjectQuestion) -> QuestionId:
         """Inserts a selectable question
         :param question: the question to insert
         :raises ConflictError: if the project already exists"""
@@ -30,7 +30,7 @@ class QuestionnaireRepository(ABC):
 
     @abstractmethod
     def update_selectable_question(
-        self, question_id: QuestionId, question: SelectableQuestion
+        self, question_id: QuestionId, question: ProjectQuestion
     ) -> None:
         """Updates an existing project
         :param question_id: the id of the question to update

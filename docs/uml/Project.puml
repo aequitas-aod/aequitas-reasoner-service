@@ -15,7 +15,7 @@ entity Answer {
 entity Question {
 }
 
-entity SelectableQuestion {
+entity ProjectQuestion {
   +projectId: ProjectId
   +selectionStrategy: SelectionStrategy
   +selectedAnswers: Set<Answer>
@@ -49,10 +49,10 @@ entity QuestionnaireService {
 Project *-- ProjectId
 ProjectFactory --> Project : creates
 QuestionFactory --> Question : creates
-SelectableQuestion -up-|> Question
-SelectableQuestion o- ProjectId
-SelectableQuestion o-- Answer
-SelectionStrategy -right-o SelectableQuestion
+ProjectQuestion -up-|> Question
+ProjectQuestion o- ProjectId
+ProjectQuestion o-- Answer
+SelectionStrategy -right-o ProjectQuestion
 SelectionStrategyImpl -up-|> SelectionStrategy
 
 

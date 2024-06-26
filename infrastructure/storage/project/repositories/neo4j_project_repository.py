@@ -84,7 +84,7 @@ class Neo4jProjectRepository(ProjectRepository):
             [
                 Neo4jQuery(
                     "MATCH (n:Project) DETACH DELETE n", {}
-                ),  # TODO: also SelectableQuestions?
+                ),  # TODO: also ProjectQuestions?
             ]
         )
 
