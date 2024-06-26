@@ -51,13 +51,14 @@ class TestProjectQuestionPresentation(unittest.TestCase):
                 },
             ],
             "created_at": self.question_timestamp.isoformat(),
-            "selection_strategy": {'type': 'single'},
+            "selection_strategy": {"type": "single"},
             "selected_answers": [
                 {
                     "id": {"code": "project_question_id-false"},
                     "text": "No",
                 },
             ],
+            "previous_question_id": None,
         }
 
     def test_deserialize_project_question(self):

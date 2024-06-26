@@ -21,6 +21,7 @@ class ProjectQuestionFactory:
         available_answers: FrozenSet[Answer],
         created_at: datetime = datetime.now(),
         selected_answers: FrozenSet[Answer] = frozenset(),
+        previous_question_id: QuestionId = None,
     ) -> ProjectQuestion:
         match question_type:
             case QuestionType.BOOLEAN:
@@ -46,6 +47,7 @@ class ProjectQuestionFactory:
             created_at=created_at,
             selection_strategy=selection_strategy,
             selected_answers=selected_answers,
+            previous_question_id=previous_question_id,
         )
 
     @staticmethod
@@ -53,6 +55,7 @@ class ProjectQuestionFactory:
         question_id: QuestionId,
         text: str,
         created_at: datetime = datetime.now(),
+        previous_question_id: QuestionId = None,
     ) -> ProjectQuestion:
         available_answers: FrozenSet[Answer] = frozenset(
             {
@@ -70,4 +73,5 @@ class ProjectQuestionFactory:
             QuestionType.BOOLEAN,
             available_answers,
             created_at,
+            previous_question_id=previous_question_id,
         )

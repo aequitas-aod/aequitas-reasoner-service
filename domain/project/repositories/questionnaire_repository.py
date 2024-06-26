@@ -14,7 +14,7 @@ class QuestionnaireRepository(ABC):
         pass
 
     @abstractmethod
-    def get_selectable_question_by_id(
+    def get_project_question_by_id(
         self, question_id: QuestionId
     ) -> Optional[ProjectQuestion]:
         """Gets a question by its id
@@ -22,14 +22,15 @@ class QuestionnaireRepository(ABC):
         :return: the question or None if it does not exist"""
 
     @abstractmethod
-    def insert_selectable_question(self, question: ProjectQuestion) -> QuestionId:
-        """Inserts a selectable question
+    def insert_project_question(self, question: ProjectQuestion) -> QuestionId:
+        """Inserts a project question
         :param question: the question to insert
-        :raises ConflictError: if the project already exists"""
+        :raises ConflictError: if the project already exists
+        :raises ValueError: if the project does not exist"""
         pass
 
     @abstractmethod
-    def update_selectable_question(
+    def update_project_question(
         self, question_id: QuestionId, question: ProjectQuestion
     ) -> None:
         """Updates an existing project
@@ -38,7 +39,7 @@ class QuestionnaireRepository(ABC):
         :raises NotFoundError: if the question does not exist"""
 
     @abstractmethod
-    def delete_selectable_question(self, question_id: QuestionId) -> None:
+    def delete_project_question(self, question_id: QuestionId) -> None:
         """Deletes a question
         :param question_id: the id of the question to delete
         :raises NotFoundError: if the question does not exist"""
