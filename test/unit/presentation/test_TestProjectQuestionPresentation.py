@@ -45,7 +45,7 @@ class TestProjectQuestionPresentation(unittest.TestCase):
                 },
             ],
             "created_at": self.question_timestamp.isoformat(),
-            "selection_strategy": {"type": "single"},
+            "selection_strategy": {"type": "SingleSelectionStrategy"},
             "previous_question_id": None,
         }
 

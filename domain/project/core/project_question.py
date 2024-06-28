@@ -49,10 +49,8 @@ class ProjectQuestion(Question):
 
     @field_serializer("selection_strategy", when_used="json")
     def serialize_selection_strategy(self, selection_strategy: SelectionStrategy):
-        if isinstance(selection_strategy, SingleSelectionStrategy):
-            return {"type": "single"}
-        elif isinstance(selection_strategy, MultipleSelectionStrategy):
-            return {"type": "multiple"}
+        if isinstance(selection_strategy, SelectionStrategy):
+            return {"type": self.selection_strategy.__class__.__name__}
         else:
             raise ValueError(
                 f"Unsupported selection strategy {self.selection_strategy}"
@@ -64,9 +62,9 @@ class ProjectQuestion(Question):
             return value
         elif isinstance(value, dict) and "type" in value:
             strategy_type = value["type"]
-            if strategy_type == "single":
+            if strategy_type == "SingleSelectionStrategy":
                 return SingleSelectionStrategy()
-            elif strategy_type == "multiple":
+            elif strategy_type == "MultipleSelectionStrategy":
                 return MultipleSelectionStrategy()
             else:
                 raise ValueError(f"Unsupported selection strategy type {strategy_type}")
