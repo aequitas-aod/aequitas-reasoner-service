@@ -21,9 +21,8 @@ class Question(ABC, BaseModel):
 
     def __str__(self) -> str:
         return (
-            f"Question(\n id={self.id},\n text='{self.text}',\n type={self.type}, \n"
-            f"answers={self.answers}, \n"
-            f"created_at={self.created_at}\n)"
+            f"Question(\n id={self.id},\n text='{self.text}',\n type={self.type},\n"
+            f" answers={self.answers},\n created_at={self.created_at}\n)"
         )
 
     def __hash__(self):

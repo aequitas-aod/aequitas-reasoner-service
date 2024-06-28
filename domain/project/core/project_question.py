@@ -3,8 +3,9 @@ from typing import FrozenSet, Any, Optional
 from pydantic import field_serializer, field_validator
 from typing_extensions import Self
 
-from domain.common.core import Answer, QuestionId
-from domain.common.core import Question
+from domain.common.core import Question, AnswerId
+from domain.common.core import QuestionId
+from domain.project.core import ProjectAnswer
 from domain.project.core.selection import (
     SelectionStrategy,
     SingleSelectionStrategy,
@@ -13,42 +14,36 @@ from domain.project.core.selection import (
 
 
 class ProjectQuestion(Question):
+    answers: FrozenSet[ProjectAnswer]
     selection_strategy: SelectionStrategy
-    selected_answers: FrozenSet[Answer]
     previous_question_id: Optional[QuestionId]
 
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
 
-    def select_answer(self, answer: Answer) -> Self:
-        if answer not in self.answers:
-            raise ValueError(f"Answer {answer} is not available for this question")
-        selected_answers: FrozenSet[Answer] = self.selection_strategy.select_answer(
-            answer, self.selected_answers
+    def select_answer(self, answer_id: AnswerId) -> Self:
+        answers: FrozenSet[ProjectAnswer] = self.selection_strategy.select_answer(
+            answer_id, self.answers
         )
         return ProjectQuestion(
             id=self.id,
             text=self.text,
             type=self.type,
-            answers=self.answers,
+            answers=answers,
             created_at=self.created_at,
             selection_strategy=self.selection_strategy,
-            selected_answers=selected_answers,
             previous_question_id=self.previous_question_id,
         )
 
-    def deselect_answer(self, answer: Answer) -> Self:
-        selected_answers = self.selection_strategy.deselect_answer(
-            answer, self.selected_answers
-        )
+    def deselect_answer(self, answer_id: AnswerId) -> Self:
+        answers = self.selection_strategy.deselect_answer(answer_id, self.answers)
         return ProjectQuestion(
             id=self.id,
             text=self.text,
             type=self.type,
-            answers=self.answers,
+            answers=answers,
             created_at=self.created_at,
             selection_strategy=self.selection_strategy,
-            selected_answers=selected_answers,
             previous_question_id=self.previous_question_id,
         )
 
@@ -78,14 +73,14 @@ class ProjectQuestion(Question):
         else:
             raise ValueError("Invalid selection strategy value")
 
-    @field_serializer("selected_answers", when_used="json")
-    def serialize_selected_answers_in_order(self, answer_ids: FrozenSet[Answer]):
+    @field_serializer("answers", when_used="json")
+    def serialize_answers_in_order(self, answer_ids: FrozenSet[ProjectAnswer]):
         return sorted(answer_ids, key=lambda answer: answer.id.code)
 
     def __str__(self) -> str:
         return (
             f"ProjectQuestion(id={self.id},\n text={self.text},\n type={self.type},\n answers={self.answers},\n "
-            f"created_at={self.created_at}\n, selection_strategy={self.selection_strategy},\n selected_answers={self.selected_answers},\n "
+            f"created_at={self.created_at}\n, selection_strategy={self.selection_strategy},\n "
             f"previous_question_id={self.previous_question_id}\n)"
         )
 
@@ -96,7 +91,6 @@ class ProjectQuestion(Question):
                 self.type,
                 self.answers,
                 self.created_at,
-                self.selected_answers,
                 self.selection_strategy,
                 self.previous_question_id,
             )

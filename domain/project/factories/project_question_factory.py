@@ -4,11 +4,12 @@ from typing import FrozenSet
 from domain.common.core import Answer, AnswerId, QuestionId
 from domain.common.core.enum import QuestionType
 from domain.common.factories import AnswerFactory
-from domain.project.core import ProjectQuestion
+from domain.project.core import ProjectQuestion, ProjectAnswer
 from domain.project.core.selection import (
     MultipleSelectionStrategy,
     SingleSelectionStrategy,
 )
+from domain.project.factories import ProjectAnswerFactory
 
 
 class ProjectQuestionFactory:
@@ -18,9 +19,8 @@ class ProjectQuestionFactory:
         question_id: QuestionId,
         text: str,
         question_type: QuestionType,
-        answers: FrozenSet[Answer],
+        answers: FrozenSet[ProjectAnswer],
         created_at: datetime = datetime.now(),
-        selected_answers: FrozenSet[Answer] = frozenset(),
         previous_question_id: QuestionId = None,
     ) -> ProjectQuestion:
         match question_type:
@@ -35,6 +35,7 @@ class ProjectQuestionFactory:
             case _:
                 raise ValueError(f"Unsupported question type {question_type}")
 
+        selected_answers = list(filter(lambda answer: answer.selected, answers))
         if len(selected_answers) > 1 and question_type != QuestionType.MULTIPLE_CHOICE:
             raise ValueError(
                 "Selected answers are only allowed for multiple choice questions"
@@ -46,7 +47,6 @@ class ProjectQuestionFactory:
             answers=answers,
             created_at=created_at,
             selection_strategy=selection_strategy,
-            selected_answers=selected_answers,
             previous_question_id=previous_question_id,
         )
 
@@ -57,13 +57,13 @@ class ProjectQuestionFactory:
         created_at: datetime = datetime.now(),
         previous_question_id: QuestionId = None,
     ) -> ProjectQuestion:
-        answers: FrozenSet[Answer] = frozenset(
+        answers: FrozenSet[ProjectAnswer] = frozenset(
             {
-                AnswerFactory.create_boolean_answer(
-                    AnswerId(code=f"{question_id.code}-true"), True
+                ProjectAnswerFactory.create_project_answer(
+                    AnswerId(code=f"{question_id.code}-true"), "Yes"
                 ),
-                AnswerFactory.create_boolean_answer(
-                    AnswerId(code=f"{question_id.code}-false"), False
+                ProjectAnswerFactory.create_project_answer(
+                    AnswerId(code=f"{question_id.code}-false"), "No"
                 ),
             }
         )

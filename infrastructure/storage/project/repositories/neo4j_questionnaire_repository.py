@@ -137,9 +137,7 @@ class Neo4jQuestionnaireRepository(QuestionnaireRepository):
         q: dict = serialize(question)
         q["id"] = question.id.code
         q["created_at"] = question.created_at.isoformat()
-        q["answers"] = list(
-            map(lambda a: a.id.code, question.answers)
-        )
+        q["answers"] = list(map(lambda a: a.id.code, question.answers))
         q["selection_strategy"] = question.selection_strategy.__class__.__name__
         del q["selected_answers"]
         del q["previous_question_id"]
@@ -162,7 +160,9 @@ class Neo4jQuestionnaireRepository(QuestionnaireRepository):
         question["selected_answers"] = [
             {"id": {"code": a["id"]}, "text": a["text"]} for a in selected_answers
         ]
-        question["previous_question_id"] = {"code": previous_question_code} if previous_question_code else None
+        question["previous_question_id"] = (
+            {"code": previous_question_code} if previous_question_code else None
+        )
         return deserialize(question, ProjectQuestion)
 
 
