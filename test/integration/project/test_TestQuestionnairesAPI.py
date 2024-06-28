@@ -54,7 +54,7 @@ class TestQuestionnairesAPI(unittest.TestCase):
             json.loads(response.data), GraphQuestion
         )
         self.assertEqual(
-            first_question.available_answers, related_question.available_answers
+            first_question.answers, related_question.answers
         )
         self.assertEqual(
             first_question.id.code, f"{self.project_id.code}-{related_question.id.code}"

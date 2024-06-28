@@ -34,12 +34,12 @@ class TestProjectQuestion(unittest.TestCase):
         )
 
     def test_select_answer(self):
-        answer, _ = self.question.available_answers
+        answer, _ = self.question.answers
         question: ProjectQuestion = self.question.select_answer(answer)
         self.assertEqual(question.selected_answers, {answer})
 
     def test_select_answer_twice(self):
-        answer, _ = self.question.available_answers
+        answer, _ = self.question.answers
         question: ProjectQuestion = self.question.select_answer(answer).select_answer(
             answer
         )
@@ -54,14 +54,14 @@ class TestProjectQuestion(unittest.TestCase):
         )
 
     def test_deselect_answer(self):
-        answer, _ = self.question.available_answers
+        answer, _ = self.question.answers
         question: ProjectQuestion = self.question.select_answer(answer).deselect_answer(
             answer
         )
         self.assertEqual(question.selected_answers, frozenset())
 
     def test_deselect_not_selected_answer(self):
-        answer, _ = self.question.available_answers
+        answer, _ = self.question.answers
         question: ProjectQuestion = self.question.deselect_answer(answer)
         self.assertEqual(question.selected_answers, frozenset())
 
@@ -76,7 +76,7 @@ class TestBooleanProjectQuestion(unittest.TestCase):
 
     def test_boolean_answers(self):
         self.assertEqual(
-            self.project_question.available_answers,
+            self.project_question.answers,
             frozenset(
                 {
                     AnswerFactory.create_boolean_answer(

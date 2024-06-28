@@ -18,7 +18,7 @@ class ProjectQuestionFactory:
         question_id: QuestionId,
         text: str,
         question_type: QuestionType,
-        available_answers: FrozenSet[Answer],
+        answers: FrozenSet[Answer],
         created_at: datetime = datetime.now(),
         selected_answers: FrozenSet[Answer] = frozenset(),
         previous_question_id: QuestionId = None,
@@ -43,7 +43,7 @@ class ProjectQuestionFactory:
             id=question_id,
             text=text,
             type=question_type,
-            available_answers=available_answers,
+            answers=answers,
             created_at=created_at,
             selection_strategy=selection_strategy,
             selected_answers=selected_answers,
@@ -57,7 +57,7 @@ class ProjectQuestionFactory:
         created_at: datetime = datetime.now(),
         previous_question_id: QuestionId = None,
     ) -> ProjectQuestion:
-        available_answers: FrozenSet[Answer] = frozenset(
+        answers: FrozenSet[Answer] = frozenset(
             {
                 AnswerFactory.create_boolean_answer(
                     AnswerId(code=f"{question_id.code}-true"), True
@@ -71,7 +71,7 @@ class ProjectQuestionFactory:
             question_id,
             text,
             QuestionType.BOOLEAN,
-            available_answers,
+            answers,
             created_at,
             previous_question_id=previous_question_id,
         )

@@ -40,7 +40,7 @@ class TestProjectQuestionPresentation(unittest.TestCase):
             "id": {"code": "project_question_id"},
             "text": "Do you practice TDD?",
             "type": QuestionType.SINGLE_CHOICE.value,
-            "available_answers": [
+            "answers": [
                 {
                     "id": {"code": "project_question_id-false"},
                     "text": "No",

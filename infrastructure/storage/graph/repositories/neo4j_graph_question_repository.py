@@ -61,7 +61,7 @@ class Neo4JGraphQuestionRepository(GraphQuestionRepository):
                 {"question": q},
             )
         ]
-        for answer in question.available_answers:
+        for answer in question.answers:
             a: dict = self._convert_answer_in_node(answer)
             queries.append(Neo4jQuery("CREATE (:Answer $answer)", {"answer": a}))
             queries.append(
@@ -135,7 +135,7 @@ class Neo4JGraphQuestionRepository(GraphQuestionRepository):
         q: dict = serialize(question)
         q["id"] = question.id.code
         q["created_at"] = question.created_at.isoformat()
-        del q["available_answers"]
+        del q["answers"]
         del q["enabled_by"]
         return q
 
@@ -144,7 +144,7 @@ class Neo4JGraphQuestionRepository(GraphQuestionRepository):
         question: dict = q
         question["id"] = {"code": question["id"]}
         question["created_at"] = question["created_at"]
-        question["available_answers"] = [
+        question["answers"] = [
             {"id": {"code": a["id"]}, "text": a["text"]} for a in answers
         ]
         enabled_by: List[dict] = self._get_enabled_by(

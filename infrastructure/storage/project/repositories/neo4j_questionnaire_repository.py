@@ -137,8 +137,8 @@ class Neo4jQuestionnaireRepository(QuestionnaireRepository):
         q: dict = serialize(question)
         q["id"] = question.id.code
         q["created_at"] = question.created_at.isoformat()
-        q["available_answers"] = list(
-            map(lambda a: a.id.code, question.available_answers)
+        q["answers"] = list(
+            map(lambda a: a.id.code, question.answers)
         )
         q["selection_strategy"] = question.selection_strategy.__class__.__name__
         del q["selected_answers"]
@@ -155,8 +155,8 @@ class Neo4jQuestionnaireRepository(QuestionnaireRepository):
     ) -> ProjectQuestion:
         question: dict = q
         question["id"] = {"code": q["id"]}
-        question["available_answers"] = [
-            {"id": {"code": answer_id}} for answer_id in question["available_answers"]
+        question["answers"] = [
+            {"id": {"code": answer_id}} for answer_id in question["answers"]
         ]
         question["selection_strategy"] = {"type": q["selection_strategy"]}
         question["selected_answers"] = [
@@ -172,7 +172,7 @@ if __name__ == "__main__":
         QuestionId(code="p1-Q-1"),
         text="What is your favorite color?",
         question_type=QuestionType.SINGLE_CHOICE,
-        available_answers=frozenset(
+        answers=frozenset(
             {
                 AnswerFactory.create_answer(AnswerId(code="p1-Q-1-A-1"), "Red"),
                 AnswerFactory.create_answer(AnswerId(code="p1-Q-1-A-2"), "Green"),
@@ -187,7 +187,7 @@ if __name__ == "__main__":
         QuestionId(code="p1-Q-2"),
         text="What is your favorite animal?",
         question_type=QuestionType.SINGLE_CHOICE,
-        available_answers=frozenset(
+        answers=frozenset(
             {
                 AnswerFactory.create_answer(AnswerId(code="p1-Q-2-A-1"), "Dog"),
                 AnswerFactory.create_answer(AnswerId(code="p1-Q-2-A-2"), "Cat"),

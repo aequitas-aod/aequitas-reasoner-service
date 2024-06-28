@@ -21,7 +21,7 @@ class ProjectQuestion(Question):
         super().__init__(**kwargs)
 
     def select_answer(self, answer: Answer) -> Self:
-        if answer not in self.available_answers:
+        if answer not in self.answers:
             raise ValueError(f"Answer {answer} is not available for this question")
         selected_answers: FrozenSet[Answer] = self.selection_strategy.select_answer(
             answer, self.selected_answers
@@ -30,7 +30,7 @@ class ProjectQuestion(Question):
             id=self.id,
             text=self.text,
             type=self.type,
-            available_answers=self.available_answers,
+            answers=self.answers,
             created_at=self.created_at,
             selection_strategy=self.selection_strategy,
             selected_answers=selected_answers,
@@ -45,7 +45,7 @@ class ProjectQuestion(Question):
             id=self.id,
             text=self.text,
             type=self.type,
-            available_answers=self.available_answers,
+            answers=self.answers,
             created_at=self.created_at,
             selection_strategy=self.selection_strategy,
             selected_answers=selected_answers,
@@ -84,7 +84,7 @@ class ProjectQuestion(Question):
 
     def __str__(self) -> str:
         return (
-            f"ProjectQuestion(id={self.id},\n text={self.text},\n type={self.type},\n available_answers={self.available_answers},\n "
+            f"ProjectQuestion(id={self.id},\n text={self.text},\n type={self.type},\n answers={self.answers},\n "
             f"created_at={self.created_at}\n, selection_strategy={self.selection_strategy},\n selected_answers={self.selected_answers},\n "
             f"previous_question_id={self.previous_question_id}\n)"
         )
@@ -94,7 +94,7 @@ class ProjectQuestion(Question):
             (
                 self.text,
                 self.type,
-                self.available_answers,
+                self.answers,
                 self.created_at,
                 self.selected_answers,
                 self.selection_strategy,
