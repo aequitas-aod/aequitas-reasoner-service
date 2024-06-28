@@ -78,7 +78,7 @@ class ProjectQuestion(Question):
     def __str__(self) -> str:
         return (
             f"ProjectQuestion(id={self.id},\n text={self.text},\n type={self.type},\n answers={self.answers},\n "
-            f"created_at={self.created_at}\n, selection_strategy={self.selection_strategy},\n "
+            f"created_at={self.created_at},\n selection_strategy={self.selection_strategy},\n "
             f"previous_question_id={self.previous_question_id}\n)"
         )
 

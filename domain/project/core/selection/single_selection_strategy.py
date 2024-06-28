@@ -13,7 +13,7 @@ class SingleSelectionStrategy(SelectionStrategy):
     """
 
     def select_answer(
-            self, answer_id: AnswerId, answers: FrozenSet[ProjectAnswer]
+        self, answer_id: AnswerId, answers: FrozenSet[ProjectAnswer]
     ) -> FrozenSet[ProjectAnswer]:
         self._check_answer_exists(answer_id, answers)
         new_answers = set()
@@ -24,7 +24,7 @@ class SingleSelectionStrategy(SelectionStrategy):
         return frozenset(new_answers)
 
     def deselect_answer(
-            self, answer_id: AnswerId, answers: FrozenSet[ProjectAnswer]
+        self, answer_id: AnswerId, answers: FrozenSet[ProjectAnswer]
     ) -> FrozenSet[ProjectAnswer]:
         self._check_answer_exists(answer_id, answers)
         answer = list(filter(lambda answer: answer.id == answer_id, answers))[0]

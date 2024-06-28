@@ -1,10 +1,9 @@
 from typing import List, Optional
 
-from domain.common.core import QuestionId, Answer, AnswerId
+from domain.common.core import QuestionId, AnswerId
 from domain.common.core.enum import QuestionType
-from domain.common.factories import AnswerFactory
-from domain.project.core import ProjectQuestion, Project, ProjectId
-from domain.project.factories import ProjectQuestionFactory
+from domain.project.core import ProjectQuestion, Project, ProjectId, ProjectAnswer
+from domain.project.factories import ProjectQuestionFactory, ProjectAnswerFactory
 from domain.project.repositories import ProjectRepository
 from domain.project.repositories.questionnaire_repository import QuestionnaireRepository
 from infrastructure.storage.project.repositories.neo4j_project_repository import (
@@ -12,7 +11,9 @@ from infrastructure.storage.project.repositories.neo4j_project_repository import
 )
 from presentation.presentation import serialize, deserialize
 from utils.env import DB_HOST, DB_USER, DB_PASSWORD
+from utils.errors import NotFoundError
 from utils.neo4j_driver import Neo4jDriver, Credentials, Neo4jQuery
+from ws.utils.logger import logger
 
 
 class Neo4jQuestionnaireRepository(QuestionnaireRepository):
@@ -27,16 +28,20 @@ class Neo4jQuestionnaireRepository(QuestionnaireRepository):
         self, question_id: QuestionId
     ) -> Optional[ProjectQuestion]:
         query_string: str = (
-            "MATCH (q:ProjectQuestion {id: $question_id})-[:HAS_SELECTED]->(a:Answer) "
+            "MATCH (q:ProjectQuestion {id: $question_id})-[:HAS_AVAILABLE]->(available:Answer) "
+            "OPTIONAL MATCH (q)-[:HAS_SELECTED]->(selected:Answer) "
             "OPTIONAL MATCH (prev_q: ProjectQuestion)-[:NEXT]->(q)"
-            "RETURN q, COLLECT(a) AS selected_answers, prev_q as previous_question_code"
+            "RETURN q, COLLECT(available) AS available_answers, COLLECT(selected) AS selected_answers, prev_q as previous_question"
         )
         query: Neo4jQuery = Neo4jQuery(query_string, {"question_id": question_id.code})
         res: List[dict] = self.driver.query(query)
         if len(res) == 0:
             return None
         question: ProjectQuestion = self._convert_node_in_project_question(
-            res[0]["q"], res[0]["selected_answers"], res[0]["previous_question_code"]
+            res[0]["q"],
+            res[0]["available_answers"],
+            res[0]["selected_answers"],
+            res[0]["previous_question"],
         )
         return question
 
@@ -57,14 +62,15 @@ class Neo4jQuestionnaireRepository(QuestionnaireRepository):
             query_string, {"project_code": project_code, "question": q}
         )
         queries.append(query)
-        for answer in question.selected_answers:
+        for answer in question.answers:
             a: dict = self._convert_answer_in_node(answer)
             queries.append(Neo4jQuery("CREATE (:Answer $answer)", {"answer": a}))
+            relation_name: str = "HAS_SELECTED" if answer.selected else "HAS_AVAILABLE"
             queries.append(
                 Neo4jQuery(
                     "MATCH (q:ProjectQuestion {id: $question_id}) "
                     "MATCH (a:Answer {id: $answer_id}) "
-                    "CREATE (q)-[:HAS_SELECTED]->(a)",
+                    f"CREATE (q)-[:{relation_name}]->(a)",
                     {"question_id": question.id.code, "answer_id": answer.id.code},
                 )
             )
@@ -107,18 +113,18 @@ class Neo4jQuestionnaireRepository(QuestionnaireRepository):
     def update_project_question(
         self, question_id: QuestionId, question: ProjectQuestion
     ) -> None:
-        # if not self._check_project_question_exists(question_id):
-        #     raise NotFoundError(f"Question with id {question_id} does not exist")
+        if not self._check_project_question_exists(question_id):
+            raise NotFoundError(f"Question with id {question_id} does not exist")
         self.delete_project_question(question_id)
         self.insert_project_question(question)
 
     def delete_project_question(self, question_id: QuestionId) -> None:
-        # if not self._check_project_question_exists(question_id):
-        #     raise NotFoundError(f"Question with id {question_id} does not exist")
+        if not self._check_project_question_exists(question_id):
+            raise NotFoundError(f"Question with id {question_id} does not exist")
         self.driver.query(
             Neo4jQuery(
                 "MATCH (q:ProjectQuestion {id: $question_id})"
-                "OPTIONAL MATCH (q)-[:HAS_SELECTED]->(a:Answer)"
+                "OPTIONAL MATCH (q)-[]->(a:Answer)"
                 "OPTIONAL MATCH (prev_q: ProjectQuestion)-[:NEXT]->(q)"
                 "OPTIONAL MATCH (p: Project)-[:QUESTIONNAIRE]->(q)"
                 "DETACH DELETE q, a",
@@ -137,32 +143,45 @@ class Neo4jQuestionnaireRepository(QuestionnaireRepository):
         q: dict = serialize(question)
         q["id"] = question.id.code
         q["created_at"] = question.created_at.isoformat()
-        q["answers"] = list(map(lambda a: a.id.code, question.answers))
         q["selection_strategy"] = question.selection_strategy.__class__.__name__
-        del q["selected_answers"]
+        del q["answers"]
         del q["previous_question_id"]
         return q
 
-    def _convert_answer_in_node(self, answer: Answer) -> dict:
+    def _convert_answer_in_node(self, answer: ProjectAnswer) -> dict:
         a: dict = serialize(answer)
         a["id"] = answer.id.code
+        del a["selected"]
         return a
 
+    def _convert_node_in_answer(self, a: dict, selected: bool) -> ProjectAnswer:
+        a["id"] = {"code": a["id"]}
+        a["selected"] = selected
+        return deserialize(a, ProjectAnswer)
+
     def _convert_node_in_project_question(
-        self, q: dict, selected_answers: List, previous_question_code: Optional[str]
+        self,
+        q: dict,
+        available_answers: List,
+        selected_answers: List,
+        previous_question: dict,
     ) -> ProjectQuestion:
         question: dict = q
         question["id"] = {"code": q["id"]}
-        question["answers"] = [
-            {"id": {"code": answer_id}} for answer_id in question["answers"]
-        ]
         question["selection_strategy"] = {"type": q["selection_strategy"]}
-        question["selected_answers"] = [
-            {"id": {"code": a["id"]}, "text": a["text"]} for a in selected_answers
+        selected_ids = {a["id"] for a in selected_answers}
+        question["answers"] = [
+            {
+                "id": {"code": a["id"]},
+                "text": a["text"],
+                "selected": a["id"] in selected_ids,
+            }
+            for a in available_answers
         ]
         question["previous_question_id"] = (
-            {"code": previous_question_code} if previous_question_code else None
+            {"code": previous_question['id']} if previous_question else None
         )
+        logger.info(f"question: {question}")
         return deserialize(question, ProjectQuestion)
 
 
@@ -174,14 +193,22 @@ if __name__ == "__main__":
         question_type=QuestionType.SINGLE_CHOICE,
         answers=frozenset(
             {
-                AnswerFactory.create_answer(AnswerId(code="p1-Q-1-A-1"), "Red"),
-                AnswerFactory.create_answer(AnswerId(code="p1-Q-1-A-2"), "Green"),
-                AnswerFactory.create_answer(AnswerId(code="p1-Q-1-A-3"), "Blue"),
+                ProjectAnswerFactory.create_project_answer(
+                    AnswerId(code="p1-Q-1-A-1"), "Red"
+                ),
+                ProjectAnswerFactory.create_project_answer(
+                    AnswerId(code="p1-Q-1-A-2"), "Green"
+                ),
+                ProjectAnswerFactory.create_project_answer(
+                    AnswerId(code="p1-Q-1-A-3"), "Blue"
+                ),
             }
         ),
     )
     updated_question: ProjectQuestion = project_question.select_answer(
-        AnswerFactory.create_answer(AnswerId(code="p1-Q-1-A-1"), "Red")
+        ProjectAnswerFactory.create_project_answer(
+            AnswerId(code="p1-Q-1-A-1"), "Red"
+        ).id
     )
     project_question2: ProjectQuestion = ProjectQuestionFactory.create_project_question(
         QuestionId(code="p1-Q-2"),
@@ -189,15 +216,23 @@ if __name__ == "__main__":
         question_type=QuestionType.SINGLE_CHOICE,
         answers=frozenset(
             {
-                AnswerFactory.create_answer(AnswerId(code="p1-Q-2-A-1"), "Dog"),
-                AnswerFactory.create_answer(AnswerId(code="p1-Q-2-A-2"), "Cat"),
-                AnswerFactory.create_answer(AnswerId(code="p1-Q-2-A-3"), "Bird"),
+                ProjectAnswerFactory.create_project_answer(
+                    AnswerId(code="p1-Q-2-A-1"), "Dog"
+                ),
+                ProjectAnswerFactory.create_project_answer(
+                    AnswerId(code="p1-Q-2-A-2"), "Cat"
+                ),
+                ProjectAnswerFactory.create_project_answer(
+                    AnswerId(code="p1-Q-2-A-3"), "Bird"
+                ),
             }
         ),
         previous_question_id=QuestionId(code="p1-Q-1"),
     )
     updated_question2: ProjectQuestion = project_question2.select_answer(
-        AnswerFactory.create_answer(AnswerId(code="p1-Q-2-A-1"), "Dog")
+        ProjectAnswerFactory.create_project_answer(
+            AnswerId(code="p1-Q-2-A-1"), "Dog"
+        ).id
     )
 
     questionnaire_repository.insert_project_question(project_question)
@@ -209,4 +244,9 @@ if __name__ == "__main__":
         project_question2.id, updated_question2
     )
     # print(updated_question.selection_strategy.__class__.__name__)
-    # questionnaire_repository.delete_project_question(project_question.id)
+    print(questionnaire_repository.get_project_question_by_id(project_question.id))
+    print(questionnaire_repository.get_project_question_by_id(project_question2.id))
+
+    questionnaire_repository.delete_project_question(project_question.id)
+    questionnaire_repository.delete_project_question(project_question2.id)
+
